@@ -1,0 +1,124 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.uploadArea {
+    border: 2px dashed var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: var(--bg-secondary);
+}
+
+.uploadArea:hover,
+.uploadArea.active {
+    border-color: var(--color-primary-500);
+    background-color: var(--color-primary-50);
+}
+
+.uploadIcon {
+    color: var(--color-gray-400);
+}
+
+.uploadText {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.uploadText strong {
+    color: var(--color-primary-600);
+}
+
+.fileInput {
+    display: none;
+}
+
+.previewGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--space-4);
+}
+
+.previewItem {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.image {
+    object-fit: cover;
+}
+
+.removeButton {
+    position: absolute;
+    top: var(--space-1);
+    right: var(--space-1);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.removeButton:hover {
+    background-color: var(--color-error);
+}
+
+.primaryBadge {
+    position: absolute;
+    bottom: var(--space-1);
+    left: var(--space-1);
+    background-color: var(--color-primary-500);
+    color: white;
+    font-size: var(--text-xs);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    z-index: 5;
+    font-weight: 600;
+}
+
+.setPrimaryOverlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    cursor: pointer;
+}
+
+.previewItem:hover .setPrimaryOverlay {
+    opacity: 1;
+}
+
+.setPrimaryBtn {
+    color: white;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    border: 1px solid white;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.setPrimaryBtn:hover {
+    background-color: white;
+    color: black;
+}

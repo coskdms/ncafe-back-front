@@ -1,0 +1,188 @@
+.card {
+    cursor: pointer;
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: all var(--transition-fast);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.imageWrapper {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-gray-100);
+}
+
+.image {
+    object-fit: cover;
+}
+
+.placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-gray-400);
+}
+
+.soldOutBadge {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    background-color: var(--color-error);
+    color: white;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+
+.content {
+    padding: var(--space-4);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-2);
+}
+
+.name {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+}
+
+.engName {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+.category {
+    font-size: var(--text-xs);
+    padding: var(--space-1) var(--space-2);
+    background-color: var(--color-primary-50);
+    color: var(--color-primary-600);
+    border-radius: var(--radius-full);
+}
+
+.price {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-color);
+}
+
+/* Toggle Switch */
+.toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+}
+
+.toggle input {
+    display: none;
+}
+
+.toggleSlider {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    background-color: var(--color-gray-300);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+}
+
+.toggleSlider::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+}
+
+.toggle input:checked+.toggleSlider {
+    background-color: var(--color-error);
+}
+
+.toggle input:checked+.toggleSlider::before {
+    transform: translateX(16px);
+}
+
+.toggleLabel {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.actions {
+    display: flex;
+    gap: var(--space-1);
+}
+
+.actionButton {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+}
+
+.actionButton:hover {
+    background-color: var(--color-gray-100);
+    color: var(--text-primary);
+}
+
+.actionButton.danger:hover {
+    background-color: #fef2f2;
+    color: var(--color-error);
+}
+
+.dragHandle {
+    position: absolute;
+    top: var(--space-2);
+    left: var(--space-2);
+    z-index: 10;
+    padding: var(--space-2);
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: var(--radius-sm);
+    color: white;
+    cursor: grab;
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card:hover .dragHandle {
+    opacity: 1;
+}
+
+.card.isDragging {
+    opacity: 0.5;
+    z-index: 999;
+    box-shadow: var(--shadow-xl);
+}

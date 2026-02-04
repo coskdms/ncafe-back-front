@@ -1,0 +1,19 @@
+.card {
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.hoverable {
+    transition: all var(--transition-fast);
+}
+
+.hoverable:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.clickable {
+    cursor: pointer;
+}
