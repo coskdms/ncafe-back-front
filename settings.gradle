@@ -1,0 +1,4 @@
+rootProject.name = 'ncafe-back'
+
+// 서브 프로젝트 포함
+include 'backend'

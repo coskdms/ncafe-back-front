@@ -1,0 +1,28 @@
+# NCafe Project Rules
+
+## Frontend Development Guidelines
+
+### 1. Component Architecture
+- **Colocation**: Page-specific components must be located within a `_components` folder inside the relevant route directory.
+  - Example: `frontend/app/admin/menus/_components/MenuActionBar/`
+- **Shared Components**: Components used across multiple pages must be located in `frontend/components/`.
+- **Private Folders**: Use the `_` prefix for folders that should not be routing targets (e.g., `_components`, `_hooks`).
+
+### 2. File Structure for Components
+All components must follow the **Folder-based Pattern**:
+```
+ComponentName/              # Folder name in PascalCase
+├── index.tsx               # Component logic (export default)
+└── ComponentName.module.css # Component-specific styles
+```
+
+### 3. Styling
+- Use **CSS Modules** (`*.module.css`) for component styling.
+- Import styles as: `import styles from './ComponentName.module.css';`
+- Use CSS Variables defined in `globals.css` for colors, spacing, and typography.
+- Avoid using TailwindCSS unless explicitly requested.
+
+### 4. Tech Stack
+- Framework: Next.js 15 (App Router)
+- Library: React 19
+- Language: TypeScript
