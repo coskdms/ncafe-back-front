@@ -90,59 +90,44 @@ public class NewMenuRepository implements MenuRepository {
         return menus;
     }
 
-    // @Override
-    // public MenuListResponse findAll() {
-    // return findAllByCategoryId(null);
-    // }
+    @Override
+    public Menu findById(Long id) {
+        String sql = "SELECT * FROM menus WHERE id = " + id;
 
-    // @Override
-    // public MenuListResponse findAllByCategoryId(Integer categoryId) {
-    // List<Menu> menus = new ArrayList<>();
-    // String sql = "SELECT * FROM menus";
+        try (
+                Connection conn = dataSource.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
-    // // categoryId가 null이 아니면 WHERE 조건 추가
-    // if (categoryId != null) {
-    // sql += " WHERE category_id = " + categoryId;
-    // }
+            if (rs.next()) {
+                String korName = rs.getString("kor_name");
+                String engName = rs.getString("eng_name");
+                String catId = rs.getString("category_id");
+                Integer price = rs.getInt("price");
+                String description = rs.getString("description");
+                Boolean isAvailable = rs.getBoolean("is_available");
+                Timestamp createdAtTs = rs.getTimestamp("created_at");
+                Timestamp updatedAtTs = rs.getTimestamp("updated_at");
+                LocalDateTime createdAt = createdAtTs != null ? createdAtTs.toLocalDateTime() : null;
+                LocalDateTime updatedAt = updatedAtTs != null ? updatedAtTs.toLocalDateTime() : null;
 
-    // try (
-    // Connection conn = dataSource.getConnection();
-    // Statement stmt = conn.createStatement();
-    // ResultSet rs = stmt.executeQuery(sql)) {
+                return Menu.builder()
+                        .id(id)
+                        .korName(korName)
+                        .engName(engName)
+                        .categoryId(catId)
+                        .price(price)
+                        .description(description)
+                        .isAvailable(isAvailable)
+                        .createdAt(createdAt)
+                        .updatedAt(updatedAt)
+                        .build();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-    // while (rs.next()) {
-    // Long id = rs.getLong("id");
-    // String korName = rs.getString("kor_name");
-    // String engName = rs.getString("eng_name");
-    // String catId = rs.getString("category_id");
-    // Integer price = rs.getInt("price");
-    // String description = rs.getString("description");
-    // Boolean isAvailable = rs.getBoolean("is_available");
-    // Timestamp createdAtTs = rs.getTimestamp("created_at");
-    // Timestamp updatedAtTs = rs.getTimestamp("updated_at");
-    // LocalDateTime createdAt = createdAtTs != null ? createdAtTs.toLocalDateTime()
-    // : null;
-    // LocalDateTime updatedAt = updatedAtTs != null ? updatedAtTs.toLocalDateTime()
-    // : null;
-
-    // Menu menu = Menu.builder()
-    // .id(id)
-    // .korName(korName)
-    // .engName(engName)
-    // .categoryId(catId)
-    // .price(price)
-    // .description(description)
-    // .isAvailable(isAvailable)
-    // .createdAt(createdAt)
-    // .updatedAt(updatedAt)
-    // .build();
-    // menus.add(menu);
-    // }
-    // } catch (SQLException e) {
-    // e.printStackTrace();
-    // }
-
-    // return menus;
-    // }
+        return null;
+    }
 
 }

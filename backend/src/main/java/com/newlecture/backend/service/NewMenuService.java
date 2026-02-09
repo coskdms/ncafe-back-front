@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.newlecture.backend.dto.MenuCreateRequest;
 import com.newlecture.backend.dto.MenuCreateResponse;
 import com.newlecture.backend.dto.MenuDetailResponse;
+import com.newlecture.backend.dto.MenuImageListResponse;
+import com.newlecture.backend.dto.MenuImageResponse;
 import com.newlecture.backend.dto.MenuListRequest;
 import com.newlecture.backend.dto.MenuListResponse;
 import com.newlecture.backend.dto.MenuResponse;
@@ -55,7 +57,7 @@ public class NewMenuService implements MenuService {
                     }
 
                     // 이미지 정보 가져오기 (첫 번째 이미지의 srcUrl 사용)
-                    String imagesSrc = "";
+                    String imagesSrc = "blank.png";
                     List<MenuImage> menuImages = menuImageRepository.findAllByMenuId(menu.getId());
 
                     if (!menuImages.isEmpty()) {
@@ -88,9 +90,37 @@ public class NewMenuService implements MenuService {
     }
 
     @Override
-    public MenuDetailResponse getMenu(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMenu'");
+    public MenuDetailResponse getMenuDetailById(Long id) {
+        Menu menu = menuRepository.findById(id);
+
+        if (menu == null) {
+            return null;
+        }
+
+        // 카테고리 정보 가져오기
+        String categoryName = "";
+        if (menu.getCategoryId() != null) {
+            Category category = categoryRepository.findById(Integer.parseInt(menu.getCategoryId()));
+            if (category != null) {
+                categoryName = category.getName();
+            }
+        }
+
+        return MenuDetailResponse
+                .builder()
+                .id(menu.getId())
+                .korName(menu.getKorName())
+                .engName(menu.getEngName())
+                .description(menu.getDescription())
+                .price(String.valueOf(menu.getPrice()))
+                .categoryId(menu.getCategoryId())
+                .categoryName(categoryName)
+                .isAvailable(menu.getIsAvailable())
+                // .isSoldOut(false)
+                // .sortOrder(1)
+                .createdAt(menu.getCreatedAt())
+                .updatedAt(menu.getUpdatedAt())
+                .build();
     }
 
     @Override
@@ -109,6 +139,28 @@ public class NewMenuService implements MenuService {
     public void deleteMenu(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteMenu'");
+    }
+
+    @Override
+    public MenuImageListResponse getMenuImages(Long id) {
+        Menu menu = menuRepository.findById(id);
+        String altText = (menu != null) ? menu.getKorName() : "메뉴 이미지";
+
+        List<MenuImage> menuImages = menuImageRepository.findAllByMenuId(id);
+
+        List<MenuImageResponse> menuImageResponses = menuImages.stream()
+                .map(img -> MenuImageResponse.builder()
+                        .id(img.getId())
+                        .menuId(img.getMenuId())
+                        .srcUrl(img.getSrcUrl())
+                        .altText(altText)
+                        .sortOrder(img.getSortOrder())
+                        .build())
+                .toList();
+
+        return MenuImageListResponse.builder()
+                .images(menuImageResponses)
+                .build();
     }
 
 }

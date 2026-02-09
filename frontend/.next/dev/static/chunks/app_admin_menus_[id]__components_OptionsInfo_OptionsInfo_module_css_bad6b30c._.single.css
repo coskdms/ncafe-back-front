@@ -1,0 +1,108 @@
+/* [project]/app/admin/menus/[id]/_components/OptionsInfo/OptionsInfo.module.css [app-client] (css) */
+.OptionsInfo-module__ZRlDoq__optionsSection {
+  gap: var(--space-4);
+  flex-direction: column;
+  display: flex;
+}
+
+.OptionsInfo-module__ZRlDoq__sectionTitle {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-color);
+  margin: 0;
+  font-weight: 600;
+}
+
+.OptionsInfo-module__ZRlDoq__emptyMessage {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  padding: var(--space-4);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.OptionsInfo-module__ZRlDoq__optionList {
+  gap: var(--space-3);
+  flex-direction: column;
+  display: flex;
+}
+
+.OptionsInfo-module__ZRlDoq__optionGroup {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.OptionsInfo-module__ZRlDoq__optionHeader {
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}
+
+.OptionsInfo-module__ZRlDoq__optionName {
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.OptionsInfo-module__ZRlDoq__optionTags {
+  gap: var(--space-2);
+  display: flex;
+}
+
+.OptionsInfo-module__ZRlDoq__tag {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.OptionsInfo-module__ZRlDoq__required {
+  color: var(--color-error);
+  background: #ef44441a;
+}
+
+.OptionsInfo-module__ZRlDoq__optional {
+  color: var(--color-info);
+  background: #3b82f61a;
+}
+
+.OptionsInfo-module__ZRlDoq__optionItems {
+  flex-direction: column;
+  display: flex;
+}
+
+.OptionsInfo-module__ZRlDoq__optionItem {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-color);
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}
+
+.OptionsInfo-module__ZRlDoq__optionItem:last-child {
+  border-bottom: none;
+}
+
+.OptionsInfo-module__ZRlDoq__itemName {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.OptionsInfo-module__ZRlDoq__itemPrice {
+  font-size: var(--text-sm);
+  color: var(--color-primary-600);
+  font-weight: 600;
+}
+
+/*# sourceMappingURL=app_admin_menus_%5Bid%5D__components_OptionsInfo_OptionsInfo_module_css_bad6b30c._.single.css.map*/

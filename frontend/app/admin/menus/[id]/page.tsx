@@ -1,9 +1,7 @@
 import MenuDetailClient from './_components/MenuDetailClient';
 
-type Params = Promise<{ id: string }>;
+type Params = Promise<{ id: number }>;
 
 export default async function MenuDetailPage({ params }: { params: Params }) {
-    const { id } = await params;
-
-    return <MenuDetailClient menuId={id} />;
+    return <MenuDetailClient params={params} />;
 }

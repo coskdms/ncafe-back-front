@@ -1,45 +1,43 @@
-[00:00:01.014] Server  LOG     ✓ Ready in 709ms
-[00:00:02.717] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:06.882] Browser WARN    Image with src "http://localhost:8080/americano.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[00:00:50.793] Server  LOG     ✓ Ready in 48.7s
+[00:01:00.147] Server  LOG     ○ Compiling /admin/menus ...
+[00:01:17.304] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:52.586] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:54.528] Browser WARN    Image with src "http://localhost:8080/beefBagel.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:02:18.945] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:02:19.533] Browser WARN    Image with src "http://localhost:8080/capuchino.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[00:04:53.036] Server  LOG     ○ Compiling /admin/menus/[id] ...
+[00:42:54.155] Server  LOG     ✓ Compiled in 737ms
+[02:29:11.803] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:29:16.262] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:29:19.112] Browser WARN    Image with src "http://localhost:8080/beef-bagel.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:09:54.949] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:24:16.051] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:24:16.718] Browser WARN    Image with src "http://localhost:8080/capuchino.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[04:40:10.953] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[04:40:13.832] Browser WARN    Image with src "http://localhost:8080/beef-bagel.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:24:18.387] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:24:19.151] Browser WARN    Image with src "http://localhost:8080/capuchino.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[04:46:36.792] Server  LOG     ✓ Compiled in 310ms
+[04:46:51.140] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[04:47:02.898] Server  LOG     ✓ Compiled in 115ms
+[04:47:06.613] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[04:48:17.203] Server  LOG     ✓ Compiled in 210ms
+[04:48:17.952] Browser LOG     [{"altText":"카페라떼","id":102,"menuId":2,"sortOrder":1,"srcUrl":"cafelatte.png"},{"altText":"카페라떼","id":132,"menuId":2,"sortOrder":2,"srcUrl":"cafelatte1.png"}]
+[04:48:21.756] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[04:48:22.047] Browser LOG     [{"altText":"카페라떼","id":102,"menuId":2,"sortOrder":1,"srcUrl":"cafelatte.png"},{"altText":"카페라떼","id":132,"menuId":2,"sortOrder":2,"srcUrl":"cafelatte1.png"}]
+[04:50:54.542] Server  LOG     ✓ Compiled in 805ms
+[04:50:55.929] Browser LOG     [{"altText":"카페라떼","id":102,"menuId":2,"sortOrder":1,"srcUrl":"cafelatte.png"},{"altText":"카페라떼","id":132,"menuId":2,"sortOrder":2,"srcUrl":"cafelatte1.png"}]
+[04:51:46.958] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[04:52:59.362] Browser LOG     [{"altText":"카페라떼","id":102,"menuId":2,"sortOrder":1,"srcUrl":"cafelatte.png"},{"altText":"카페라떼","id":132,"menuId":2,"sortOrder":2,"srcUrl":"cafelatte1.png"}]
+[04:57:28.566] Server  LOG     ✓ Compiled in 637ms
+[04:57:37.931] Server  LOG     ✓ Compiled in 103ms
+[04:58:17.084] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[04:58:18.337] Browser WARN    Image with src "http://localhost:8080/choco-chip-cookie.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:24:23.491] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:24:24.034] Browser WARN    Image with src "http://localhost:8080/capuchino.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[05:00:25.286] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[05:00:38.291] Browser WARN    Image with src "http://localhost:8080/choco-chip-cookie.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:31:47.915] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:31:48.448] Browser WARN    Image with src "http://localhost:8080/capuchino.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[05:03:57.190] Browser WARN    Image with src "http://localhost:8080/images/menus/choco-chip-cookie.png" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[05:03:57.192] Browser WARN    Image with src "http://localhost:8080/images/menus/choco-chip-cookie1.png" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[05:08:35.448] Server  LOG     ✓ Compiled in 1008ms
+[05:09:25.495] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[05:09:30.691] Browser WARN    Image with src "http://localhost:8080/images/menus/choco-chip-cookie.png" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[05:09:30.692] Browser WARN    Image with src "http://localhost:8080/images/menus/choco-chip-cookie.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:32:56.740] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:32:57.466] Browser WARN    Image with src "http://localhost:8080/cafelatte.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:33:52.136] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:33:52.778] Browser WARN    Image with src "http://localhost:8080/cafelatte.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:34:10.977] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:34:11.496] Browser WARN    Image with src "http://localhost:8080/capuchino.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:34:49.258] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:34:49.944] Browser WARN    Image with src "http://localhost:8080/capuchino.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:36:19.568] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:40:52.013] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:40:52.577] Browser WARN    Image with src "http://localhost:8080/cafelatte.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:45:21.180] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:45:21.840] Browser WARN    Image with src "http://localhost:8080/strawberryCake.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[01:09:41.985] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:09:42.809] Browser WARN    Image with src "http://localhost:8080/beefBagel.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[01:15:18.058] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:15:19.081] Browser WARN    Image with src "http://localhost:8080/beefBagel.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[05:09:30.692] Browser WARN    Image with src "http://localhost:8080/images/menus/choco-chip-cookie1.png" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.

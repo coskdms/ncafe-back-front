@@ -17,12 +17,10 @@ public class MenuDetailResponse {
     private String engName;
     private String description;
     private String price;
+    // 이건 나중에 수정 페이지를 위해서..
     private String categoryId;
     private String categoryName;
-    private String imageSrc;
     private Boolean isAvailable;
-    private Boolean isSoldOut;
-    private int sortOrder;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

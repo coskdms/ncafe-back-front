@@ -90,7 +90,6 @@ export default function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled 
                         <h3 className={styles.name}>{menu.korName}</h3>
                         <p className={styles.engName}>{menu.engName}</p>
                     </div>
-                    {/* <span className={styles.category}>{menu.category.korName}</span> */}
                 </div>
 
                 <p className={styles.price}>₩{formatPrice(menu.price)}</p>

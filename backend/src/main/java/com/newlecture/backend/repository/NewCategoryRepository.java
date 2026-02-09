@@ -23,7 +23,7 @@ public class NewCategoryRepository implements CategoryRepository {
     @Override
     public List<Category> findAll() {
         List<Category> categories = new ArrayList<>();
-        String sql = "SELECT * FROM categories";
+        String sql = "SELECT * FROM categories ORDER BY sort_order";
 
         try (
                 Connection conn = dataSource.getConnection();
@@ -32,6 +32,8 @@ public class NewCategoryRepository implements CategoryRepository {
             while (rs.next()) {
                 Integer id = rs.getInt("id");
                 String name = rs.getString("name");
+                String icon = rs.getString("icon");
+                Integer sortOrder = rs.getInt("sort_order");
 
                 // builder pattern을 사용하여 객체 생성
                 // Category entity 에서 롬복의 builder를 사용하여 객체 생성
@@ -39,6 +41,8 @@ public class NewCategoryRepository implements CategoryRepository {
                 Category category = Category.builder()
                         .id(id)
                         .name(name)
+                        .icon(icon)
+                        .sortOrder(sortOrder)
                         .build();
                 categories.add(category);
             }
@@ -60,10 +64,14 @@ public class NewCategoryRepository implements CategoryRepository {
             if (rs.next()) {
                 Integer categoryId = rs.getInt("id");
                 String name = rs.getString("name");
+                String icon = rs.getString("icon");
+                Integer sortOrder = rs.getInt("sort_order");
 
                 return Category.builder()
                         .id(categoryId)
                         .name(name)
+                        .icon(icon)
+                        .sortOrder(sortOrder)
                         .build();
             }
         } catch (SQLException e) {

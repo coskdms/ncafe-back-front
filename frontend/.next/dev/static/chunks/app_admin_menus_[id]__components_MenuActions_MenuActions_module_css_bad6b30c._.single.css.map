@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/app/admin/menus/[id]/_components/MenuActions/MenuActions.module.css"],"sourcesContent":[".actionsContainer {\n    display: flex;\n    justify-content: flex-end;\n    align-items: center;\n    gap: var(--space-3);\n    padding-top: var(--space-5);\n    border-top: 1px solid var(--border-color);\n    margin-top: auto;\n}\n\n.editButton,\n.deleteButton {\n    display: flex;\n    align-items: center;\n    gap: var(--space-2);\n    padding: var(--space-3) var(--space-5);\n    border-radius: var(--radius-md);\n    font-size: var(--text-sm);\n    font-weight: 600;\n    cursor: pointer;\n    transition: var(--transition-fast);\n    text-decoration: none;\n    border: none;\n}\n\n.editButton {\n    background: var(--color-primary-600);\n    color: white;\n}\n\n.editButton:hover {\n    background: var(--color-primary-700);\n}\n\n.deleteButton {\n    background: transparent;\n    color: var(--color-error);\n    border: 1px solid var(--color-error);\n}\n\n.deleteButton:hover {\n    background: rgba(239, 68, 68, 0.1);\n}"],"names":[],"mappings":"AAAA;;;;;;;;;;AAUA;;;;;;;;;;;;;;AAeA;;;;;AAKA;;;;AAIA;;;;;;AAMA"}}]
+}

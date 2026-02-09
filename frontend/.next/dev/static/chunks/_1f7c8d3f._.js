@@ -244,7 +244,7 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                        lineNumber: 96,
+                        lineNumber: 95,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -260,14 +260,14 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                                         onChange: ()=>onToggleSoldOut(menu.id)
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                        lineNumber: 103,
+                                        lineNumber: 102,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$admin$2f$menus$2f$_components$2f$MenuCard$2f$MenuCard$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].toggleSlider
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                        lineNumber: 108,
+                                        lineNumber: 107,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -275,13 +275,13 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                                         children: "품절"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                        lineNumber: 109,
+                                        lineNumber: 108,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                lineNumber: 99,
+                                lineNumber: 98,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -295,12 +295,12 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                                             size: 16
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                            lineNumber: 118,
+                                            lineNumber: 117,
                                             columnNumber: 29
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                        lineNumber: 113,
+                                        lineNumber: 112,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -313,24 +313,24 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                                             size: 16
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                            lineNumber: 127,
+                                            lineNumber: 126,
                                             columnNumber: 29
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                        lineNumber: 120,
+                                        lineNumber: 119,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                lineNumber: 112,
+                                lineNumber: 111,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                        lineNumber: 98,
+                        lineNumber: 97,
                         columnNumber: 17
                     }, this)
                 ]
@@ -1003,8 +1003,12 @@ function CategoryTabs({ selectedCategory, onCategorySelect }) {
             categories.map((category)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                     className: `${__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$admin$2f$menus$2f$_components$2f$CategoryTabs$2f$CategoryTabs$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].tab} ${selectedCategory === category.id ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$admin$2f$menus$2f$_components$2f$CategoryTabs$2f$CategoryTabs$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].active : ''}`,
                     onClick: ()=>onCategorySelect(category.id),
-                    children: category.name
-                }, category.id, false, {
+                    children: [
+                        category.icon,
+                        "  ",
+                        category.name
+                    ]
+                }, category.id, true, {
                     fileName: "[project]/app/admin/menus/_components/CategoryTabs/CategoryTabs.tsx",
                     lineNumber: 39,
                     columnNumber: 17

@@ -41,6 +41,7 @@ export default function CategoryTabs({ selectedCategory, onCategorySelect }: {
                     className={`${styles.tab} ${selectedCategory === category.id ? styles.active : ''}`}
                     onClick={() => onCategorySelect(category.id)}
                 >
+                    {category.icon} &nbsp;
                     {category.name}
                 </button>
             ))}

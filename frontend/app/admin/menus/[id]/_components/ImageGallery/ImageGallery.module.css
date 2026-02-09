@@ -1,0 +1,79 @@
+.imageSection {
+    flex-shrink: 0;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.mainImageWrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+}
+
+.mainImage {
+    object-fit: cover;
+}
+
+.placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+}
+
+/* 썸네일 목록 */
+.thumbnailList {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    padding: var(--space-1) 0;
+}
+
+.thumbnail {
+    position: relative;
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 2px solid transparent;
+    background: var(--bg-tertiary);
+    cursor: pointer;
+    padding: 0;
+    transition: border-color var(--transition-fast);
+}
+
+.thumbnail:hover {
+    border-color: var(--color-gray-400);
+}
+
+.thumbnail.active {
+    border-color: var(--color-primary-600);
+}
+
+.thumbnailImage {
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .imageSection {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .thumbnail {
+        width: 56px;
+        height: 56px;
+    }
+}

@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class Category {
     private Integer id;
     private String name;
+    private String icon;
+    private Integer sortOrder;
 }
