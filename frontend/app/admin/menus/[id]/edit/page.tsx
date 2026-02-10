@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useMenuStore } from '../../../../../stores/menuStore';
-import MenuForm, { MenuFormData } from '../../_components/MenuForm';
+import MenuForm, { MenuFormData } from '../../_components/MenuForm/MenuForm';
 import styles from './page.module.css';
 
 export default function EditMenuPage() {
@@ -22,7 +22,7 @@ export default function EditMenuPage() {
             const formData: MenuFormData = {
                 korName: menu.korName,
                 engName: menu.engName,
-                categoryId: menu.category.id,
+                categoryId: menu.categoryId,
                 price: menu.price,
                 description: menu.description,
                 isAvailable: menu.isAvailable,

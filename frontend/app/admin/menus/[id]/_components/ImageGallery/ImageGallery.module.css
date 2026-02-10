@@ -16,8 +16,20 @@
     border: 1px solid var(--border-color);
 }
 
+.imageContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
 .mainImage {
     object-fit: cover;
+}
+
+.thumbnailImageWrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .placeholder {

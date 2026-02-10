@@ -51,7 +51,7 @@ export function useMenus(params?: MenuListParams): MenuListResponseDto {
             setLoading(true);
             setError(null);
 
-            const url = new URL("http://localhost:8080/admin/menus");
+            const url = new URL("/api/admin/menus", window.location.origin);
             if (categoryId) {
                 url.searchParams.append('categoryId', categoryId.toString());
             }

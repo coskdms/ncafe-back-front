@@ -3,17 +3,50 @@
 }
 
 .content {
-    max-width: 1000px;
+    max-width: 1400px;
     margin: 0 auto;
     display: flex;
+    flex-wrap: wrap;
+    /* 줄바꿈 허용 */
     gap: var(--space-8);
+    position: relative;
+    align-items: flex-start;
 }
 
-.rightSection {
-    flex: 1;
+.leftColumn {
+    flex: 1 1 350px;
+    /* basis 설정으로 유연하게 */
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
+    /* min-width 제거 */
+    max-width: 500px;
+    position: sticky;
+    top: var(--space-6);
+    height: fit-content;
+}
+
+.rightColumn {
+    flex: 2 1 500px;
+    /* basis 설정으로 유연하게 */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    min-width: 0;
+    /* content overflow 방지 */
+}
+
+/* 액션 버튼 영역 */
+/* 액션 버튼 영역 */
+.actionWrapper {
+    max-width: 1400px;
+    margin: var(--space-8) auto 0;
+    /* 위쪽 여백 좀 더 넉넉하게 */
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    /* 오른쪽 정렬 */
 }
 
 /* 로딩 상태 */
@@ -59,9 +92,17 @@
 }
 
 /* 반응형 */
-@media (max-width: 768px) {
+/* 반응형 */
+@media (max-width: 1024px) {
     .content {
         flex-direction: column;
+    }
+
+    .leftColumn {
+        max-width: 1000px;
+        /* 전체 너비 허용 */
+        position: static;
+        /* 스티키 해제 */
     }
 
     .container {

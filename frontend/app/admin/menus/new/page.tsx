@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useMenuStore } from '../../../../stores/menuStore';
 import { MOCK_CATEGORIES } from '@/mocks/menuData';
 import { Menu } from '@/types/menu';
-import MenuForm, { MenuFormData } from '../_components/MenuForm';
+import MenuForm, { MenuFormData } from '../_components/MenuForm/MenuForm';
 import styles from './page.module.css';
 
 export default function NewMenuPage() {
@@ -19,7 +19,7 @@ export default function NewMenuPage() {
             engName: data.engName || '',
             description: data.description || '',
             price: Number(data.price),
-            category: MOCK_CATEGORIES.find(c => c.id === data.categoryId) || MOCK_CATEGORIES[0],
+            categoryId: data.categoryId,
             images: [],
             isAvailable: data.isAvailable,
             isSoldOut: false,

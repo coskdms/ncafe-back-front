@@ -1,106 +1,120 @@
 /* [project]/app/admin/menus/[id]/_components/OptionsInfo/OptionsInfo.module.css [app-client] (css) */
 .OptionsInfo-module__ZRlDoq__optionsSection {
-  gap: var(--space-4);
-  flex-direction: column;
-  display: flex;
-}
-
-.OptionsInfo-module__ZRlDoq__sectionTitle {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--border-color);
-  margin: 0;
-  font-weight: 600;
-}
-
-.OptionsInfo-module__ZRlDoq__emptyMessage {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
+  gap: var(--space-5);
   padding: var(--space-4);
-  background: var(--bg-tertiary);
+  background: var(--bg-primary);
   border-radius: var(--radius-md);
-  text-align: center;
-}
-
-.OptionsInfo-module__ZRlDoq__optionList {
-  gap: var(--space-3);
+  border: 1px solid var(--border-color);
   flex-direction: column;
+  flex: 1;
   display: flex;
 }
 
-.OptionsInfo-module__ZRlDoq__optionGroup {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+.OptionsInfo-module__ZRlDoq__header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--space-4);
+  align-items: center;
+  display: flex;
 }
 
-.OptionsInfo-module__ZRlDoq__optionHeader {
-  padding: var(--space-3) var(--space-4);
-  background: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-color);
+.OptionsInfo-module__ZRlDoq__title {
+  font-size: var(--text-2xl);
+  color: var(--color-primary-700);
+  letter-spacing: -.5px;
+  margin: 0;
+  font-weight: 800;
+}
+
+.OptionsInfo-module__ZRlDoq__optionsGrid {
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: grid;
+}
+
+.OptionsInfo-module__ZRlDoq__optionCard {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4);
+  gap: var(--space-3);
+  border: 1px solid var(--border-color);
+  flex-direction: column;
+  transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
+  display: flex;
+}
+
+.OptionsInfo-module__ZRlDoq__optionCard:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.OptionsInfo-module__ZRlDoq__cardHeader {
+  margin-bottom: var(--space-2);
   justify-content: space-between;
   align-items: center;
   display: flex;
 }
 
-.OptionsInfo-module__ZRlDoq__optionName {
+.OptionsInfo-module__ZRlDoq__categoryName {
   font-size: var(--text-base);
   color: var(--text-primary);
+  margin: 0;
   font-weight: 600;
 }
 
-.OptionsInfo-module__ZRlDoq__optionTags {
+.OptionsInfo-module__ZRlDoq__badges {
   gap: var(--space-2);
   display: flex;
 }
 
-.OptionsInfo-module__ZRlDoq__tag {
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
+.OptionsInfo-module__ZRlDoq__badge {
   font-size: var(--text-xs);
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  padding: 2px 6px;
   font-weight: 500;
 }
 
 .OptionsInfo-module__ZRlDoq__required {
   color: var(--color-error);
-  background: #ef44441a;
+  background-color: #ef44441a;
 }
 
-.OptionsInfo-module__ZRlDoq__optional {
+.OptionsInfo-module__ZRlDoq__multi {
   color: var(--color-info);
-  background: #3b82f61a;
+  background-color: #3b82f61a;
 }
 
-.OptionsInfo-module__ZRlDoq__optionItems {
+.OptionsInfo-module__ZRlDoq__single {
+  color: var(--text-secondary);
+  background-color: #6b72801a;
+}
+
+.OptionsInfo-module__ZRlDoq__itemList {
+  gap: var(--space-2);
   flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
 }
 
-.OptionsInfo-module__ZRlDoq__optionItem {
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--border-color);
+.OptionsInfo-module__ZRlDoq__item {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  padding: var(--space-1) 0;
+  border-bottom: 1px dashed var(--border-color);
   justify-content: space-between;
-  align-items: center;
   display: flex;
 }
 
-.OptionsInfo-module__ZRlDoq__optionItem:last-child {
+.OptionsInfo-module__ZRlDoq__item:last-child {
   border-bottom: none;
 }
 
 .OptionsInfo-module__ZRlDoq__itemName {
-  font-size: var(--text-sm);
-  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .OptionsInfo-module__ZRlDoq__itemPrice {
-  font-size: var(--text-sm);
   color: var(--color-primary-600);
   font-weight: 600;
 }

@@ -165,14 +165,14 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                         columnNumber: 21
                     }, this),
                     menu.imagesSrc ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                        src: `http://localhost:8080/${menu.imagesSrc}`,
+                        src: `/images/${menu.imagesSrc}`,
                         alt: menu.korName,
                         fill: true,
                         sizes: "(max-width: 768px) 100vw, 300px",
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$admin$2f$menus$2f$_components$2f$MenuCard$2f$MenuCard$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].image
                     }, void 0, false, {
                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                        lineNumber: 69,
+                        lineNumber: 70,
                         columnNumber: 21
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$admin$2f$menus$2f$_components$2f$MenuCard$2f$MenuCard$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].placeholder,
@@ -180,12 +180,12 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                             size: 48
                         }, void 0, false, {
                             fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                            lineNumber: 78,
+                            lineNumber: 79,
                             columnNumber: 25
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                        lineNumber: 77,
+                        lineNumber: 78,
                         columnNumber: 21
                     }, this),
                     !menu.isAvailable && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -193,7 +193,7 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                         children: "품절"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                        lineNumber: 83,
+                        lineNumber: 84,
                         columnNumber: 21
                     }, this)
                 ]
@@ -214,7 +214,7 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                                     children: menu.korName
                                 }, void 0, false, {
                                     fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                    lineNumber: 90,
+                                    lineNumber: 91,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -222,18 +222,18 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                                     children: menu.engName
                                 }, void 0, false, {
                                     fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                    lineNumber: 91,
+                                    lineNumber: 92,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                            lineNumber: 89,
+                            lineNumber: 90,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                        lineNumber: 88,
+                        lineNumber: 89,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -244,7 +244,7 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                        lineNumber: 95,
+                        lineNumber: 96,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -260,14 +260,14 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                                         onChange: ()=>onToggleSoldOut(menu.id)
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                        lineNumber: 102,
+                                        lineNumber: 103,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$admin$2f$menus$2f$_components$2f$MenuCard$2f$MenuCard$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].toggleSlider
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                        lineNumber: 107,
+                                        lineNumber: 108,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -275,13 +275,13 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                                         children: "품절"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                        lineNumber: 108,
+                                        lineNumber: 109,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                lineNumber: 98,
+                                lineNumber: 99,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -295,12 +295,12 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                                             size: 16
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                            lineNumber: 117,
+                                            lineNumber: 118,
                                             columnNumber: 29
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                        lineNumber: 112,
+                                        lineNumber: 113,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -313,30 +313,30 @@ function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled = true }) {
                                             size: 16
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                            lineNumber: 126,
+                                            lineNumber: 127,
                                             columnNumber: 29
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                        lineNumber: 119,
+                                        lineNumber: 120,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                                lineNumber: 111,
+                                lineNumber: 112,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                        lineNumber: 97,
+                        lineNumber: 98,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/menus/_components/MenuCard/MenuCard.tsx",
-                lineNumber: 87,
+                lineNumber: 88,
                 columnNumber: 13
             }, this)
         ]
@@ -404,7 +404,7 @@ function useMenus(params) {
             try {
                 setLoading(true);
                 setError(null);
-                const url = new URL("http://localhost:8080/admin/menus");
+                const url = new URL("/api/admin/menus", window.location.origin);
                 if (categoryId) {
                     url.searchParams.append('categoryId', categoryId.toString());
                 }
@@ -910,7 +910,7 @@ function useCategories() {
                     try {
                         setLoading(true);
                         setError(null);
-                        const response = await fetch('http://localhost:8080/admin/categories');
+                        const response = await fetch('/api/admin/categories');
                         if (!response.ok) {
                             throw new Error('카테고리 데이터를 불러오는데 실패했습니다.');
                         }

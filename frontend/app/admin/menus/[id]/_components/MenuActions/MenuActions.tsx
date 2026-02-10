@@ -18,14 +18,14 @@ export default function MenuActions() {
 
     return (
         <div className={styles.actionsContainer}>
-            {/* <Link href={`/admin/menus/${menuId}/edit`} className={styles.editButton}>
+            <Link className={styles.editButton} href={``}>
                 <Edit size={18} />
                 수정
             </Link>
-            <button className={styles.deleteButton} onClick={handleDelete}>
+            <button className={styles.deleteButton}>
                 <Trash2 size={18} />
                 삭제
-            </button> */}
+            </button>
         </div>
     );
 }

@@ -66,8 +66,9 @@ export default function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled 
 
                 {/* imagesSrc가 있으면 이미지 표시, 없으면 placeholder */}
                 {menu.imagesSrc ? (
+
                     <Image
-                        src={`http://localhost:8080/${menu.imagesSrc}`}
+                        src={`/images/${menu.imagesSrc}`}
                         alt={menu.korName}
                         fill
                         sizes="(max-width: 768px) 100vw, 300px"

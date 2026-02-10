@@ -17,8 +17,20 @@
   overflow: hidden;
 }
 
+.ImageGallery-module__2fm2ha__imageContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
 .ImageGallery-module__2fm2ha__mainImage {
   object-fit: cover;
+}
+
+.ImageGallery-module__2fm2ha__thumbnailImageWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 .ImageGallery-module__2fm2ha__placeholder {
