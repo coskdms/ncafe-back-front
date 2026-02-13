@@ -1,0 +1,48 @@
+/* [project]/components/landing/MarqueeSection.module.css [app-client] (css) */
+.MarqueeSection-module__l6LaAG__marqueeContainer {
+  background-color: var(--color-primary-600);
+  width: 100%;
+  padding: var(--space-4) 0;
+  white-space: nowrap;
+  border-top: 1px solid #ffffff1a;
+  border-bottom: 1px solid #ffffff1a;
+  position: relative;
+  overflow: hidden;
+}
+
+.MarqueeSection-module__l6LaAG__track {
+  animation: 80s linear infinite MarqueeSection-module__l6LaAG__scroll;
+  display: inline-flex;
+}
+
+.MarqueeSection-module__l6LaAG__item {
+  font-size: var(--text-2xl);
+  color: #fff;
+  text-transform: uppercase;
+  margin-right: var(--space-12);
+  letter-spacing: .05em;
+  align-items: center;
+  gap: var(--space-4);
+  font-weight: 700;
+  display: flex;
+}
+
+.MarqueeSection-module__l6LaAG__separator {
+  background-color: var(--color-primary-200);
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  display: inline-block;
+}
+
+@keyframes MarqueeSection-module__l6LaAG__scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/*# sourceMappingURL=components_landing_MarqueeSection_module_css_bad6b30c._.single.css.map*/

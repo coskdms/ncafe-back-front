@@ -1,0 +1,78 @@
+/* [project]/components/landing/Footer.module.css [app-client] (css) */
+.Footer-module__VUkswa__footer {
+  background-color: var(--color-gray-900);
+  color: #fff;
+  padding: var(--space-12) 0;
+}
+
+.Footer-module__VUkswa__container {
+  max-width: 1200px;
+  padding: 0 var(--space-6);
+  gap: var(--space-8);
+  grid-template-columns: 1fr;
+  margin: 0 auto;
+  display: grid;
+}
+
+@media (min-width: 768px) {
+  .Footer-module__VUkswa__container {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.Footer-module__VUkswa__column {
+  gap: var(--space-4);
+  flex-direction: column;
+  display: flex;
+}
+
+.Footer-module__VUkswa__brand {
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-primary-500);
+  display: flex;
+}
+
+.Footer-module__VUkswa__logoText {
+  font-weight: 700;
+  font-size: var(--text-xl);
+  color: #fff;
+}
+
+.Footer-module__VUkswa__heading {
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  font-size: var(--text-sm);
+  letter-spacing: .1em;
+}
+
+.Footer-module__VUkswa__link {
+  color: var(--color-gray-300);
+  transition: color var(--transition-fast);
+}
+
+.Footer-module__VUkswa__link:hover {
+  color: #fff;
+}
+
+.Footer-module__VUkswa__socials {
+  gap: var(--space-4);
+  display: flex;
+}
+
+.Footer-module__VUkswa__socials a {
+  color: var(--color-gray-300);
+  transition: color var(--transition-fast);
+}
+
+.Footer-module__VUkswa__socials a:hover {
+  color: var(--color-primary-500);
+}
+
+.Footer-module__VUkswa__copyright {
+  color: var(--color-gray-500);
+  font-size: var(--text-sm);
+  margin-top: auto;
+}
+
+/*# sourceMappingURL=components_landing_Footer_module_css_bad6b30c._.single.css.map*/

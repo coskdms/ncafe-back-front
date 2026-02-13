@@ -1,20 +1,52 @@
-[00:00:01.007] Server  LOG     ✓ Ready in 711ms
-[00:00:02.957] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:03.098] Server  ERROR   (node:60040) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+[00:00:01.863] Server  LOG     ✓ Ready in 1620ms
+[00:03:44.720] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:44.787] Browser WARN    Image with src "http://localhost:3000/vercel.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:03:47.990] Server  ERROR   (node:25749) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-[00:00:10.110] Browser WARN    Image with src "/images/choco-chip-cookie.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[00:03:48.107] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:49.549] Browser WARN    Image with src "/images/beef-bagel.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:00:11.453] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:12.299] Browser WARN    Image with src "/images/bagel-cream-cheese.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[02:32:55.646] Server  LOG     ✓ Compiled in 197ms
+[02:32:58.038] Server  LOG     ✓ Compiled in 622ms
+[02:33:47.868] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:33:48.793] Browser WARN    Image with src "/images/beef-bagel.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:00:36.457] Browser WARN    Image with src "http://localhost:3000/images/cafelatte.png" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
-[00:00:36.457] Browser WARN    Image with src "http://localhost:3000/images/cafelatte1.png" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
-[00:03:28.243] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:03:28.626] Browser WARN    Image with src "http://localhost:3000/images/americano.png" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
-[00:03:28.886] Browser WARN    Image with src "http://localhost:3000/images/americano1.png" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
-[00:03:29.912] Browser WARN    Image with src "/images/americano.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[00:05:56.707] Server  LOG     ✓ Compiled in 328ms
-[00:06:07.552] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:06:08.588] Browser WARN    Image with src "/images/americano.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[02:33:51.090] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:36:11.964] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:37:02.931] Server  LOG     ✓ Compiled in 107ms
+[02:37:19.360] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:38:28.980] Server  LOG     ✓ Compiled in 898ms
+[02:38:30.075] Browser ERROR   uncaughtError: ReferenceError: Link is not defined
+[02:38:38.939] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[02:38:59.866] Server  LOG     ✓ Compiled in 3.9s
+[02:39:02.239] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:39:08.001] Server  LOG     ✓ Finished writing to filesystem cache in 29.6s
+[02:39:36.609] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:40:23.303] Server  LOG     ✓ Compiled in 2.7s
+[02:42:11.347] Server  LOG     ✓ Compiled in 334ms
+[02:42:12.879] Server  LOG     ✓ Compiled in 50ms
+[02:42:15.002] Server  LOG     ✓ Compiled in 178ms
+[02:46:50.575] Server  LOG     ✓ Compiled in 319ms
+[02:47:01.652] Server  LOG     ✓ Compiled in 27ms
+[02:47:03.647] Server  LOG     ✓ Compiled in 32ms
+[02:47:50.199] Server  LOG     ✓ Compiled in 69ms
+[02:47:52.149] Server  LOG     ✓ Compiled in 4ms
+[03:39:01.620] Server  LOG     ✓ Compiled in 223ms
+[03:47:06.362] Server  LOG     ✓ Compiled in 140ms
+[03:47:08.326] Server  LOG     ✓ Compiled in 145ms
+[03:49:05.347] Server  LOG     ✓ Compiled in 52ms
+[03:49:07.361] Server  LOG     ✓ Compiled in 50ms
+[03:49:21.404] Server  LOG     ✓ Compiled in 12ms
+[03:51:29.597] Server  LOG     ✓ Compiled in 71ms
+[03:51:31.528] Server  LOG     ✓ Compiled in 84ms
+[03:53:19.692] Server  LOG     ✓ Compiled in 137ms
+[03:53:23.607] Server  LOG     ✓ Compiled in 59ms
+[03:53:26.791] Server  LOG     ✓ Compiled in 181ms
+[03:53:39.032] Server  LOG     ✓ Compiled in 162ms
+[03:56:58.299] Server  LOG     ✓ Compiled in 151ms
+[03:56:58.619] Browser ERROR   unhandledRejection: Error: No link element found for chunk /_next/static/chunks/_87dfe3e5._.css
+[03:57:29.649] Server  LOG     ✓ Compiled in 50ms
+[03:57:30.617] Browser ERROR   unhandledRejection: Error: No link element found for chunk /_next/static/chunks/_87dfe3e5._.css
+[03:57:39.890] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[03:57:57.256] Server  LOG     ✓ Compiled in 56ms
+[03:58:03.731] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
