@@ -1,0 +1,67 @@
+/* [project]/components/landing/HighlightBar.module.css [app-client] (css) */
+.HighlightBar-module___N3Zwa__section {
+  padding: var(--space-8) var(--space-6);
+  background-color: #1a1a1a;
+}
+
+.HighlightBar-module___N3Zwa__container {
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-12);
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+}
+
+.HighlightBar-module___N3Zwa__item {
+  align-items: center;
+  gap: var(--space-2);
+  flex-direction: column;
+  display: flex;
+  position: relative;
+}
+
+.HighlightBar-module___N3Zwa__item:not(:first-child):before {
+  content: "";
+  left: calc(var(--space-12) * -.5);
+  background-color: #ffffff26;
+  width: 1px;
+  height: 40px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.HighlightBar-module___N3Zwa__value {
+  color: #fff;
+  letter-spacing: -.02em;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.HighlightBar-module___N3Zwa__label {
+  font-size: var(--text-sm);
+  color: #ffffff80;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .HighlightBar-module___N3Zwa__container {
+    gap: var(--space-8);
+  }
+
+  .HighlightBar-module___N3Zwa__item:not(:first-child):before {
+    left: calc(var(--space-8) * -.5);
+    height: 30px;
+  }
+
+  .HighlightBar-module___N3Zwa__value {
+    font-size: 1.5rem;
+  }
+}
+
+/*# sourceMappingURL=components_landing_HighlightBar_module_css_bad6b30c._.single.css.map*/

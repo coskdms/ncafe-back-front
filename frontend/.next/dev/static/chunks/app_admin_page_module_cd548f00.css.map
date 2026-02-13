@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///Users/chaena-eun/Desktop/IBM_Test/ncafe-back/frontend/app/admin/page.module.css"],"sourcesContent":[".container {\n    display: flex;\n    flex-direction: column;\n    gap: var(--space-6);\n}\n\n.welcome {\n    background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));\n    color: white;\n    padding: var(--space-8);\n    border-radius: var(--radius-xl);\n}\n\n.welcome h2 {\n    font-size: var(--text-2xl);\n    margin-bottom: var(--space-2);\n}\n\n.welcome p {\n    opacity: 0.9;\n}\n\n.statsGrid {\n    display: grid;\n    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n    gap: var(--space-4);\n}\n\n.statCard {\n    background-color: var(--bg-primary);\n    padding: var(--space-6);\n    border-radius: var(--radius-lg);\n    border: 1px solid var(--border-color);\n    display: flex;\n    flex-direction: column;\n    gap: var(--space-2);\n}\n\n.statLabel {\n    font-size: var(--text-sm);\n    color: var(--text-secondary);\n}\n\n.statValue {\n    font-size: var(--text-2xl);\n    font-weight: 700;\n    color: var(--text-primary);\n}"],"names":[],"mappings":"AAAA;;;;;;AAMA;;;;;;;AAOA;;;;;AAKA;;;;AAIA;;;;;;AAMA;;;;;;;;;;AAUA;;;;;AAKA"}}]
+}

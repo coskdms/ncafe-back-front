@@ -53,3 +53,8 @@ Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
 [09:00:11.833] Server  LOG     ✓ Compiled in 327ms
 [09:01:26.338] Server  LOG     ✓ Compiled in 95ms
 [09:02:26.505] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[09:04:18.450] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[09:07:21.658] Server  LOG     ✓ Compiled in 420ms
+[09:07:38.534] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[09:09:02.261] Server  LOG     ✓ Compiled in 181ms
+[09:09:24.024] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
