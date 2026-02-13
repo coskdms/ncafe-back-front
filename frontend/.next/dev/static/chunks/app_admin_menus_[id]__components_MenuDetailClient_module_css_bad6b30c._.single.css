@@ -1,0 +1,99 @@
+/* [project]/app/admin/menus/[id]/_components/MenuDetailClient.module.css [app-client] (css) */
+.MenuDetailClient-module__RAiuYW__container {
+  padding: var(--space-6);
+}
+
+.MenuDetailClient-module__RAiuYW__content {
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  align-items: flex-start;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  position: relative;
+}
+
+.MenuDetailClient-module__RAiuYW__leftColumn {
+  gap: var(--space-6);
+  max-width: 500px;
+  top: var(--space-6);
+  flex-direction: column;
+  flex: 350px;
+  height: fit-content;
+  display: flex;
+  position: sticky;
+}
+
+.MenuDetailClient-module__RAiuYW__rightColumn {
+  gap: var(--space-6);
+  flex-direction: column;
+  flex: 2 500px;
+  min-width: 0;
+  display: flex;
+}
+
+.MenuDetailClient-module__RAiuYW__actionWrapper {
+  max-width: 1400px;
+  margin: var(--space-8) auto 0;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-color);
+  justify-content: flex-end;
+  display: flex;
+}
+
+.MenuDetailClient-module__RAiuYW__loadingWrapper {
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 400px;
+  color: var(--text-muted);
+  flex-direction: column;
+  display: flex;
+}
+
+.MenuDetailClient-module__RAiuYW__spinner {
+  border: 3px solid var(--border-color);
+  border-top-color: var(--color-primary-600);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: 1s linear infinite MenuDetailClient-module__RAiuYW__spin;
+}
+
+@keyframes MenuDetailClient-module__RAiuYW__spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.MenuDetailClient-module__RAiuYW__errorWrapper {
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+  flex-direction: column;
+  min-height: 400px;
+  display: flex;
+}
+
+.MenuDetailClient-module__RAiuYW__errorMessage {
+  font-size: var(--text-lg);
+  color: var(--text-muted);
+}
+
+@media (max-width: 1024px) {
+  .MenuDetailClient-module__RAiuYW__content {
+    flex-direction: column;
+  }
+
+  .MenuDetailClient-module__RAiuYW__leftColumn {
+    max-width: 1000px;
+    position: static;
+  }
+
+  .MenuDetailClient-module__RAiuYW__container {
+    padding: var(--space-4);
+  }
+}
+
+/*# sourceMappingURL=app_admin_menus_%5Bid%5D__components_MenuDetailClient_module_css_bad6b30c._.single.css.map*/

@@ -1,0 +1,42 @@
+/* [project]/app/admin/menus/[id]/_components/MenuActions/MenuActions.module.css [app-client] (css) */
+.MenuActions-module__RK844a__actionsContainer {
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-3);
+  display: flex;
+}
+
+.MenuActions-module__RK844a__editButton, .MenuActions-module__RK844a__deleteButton {
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  border: none;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+}
+
+.MenuActions-module__RK844a__editButton {
+  background: var(--color-primary-600);
+  color: #fff;
+}
+
+.MenuActions-module__RK844a__editButton:hover {
+  background: var(--color-primary-700);
+}
+
+.MenuActions-module__RK844a__deleteButton {
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  background: none;
+}
+
+.MenuActions-module__RK844a__deleteButton:hover {
+  background: #ef44441a;
+}
+
+/*# sourceMappingURL=app_admin_menus_%5Bid%5D__components_MenuActions_MenuActions_module_css_bad6b30c._.single.css.map*/

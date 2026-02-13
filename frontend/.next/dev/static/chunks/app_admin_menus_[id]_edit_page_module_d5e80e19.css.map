@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///Users/chaena-eun/Desktop/IBM_Test/ncafe-back/frontend/app/admin/menus/%5Bid%5D/edit/page.module.css"],"sourcesContent":[".container {\n    max-width: 800px;\n    margin: 0 auto;\n    width: 100%;\n    display: flex;\n    flex-direction: column;\n    gap: var(--space-6);\n}"],"names":[],"mappings":"AAAA"}}]
+}

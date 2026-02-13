@@ -1,0 +1,190 @@
+/* [project]/app/admin/menus/_components/MenuCard/MenuCard.module.css [app-client] (css) */
+.MenuCard-module__dATFjW__card {
+  cursor: pointer;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-fast);
+  overflow: hidden;
+}
+
+.MenuCard-module__dATFjW__card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.MenuCard-module__dATFjW__imageWrapper {
+  aspect-ratio: 4 / 3;
+  background-color: var(--color-gray-100);
+  position: relative;
+}
+
+.MenuCard-module__dATFjW__image {
+  object-fit: cover;
+}
+
+.MenuCard-module__dATFjW__placeholder {
+  width: 100%;
+  height: 100%;
+  color: var(--color-gray-400);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.MenuCard-module__dATFjW__soldOutBadge {
+  top: var(--space-2);
+  right: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-error);
+  color: #fff;
+  font-size: var(--text-xs);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  position: absolute;
+}
+
+.MenuCard-module__dATFjW__content {
+  padding: var(--space-4);
+}
+
+.MenuCard-module__dATFjW__header {
+  margin-bottom: var(--space-2);
+  justify-content: space-between;
+  align-items: flex-start;
+  display: flex;
+}
+
+.MenuCard-module__dATFjW__name {
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+  font-weight: 600;
+}
+
+.MenuCard-module__dATFjW__engName {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.MenuCard-module__dATFjW__category {
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-600);
+  border-radius: var(--radius-full);
+}
+
+.MenuCard-module__dATFjW__price {
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+  font-weight: 700;
+}
+
+.MenuCard-module__dATFjW__footer {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-color);
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}
+
+.MenuCard-module__dATFjW__toggle {
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  display: flex;
+}
+
+.MenuCard-module__dATFjW__toggle input {
+  display: none;
+}
+
+.MenuCard-module__dATFjW__toggleSlider {
+  background-color: var(--color-gray-300);
+  border-radius: var(--radius-full);
+  width: 36px;
+  height: 20px;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.MenuCard-module__dATFjW__toggleSlider:before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  transition: all var(--transition-fast);
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
+
+.MenuCard-module__dATFjW__toggle input:checked + .MenuCard-module__dATFjW__toggleSlider {
+  background-color: var(--color-error);
+}
+
+.MenuCard-module__dATFjW__toggle input:checked + .MenuCard-module__dATFjW__toggleSlider:before {
+  transform: translateX(16px);
+}
+
+.MenuCard-module__dATFjW__toggleLabel {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.MenuCard-module__dATFjW__actions {
+  gap: var(--space-1);
+  display: flex;
+}
+
+.MenuCard-module__dATFjW__actionButton {
+  border-radius: var(--radius-md);
+  width: 32px;
+  height: 32px;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.MenuCard-module__dATFjW__actionButton:hover {
+  background-color: var(--color-gray-100);
+  color: var(--text-primary);
+}
+
+.MenuCard-module__dATFjW__actionButton.MenuCard-module__dATFjW__danger:hover {
+  color: var(--color-error);
+  background-color: #fef2f2;
+}
+
+.MenuCard-module__dATFjW__dragHandle {
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 10;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  cursor: grab;
+  opacity: 0;
+  background-color: #00000080;
+  justify-content: center;
+  align-items: center;
+  transition: opacity .2s;
+  display: flex;
+  position: absolute;
+}
+
+.MenuCard-module__dATFjW__card:hover .MenuCard-module__dATFjW__dragHandle {
+  opacity: 1;
+}
+
+.MenuCard-module__dATFjW__card.MenuCard-module__dATFjW__isDragging {
+  opacity: .5;
+  z-index: 999;
+  box-shadow: var(--shadow-xl);
+}
+
+/*# sourceMappingURL=app_admin_menus__components_MenuCard_MenuCard_module_css_bad6b30c._.single.css.map*/

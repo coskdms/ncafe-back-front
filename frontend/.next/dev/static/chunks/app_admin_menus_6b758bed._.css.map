@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///Users/chaena-eun/Desktop/IBM_Test/ncafe-back/frontend/app/admin/menus/_components/CategoryTabs/CategoryTabs.module.css"],"sourcesContent":[".tabs {\n    display: flex;\n    gap: var(--space-2);\n    padding: var(--space-1);\n    background-color: var(--color-gray-100);\n    border-radius: var(--radius-lg);\n    overflow-x: auto;\n}\n\n.tab {\n    padding: var(--space-2) var(--space-4);\n    font-size: var(--text-sm);\n    font-weight: 500;\n    color: var(--text-secondary);\n    background-color: transparent;\n    border-radius: var(--radius-md);\n    white-space: nowrap;\n    transition: all var(--transition-fast);\n}\n\n.tab:hover {\n    color: var(--text-primary);\n}\n\n.tab.active {\n    background-color: var(--bg-primary);\n    color: var(--color-primary-600);\n    box-shadow: var(--shadow-sm);\n}"],"names":[],"mappings":"AAAA;;;;;;;;;AASA;;;;;;;;;;;AAWA;;;;AAIA"}},
+    {"offset": {"line": 32, "column": 0}, "map": {"version":3,"sources":["file:///Users/chaena-eun/Desktop/IBM_Test/ncafe-back/frontend/app/admin/menus/page.module.css"],"sourcesContent":[".container {\n    display: flex;\n    flex-direction: column;\n    gap: var(--space-6);\n    padding-bottom: var(--space-12);\n}\n\n.title {\n    font-size: var(--text-2xl);\n    font-weight: 700;\n    color: var(--text-primary);\n}"],"names":[],"mappings":"AAAA;;;;;;;AAOA"}}]
+}
