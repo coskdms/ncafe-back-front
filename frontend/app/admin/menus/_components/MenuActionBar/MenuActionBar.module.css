@@ -2,14 +2,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-3);
+    flex-wrap: wrap;
 }
 
 .leftGroup {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-3);
     flex: 1;
+    min-width: 0;
 }
 
 .searchWrapper {
@@ -52,9 +54,26 @@
     font-size: var(--text-sm);
     color: var(--color-gray-500);
     white-space: nowrap;
+    display: none;
 }
 
 .menuCount strong {
     color: var(--color-gray-900);
     font-weight: 600;
+}
+
+/* ── Tablet (768px+) ── */
+@media (min-width: 768px) {
+    .container {
+        gap: var(--space-4);
+        flex-wrap: nowrap;
+    }
+
+    .leftGroup {
+        gap: var(--space-4);
+    }
+
+    .menuCount {
+        display: block;
+    }
 }

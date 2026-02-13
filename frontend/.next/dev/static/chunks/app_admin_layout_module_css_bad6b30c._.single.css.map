@@ -2,5 +2,5 @@
   "version": 3,
   "sources": [],
   "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/app/admin/layout.module.css"],"sourcesContent":[".layout {\n    min-height: 100vh;\n}\n\n.main {\n    margin-left: var(--sidebar-width);\n    min-height: 100vh;\n    padding: var(--space-6);\n    padding-top: calc(var(--header-height) + var(--space-6));\n}"],"names":[],"mappings":"AAAA;;;;AAIA"}}]
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/app/admin/layout.module.css"],"sourcesContent":[".layout {\n    min-height: 100vh;\n}\n\n.main {\n    margin-left: 0;\n    min-height: 100vh;\n    padding: var(--space-4);\n    padding-top: calc(var(--header-height) + var(--space-4));\n}\n\n/* ── Desktop (768px+) ── */\n@media (min-width: 768px) {\n    .main {\n        margin-left: var(--sidebar-width);\n        padding: var(--space-6);\n        padding-top: calc(var(--header-height) + var(--space-6));\n    }\n}"],"names":[],"mappings":"AAAA;;;;AAIA;;;;;;;AAQA;EACI"}}]
 }

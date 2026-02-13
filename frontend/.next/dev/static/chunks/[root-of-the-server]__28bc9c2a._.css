@@ -159,7 +159,9 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100%;
   font-size: 16px;
+  overflow-x: hidden;
 }
 
 body {
@@ -167,7 +169,10 @@ body {
   font-size: var(--text-base);
   color: var(--text-primary);
   background-color: var(--bg-secondary);
+  width: 100%;
+  min-width: 0;
   line-height: 1.5;
+  overflow-x: hidden;
 }
 
 a {

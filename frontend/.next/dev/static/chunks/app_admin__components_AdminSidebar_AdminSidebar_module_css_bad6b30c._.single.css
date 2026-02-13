@@ -1,15 +1,67 @@
 /* [project]/app/admin/_components/AdminSidebar/AdminSidebar.module.css [app-client] (css) */
+.AdminSidebar-module__qu28rG__mobileBar {
+  height: var(--header-height);
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 var(--space-4);
+  z-index: 200;
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.AdminSidebar-module__qu28rG__mobileLogoLink {
+  align-items: baseline;
+  gap: var(--space-2);
+  display: flex;
+}
+
+.AdminSidebar-module__qu28rG__mobileToggle {
+  width: 40px;
+  height: 40px;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  background: none;
+  border: none;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.AdminSidebar-module__qu28rG__mobileToggle:hover {
+  background-color: var(--color-gray-100);
+}
+
+.AdminSidebar-module__qu28rG__overlay {
+  z-index: 250;
+  background-color: #00000080;
+  display: block;
+  position: fixed;
+  inset: 0;
+}
+
 .AdminSidebar-module__qu28rG__sidebar {
   width: var(--sidebar-width);
   background-color: var(--bg-primary);
   border-right: 1px solid var(--border-color);
-  z-index: 100;
+  z-index: 300;
   flex-direction: column;
+  transition: transform .3s;
   display: flex;
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
+  transform: translateX(-100%);
+}
+
+.AdminSidebar-module__qu28rG__sidebarOpen {
+  transform: translateX(0);
 }
 
 .AdminSidebar-module__qu28rG__logo {
@@ -76,6 +128,16 @@
   font-size: var(--text-sm);
   color: var(--text-muted);
   text-align: center;
+}
+
+@media (min-width: 768px) {
+  .AdminSidebar-module__qu28rG__mobileBar, .AdminSidebar-module__qu28rG__overlay {
+    display: none;
+  }
+
+  .AdminSidebar-module__qu28rG__sidebar {
+    transform: translateX(0);
+  }
 }
 
 /*# sourceMappingURL=app_admin__components_AdminSidebar_AdminSidebar_module_css_bad6b30c._.single.css.map*/

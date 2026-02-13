@@ -147,3 +147,33 @@
 .addOptionBtn:hover {
     background-color: var(--color-primary-100);
 }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+    .cardHeader {
+        flex-direction: column;
+        padding: var(--space-3);
+    }
+
+    .headerInputs {
+        width: 100%;
+        gap: var(--space-3);
+    }
+
+    .inputGroup {
+        width: 100%;
+    }
+
+    .input,
+    .select {
+        width: 100%;
+    }
+
+    .itemRow {
+        flex-wrap: wrap;
+    }
+
+    .priceInputWrapper {
+        width: 100px;
+    }
+}

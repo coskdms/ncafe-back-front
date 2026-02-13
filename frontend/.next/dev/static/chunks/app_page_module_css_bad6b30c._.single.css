@@ -1,8 +1,11 @@
 /* [project]/app/page.module.css [app-client] (css) */
 .page-module__E0kJGG__main {
   flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
   min-height: 100vh;
   display: flex;
+  overflow-x: hidden;
 }
 
 /*# sourceMappingURL=app_page_module_css_bad6b30c._.single.css.map*/

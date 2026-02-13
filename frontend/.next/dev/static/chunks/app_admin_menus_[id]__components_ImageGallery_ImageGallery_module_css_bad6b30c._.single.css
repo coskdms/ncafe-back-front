@@ -81,7 +81,7 @@
 @media (max-width: 768px) {
   .ImageGallery-module__2fm2ha__imageSection {
     width: 100%;
-    max-width: 400px;
+    max-width: 100%;
   }
 
   .ImageGallery-module__2fm2ha__thumbnail {

@@ -6,7 +6,7 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  min-height: 700px;
+  min-height: 600px;
   display: flex;
   position: relative;
   overflow: hidden;
@@ -24,7 +24,6 @@
   padding: var(--space-6);
   z-index: 10;
   animation: 1.2s cubic-bezier(.2, .8, .2, 1) HeroSection-module__i6dU2G__fadeIn;
-  transform: translateY(0);
 }
 
 .HeroSection-module__i6dU2G__badge {
@@ -32,10 +31,10 @@
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   border-radius: var(--radius-full);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   text-transform: uppercase;
-  letter-spacing: .2em;
-  margin-bottom: var(--space-6);
+  letter-spacing: .15em;
+  margin-bottom: var(--space-4);
   color: #ffffffe6;
   background-color: #ffffff1a;
   border: 1px solid #fff3;
@@ -44,50 +43,41 @@
 }
 
 .HeroSection-module__i6dU2G__title {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
   letter-spacing: -.02em;
   text-shadow: 0 4px 12px #0000004d;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 800;
-  line-height: 1.1;
-}
-
-@media (min-width: 768px) {
-  .HeroSection-module__i6dU2G__title {
-    font-size: 5rem;
-  }
+  line-height: 1.2;
 }
 
 .HeroSection-module__i6dU2G__subtitle {
-  font-size: var(--text-lg);
-  margin-bottom: var(--space-10);
+  font-size: var(--text-base);
+  margin-bottom: var(--space-8);
   opacity: .9;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
   font-weight: 400;
-  line-height: 1.6;
-}
-
-@media (min-width: 768px) {
-  .HeroSection-module__i6dU2G__subtitle {
-    font-size: var(--text-xl);
-  }
+  line-height: 1.7;
 }
 
 .HeroSection-module__i6dU2G__actions {
-  gap: var(--space-4);
+  gap: var(--space-3);
+  flex-wrap: wrap;
   justify-content: center;
   display: flex;
 }
 
 .HeroSection-module__i6dU2G__scrollIndicator {
-  bottom: var(--space-8);
+  bottom: var(--space-6);
   color: #fff;
   opacity: .7;
   cursor: pointer;
   z-index: 10;
   transition: opacity var(--transition-fast);
+  background: none;
+  border: none;
   animation: 2s infinite HeroSection-module__i6dU2G__bounce;
   position: absolute;
   left: 50%;
@@ -96,6 +86,41 @@
 
 .HeroSection-module__i6dU2G__scrollIndicator:hover {
   opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .HeroSection-module__i6dU2G__badge {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-6);
+  }
+
+  .HeroSection-module__i6dU2G__title {
+    margin-bottom: var(--space-6);
+    font-size: 3.5rem;
+  }
+
+  .HeroSection-module__i6dU2G__subtitle {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-10);
+  }
+
+  .HeroSection-module__i6dU2G__actions {
+    gap: var(--space-4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .HeroSection-module__i6dU2G__hero {
+    min-height: 700px;
+  }
+
+  .HeroSection-module__i6dU2G__title {
+    font-size: 5rem;
+  }
+
+  .HeroSection-module__i6dU2G__subtitle {
+    font-size: var(--text-xl);
+  }
 }
 
 @keyframes HeroSection-module__i6dU2G__fadeIn {

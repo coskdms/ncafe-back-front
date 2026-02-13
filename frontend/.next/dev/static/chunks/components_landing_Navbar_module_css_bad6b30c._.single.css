@@ -1,0 +1,139 @@
+/* [project]/components/landing/Navbar.module.css [app-client] (css) */
+.Navbar-module__ALGTZa__nav {
+  z-index: 1000;
+  padding: var(--space-4) var(--space-6);
+  background-color: #0000;
+  transition: all .3s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.Navbar-module__ALGTZa__nav.Navbar-module__ALGTZa__scrolled {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  padding: var(--space-3) var(--space-6);
+  background-color: #000000d9;
+  box-shadow: 0 2px 20px #0000004d;
+}
+
+.Navbar-module__ALGTZa__container {
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+}
+
+.Navbar-module__ALGTZa__logo {
+  align-items: center;
+  gap: var(--space-2);
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--text-xl);
+  z-index: 1001;
+  display: flex;
+}
+
+.Navbar-module__ALGTZa__logo:hover {
+  color: var(--color-primary-200);
+}
+
+.Navbar-module__ALGTZa__desktopLinks {
+  align-items: center;
+  gap: var(--space-8);
+  display: none;
+}
+
+.Navbar-module__ALGTZa__link {
+  color: #ffffffd9;
+  font-size: var(--text-sm);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: color .2s;
+  position: relative;
+}
+
+.Navbar-module__ALGTZa__link:after {
+  content: "";
+  background-color: var(--color-primary-500);
+  width: 0;
+  height: 2px;
+  transition: width .3s;
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+}
+
+.Navbar-module__ALGTZa__link:hover {
+  color: #fff;
+}
+
+.Navbar-module__ALGTZa__link:hover:after {
+  width: 100%;
+}
+
+.Navbar-module__ALGTZa__toggle {
+  color: #fff;
+  cursor: pointer;
+  z-index: 1001;
+  padding: var(--space-1);
+  background: none;
+  border: none;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.Navbar-module__ALGTZa__mobileMenu {
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  opacity: 0;
+  visibility: hidden;
+  z-index: 999;
+  background-color: #000000f2;
+  justify-content: center;
+  align-items: center;
+  transition: all .3s;
+  display: flex;
+  position: fixed;
+  inset: 0;
+}
+
+.Navbar-module__ALGTZa__mobileMenuOpen {
+  opacity: 1;
+  visibility: visible;
+}
+
+.Navbar-module__ALGTZa__mobileLinks {
+  align-items: center;
+  gap: var(--space-8);
+  flex-direction: column;
+  display: flex;
+}
+
+.Navbar-module__ALGTZa__mobileLink {
+  color: #fff;
+  letter-spacing: .05em;
+  font-size: 2rem;
+  font-weight: 700;
+  transition: color .2s;
+}
+
+.Navbar-module__ALGTZa__mobileLink:hover {
+  color: var(--color-primary-500);
+}
+
+@media (min-width: 768px) {
+  .Navbar-module__ALGTZa__desktopLinks {
+    display: flex;
+  }
+
+  .Navbar-module__ALGTZa__toggle, .Navbar-module__ALGTZa__mobileMenu {
+    display: none;
+  }
+}
+
+/*# sourceMappingURL=components_landing_Navbar_module_css_bad6b30c._.single.css.map*/

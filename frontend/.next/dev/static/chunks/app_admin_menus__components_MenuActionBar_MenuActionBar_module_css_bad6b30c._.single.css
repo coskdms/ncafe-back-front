@@ -2,14 +2,16 @@
 .MenuActionBar-module__hjRjEG__container {
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
+  flex-wrap: wrap;
   display: flex;
 }
 
 .MenuActionBar-module__hjRjEG__leftGroup {
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   flex: 1;
+  min-width: 0;
   display: flex;
 }
 
@@ -53,11 +55,27 @@
   font-size: var(--text-sm);
   color: var(--color-gray-500);
   white-space: nowrap;
+  display: none;
 }
 
 .MenuActionBar-module__hjRjEG__menuCount strong {
   color: var(--color-gray-900);
   font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .MenuActionBar-module__hjRjEG__container {
+    gap: var(--space-4);
+    flex-wrap: nowrap;
+  }
+
+  .MenuActionBar-module__hjRjEG__leftGroup {
+    gap: var(--space-4);
+  }
+
+  .MenuActionBar-module__hjRjEG__menuCount {
+    display: block;
+  }
 }
 
 /*# sourceMappingURL=app_admin_menus__components_MenuActionBar_MenuActionBar_module_css_bad6b30c._.single.css.map*/

@@ -101,3 +101,26 @@
     margin-top: var(--space-4);
     padding-bottom: var(--space-12);
 }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+    .form {
+        gap: var(--space-5);
+    }
+
+    .section {
+        padding: var(--space-4);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fullWidth {
+        grid-column: span 1;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+}

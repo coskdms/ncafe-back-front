@@ -26,9 +26,16 @@
 }
 
 .OptionsInfo-module__ZRlDoq__optionsGrid {
-  gap: var(--space-4);
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-3);
+  grid-template-columns: 1fr;
   display: grid;
+}
+
+@media (min-width: 640px) {
+  .OptionsInfo-module__ZRlDoq__optionsGrid {
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
 }
 
 .OptionsInfo-module__ZRlDoq__optionCard {

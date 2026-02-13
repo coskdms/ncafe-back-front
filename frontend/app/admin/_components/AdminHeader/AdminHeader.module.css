@@ -1,7 +1,7 @@
 .header {
     position: fixed;
     top: 0;
-    left: var(--sidebar-width);
+    left: 0;
     right: 0;
     height: var(--header-height);
     background-color: var(--bg-primary);
@@ -9,8 +9,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 var(--space-6);
+    padding: 0 var(--space-4);
     z-index: 50;
+    /* 모바일: 숨기기 (mobileBar가 대신함) */
+    display: none;
 }
 
 .title {
@@ -59,4 +61,13 @@
 .profileButton span {
     font-size: var(--text-sm);
     font-weight: 500;
+}
+
+/* ── Desktop (768px+) ── */
+@media (min-width: 768px) {
+    .header {
+        display: flex;
+        left: var(--sidebar-width);
+        padding: 0 var(--space-6);
+    }
 }

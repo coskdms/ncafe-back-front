@@ -81,7 +81,7 @@
 @media (max-width: 768px) {
     .imageSection {
         width: 100%;
-        max-width: 400px;
+        max-width: 100%;
     }
 
     .thumbnail {

@@ -96,16 +96,30 @@
 @media (max-width: 1024px) {
     .content {
         flex-direction: column;
+        gap: var(--space-5);
     }
 
     .leftColumn {
-        max-width: 1000px;
-        /* 전체 너비 허용 */
+        max-width: 100%;
         position: static;
-        /* 스티키 해제 */
     }
 
     .container {
         padding: var(--space-4);
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: var(--space-2);
+    }
+
+    .content {
+        gap: var(--space-4);
+    }
+
+    .actionWrapper {
+        flex-direction: column;
+        gap: var(--space-3);
     }
 }

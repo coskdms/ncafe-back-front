@@ -58,3 +58,26 @@ Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
 [09:07:38.534] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
 [09:09:02.261] Server  LOG     ✓ Compiled in 181ms
 [09:09:24.024] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[09:15:00.465] Server  LOG     ✓ Compiled in 85ms
+[09:15:10.456] Server  LOG     ✓ Compiled in 62ms
+[09:15:17.335] Server  LOG     ✓ Compiled in 29ms
+[09:15:24.568] Server  LOG     ✓ Compiled in 31ms
+[09:15:26.607] Server  LOG     ✓ Compiled in 50ms
+[09:17:21.589] Server  LOG     ✓ Compiled in 191ms
+[09:17:23.322] Server  LOG     ✓ Compiled in 46ms
+[09:17:53.172] Browser WARN    Image with src "/images/choco-chip-cookie.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[09:19:00.809] Server  LOG     ✓ Compiled in 640ms
+[09:19:30.982] Browser WARN    Image with src "/images/choco-chip-cookie.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[09:20:57.878] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[09:24:12.904] Server  LOG     ✓ Compiled in 1368ms
+[09:24:18.808] Server  LOG     ✓ Compiled in 269ms
+[09:24:21.817] Server  LOG     ✓ Compiled in 36ms
+[09:24:23.815] Server  LOG     ✓ Compiled in 72ms
+[09:24:48.545] Server  LOG     ✓ Compiled in 54ms
+[09:24:54.191] Server  LOG     ✓ Compiled in 101ms
+[09:24:56.167] Server  LOG     ✓ Compiled in 49ms
+[09:26:29.245] Browser WARN    Image with src "/images/choco-chip-cookie.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[09:27:46.739] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

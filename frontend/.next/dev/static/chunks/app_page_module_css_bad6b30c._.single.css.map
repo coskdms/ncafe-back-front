@@ -2,5 +2,5 @@
   "version": 3,
   "sources": [],
   "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/app/page.module.css"],"sourcesContent":[".main {\n  min-height: 100vh;\n  display: flex;\n  flex-direction: column;\n}"],"names":[],"mappings":"AAAA"}}]
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/app/page.module.css"],"sourcesContent":[".main {\n  min-height: 100vh;\n  display: flex;\n  flex-direction: column;\n  overflow-x: hidden;\n  width: 100%;\n  max-width: 100vw;\n}"],"names":[],"mappings":"AAAA"}}]
 }

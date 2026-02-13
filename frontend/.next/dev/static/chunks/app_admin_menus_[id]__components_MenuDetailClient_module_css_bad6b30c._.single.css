@@ -83,16 +83,32 @@
 
 @media (max-width: 1024px) {
   .MenuDetailClient-module__RAiuYW__content {
+    gap: var(--space-5);
     flex-direction: column;
   }
 
   .MenuDetailClient-module__RAiuYW__leftColumn {
-    max-width: 1000px;
+    max-width: 100%;
     position: static;
   }
 
   .MenuDetailClient-module__RAiuYW__container {
     padding: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .MenuDetailClient-module__RAiuYW__container {
+    padding: var(--space-2);
+  }
+
+  .MenuDetailClient-module__RAiuYW__content {
+    gap: var(--space-4);
+  }
+
+  .MenuDetailClient-module__RAiuYW__actionWrapper {
+    gap: var(--space-3);
+    flex-direction: column;
   }
 }
 

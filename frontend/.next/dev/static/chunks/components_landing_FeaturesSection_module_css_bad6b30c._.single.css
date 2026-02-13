@@ -1,6 +1,6 @@
 /* [project]/components/landing/FeaturesSection.module.css [app-client] (css) */
 .FeaturesSection-module__H4H11G__section {
-  padding: var(--space-12) var(--space-6);
+  padding: var(--space-10) var(--space-6);
   background-color: var(--bg-secondary);
 }
 
@@ -11,45 +11,38 @@
 }
 
 .FeaturesSection-module__H4H11G__header {
-  margin-bottom: var(--space-12);
+  margin-bottom: var(--space-8);
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .FeaturesSection-module__H4H11G__title {
-  font-size: var(--text-3xl);
-  margin-bottom: var(--space-4);
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-3);
   color: var(--text-primary);
   font-weight: 700;
 }
 
 .FeaturesSection-module__H4H11G__subtitle {
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   color: var(--text-secondary);
   line-height: 1.6;
 }
 
 .FeaturesSection-module__H4H11G__grid {
-  gap: var(--space-6);
+  gap: var(--space-5);
   grid-template-columns: 1fr;
   display: grid;
 }
 
-@media (min-width: 768px) {
-  .FeaturesSection-module__H4H11G__grid {
-    gap: var(--space-8);
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 .FeaturesSection-module__H4H11G__card {
-  padding: var(--space-8);
+  padding: var(--space-6);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-normal);
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   background: #fff;
   border: 1px solid #0000;
   flex-direction: column;
@@ -65,17 +58,17 @@
 .FeaturesSection-module__H4H11G__iconWrapper {
   border-radius: var(--radius-full);
   background-color: var(--color-primary-50);
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   color: var(--color-primary-600);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
   justify-content: center;
   align-items: center;
   display: flex;
 }
 
 .FeaturesSection-module__H4H11G__cardTitle {
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
   color: var(--text-primary);
   font-weight: 600;
 }
@@ -83,7 +76,50 @@
 .FeaturesSection-module__H4H11G__cardDescription {
   color: var(--text-secondary);
   line-height: 1.5;
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
+}
+
+@media (min-width: 768px) {
+  .FeaturesSection-module__H4H11G__section {
+    padding: var(--space-12) var(--space-6);
+  }
+
+  .FeaturesSection-module__H4H11G__header {
+    margin-bottom: var(--space-12);
+  }
+
+  .FeaturesSection-module__H4H11G__title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .FeaturesSection-module__H4H11G__subtitle {
+    font-size: var(--text-lg);
+  }
+
+  .FeaturesSection-module__H4H11G__grid {
+    gap: var(--space-8);
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .FeaturesSection-module__H4H11G__card {
+    padding: var(--space-8);
+    gap: var(--space-4);
+  }
+
+  .FeaturesSection-module__H4H11G__iconWrapper {
+    width: 64px;
+    height: 64px;
+    margin-bottom: var(--space-2);
+  }
+
+  .FeaturesSection-module__H4H11G__cardTitle {
+    font-size: var(--text-xl);
+  }
+
+  .FeaturesSection-module__H4H11G__cardDescription {
+    font-size: var(--text-base);
+  }
 }
 
 /*# sourceMappingURL=components_landing_FeaturesSection_module_css_bad6b30c._.single.css.map*/

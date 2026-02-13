@@ -1,16 +1,16 @@
 /* [project]/app/admin/_components/AdminHeader/AdminHeader.module.css [app-client] (css) */
 .AdminHeader-module__G-e4Ra__header {
-  top: 0;
-  left: var(--sidebar-width);
   height: var(--header-height);
   background-color: var(--bg-primary);
   border-bottom: 1px solid var(--border-color);
-  padding: 0 var(--space-6);
+  padding: 0 var(--space-4);
   z-index: 50;
   justify-content: space-between;
   align-items: center;
-  display: flex;
+  display: none;
   position: fixed;
+  top: 0;
+  left: 0;
   right: 0;
 }
 
@@ -60,6 +60,14 @@
 .AdminHeader-module__G-e4Ra__profileButton span {
   font-size: var(--text-sm);
   font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .AdminHeader-module__G-e4Ra__header {
+    left: var(--sidebar-width);
+    padding: 0 var(--space-6);
+    display: flex;
+  }
 }
 
 /*# sourceMappingURL=app_admin__components_AdminHeader_AdminHeader_module_css_bad6b30c._.single.css.map*/
