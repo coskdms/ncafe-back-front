@@ -133,8 +133,8 @@
   border-radius: 50%;
   justify-content: center;
   align-items: center;
-  width: 420px;
-  height: 420px;
+  width: 500px;
+  height: 500px;
   animation: 4s ease-in-out infinite HeroSection-module__i6dU2G__float;
   display: flex;
   position: relative;

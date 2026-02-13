@@ -132,8 +132,8 @@
 
 .imageWrapper {
     position: relative;
-    width: 420px;
-    height: 420px;
+    width: 500px;
+    height: 500px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(254, 240, 138, 0.5) 0%, transparent 70%);
     display: flex;
