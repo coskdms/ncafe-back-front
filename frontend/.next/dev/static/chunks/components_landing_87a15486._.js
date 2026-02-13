@@ -379,7 +379,7 @@ function CursorBeans() {
                 "CursorBeans.useEffect.spawnBean": ()=>{
                     const { x, y } = mouseRef.current;
                     if (x < 0) return;
-                    if (beansRef.current.length > 20) return;
+                    if (beansRef.current.length > 6) return;
                     beansRef.current.push({
                         x,
                         y,
@@ -397,7 +397,7 @@ function CursorBeans() {
                 "CursorBeans.useEffect.animate": ()=>{
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     const now = Date.now();
-                    if (now - lastSpawnRef.current > 120) {
+                    if (now - lastSpawnRef.current > 400) {
                         spawnBean();
                         lastSpawnRef.current = now;
                     }
