@@ -14,7 +14,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('/images/cafe-pattern.png');
+    background-image: url('/landing/cafe-pattern.png');
     background-size: 300px;
     opacity: 0.08;
     pointer-events: none;

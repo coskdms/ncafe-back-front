@@ -25,7 +25,7 @@ export default function HeroSection() {
                 <div className={styles.imageContent}>
                     <div className={styles.imageWrapper}>
                         <Image
-                            src="/images/psyduck-barista.png"
+                            src="/landing/psyduck-barista.png"
                             alt="바리스타 고라파덕"
                             width={500}
                             height={500}

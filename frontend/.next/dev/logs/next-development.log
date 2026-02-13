@@ -41,3 +41,6 @@
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
 [00:54:53.708] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
 [00:57:04.216] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:02:02.815] Server  LOG     ✓ Compiled in 247ms
+[01:02:05.105] Server  LOG     ✓ Compiled in 100ms
+[01:02:06.934] Server  LOG     ✓ Compiled in 56ms

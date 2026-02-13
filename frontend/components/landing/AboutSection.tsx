@@ -7,7 +7,7 @@ export default function AboutSection() {
             <div className={styles.container}>
                 <div className={styles.imageArea}>
                     <Image
-                        src="/images/psyduck-cafe.png"
+                        src="/landing/psyduck-cafe.png"
                         alt="카페에서 커피 마시는 고라파덕"
                         width={450}
                         height={450}
