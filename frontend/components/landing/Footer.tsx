@@ -11,7 +11,7 @@ export default function Footer() {
                         <Coffee size={24} />
                         <span className={styles.logoText}>NCafe</span>
                     </div>
-                    <p className={styles.copyright}>© 2024 엔카페. All rights reserved.</p>
+                    <p className={styles.copyright}>© 2024 <Link href="/admin/menus" style={{ color: 'inherit', textDecoration: 'none' }}>엔카페</Link>. All rights reserved.</p>
                 </div>
 
                 <div className={styles.column}>
