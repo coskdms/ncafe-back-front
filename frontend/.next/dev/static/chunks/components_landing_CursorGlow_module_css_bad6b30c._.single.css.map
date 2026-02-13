@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/components/landing/CursorGlow.module.css"],"sourcesContent":[".glow {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    pointer-events: none;\n    z-index: 9999;\n}\n\n/* 모바일에서는 숨김 */\n@media (max-width: 768px) {\n    .glow {\n        display: none;\n    }\n}"],"names":[],"mappings":"AAAA;;;;;;;;;;AAWA;EACI"}}]
+}
