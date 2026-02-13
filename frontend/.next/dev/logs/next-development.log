@@ -19,3 +19,25 @@
 [00:15:32.542] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
 [00:16:48.672] Server  LOG     ✓ Compiled in 109ms
 [00:16:50.353] Server  LOG     ✓ Compiled in 33ms
+[00:37:19.595] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:44:38.924] Server  LOG     ✓ Compiled in 157ms
+[00:44:50.648] Server  LOG     ✓ Compiled in 102ms
+[00:45:46.545] Server  LOG     ✓ Compiled in 50ms
+[00:46:59.460] Server  LOG     ✓ Compiled in 26ms
+[00:47:11.319] Server  LOG     ✓ Compiled in 51ms
+[00:47:16.219] Server  LOG     ✓ Compiled in 46ms
+[00:47:29.746] Server  LOG     ✓ Compiled in 657ms
+[00:47:44.063] Server  LOG     ✓ Compiled in 246ms
+[00:47:45.105] Server  LOG     ✓ Compiled in 61ms
+[00:48:18.795] Server  LOG     ✓ Compiled in 154ms
+[00:48:20.726] Server  LOG     ✓ Compiled in 33ms
+[00:50:53.060] Server  LOG     ✓ Compiled in 137ms
+[00:53:47.094] Server  LOG     ✓ Compiled in 112ms
+[00:54:00.794] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:54:46.644] Server  ERROR   (node:60015) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[00:54:46.873] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:54:49.184] Browser WARN    Image with src "/images/beef-bagel.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:54:53.708] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:57:04.216] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

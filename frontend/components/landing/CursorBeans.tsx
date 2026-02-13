@@ -15,17 +15,18 @@ interface Bean {
     life: number;
 }
 
-function createEmojiSprites(): HTMLCanvasElement[] {
-    const emojis = ['☕', '🫘', '🫘', '🫘'];
-    return emojis.map((emoji) => {
+const EMOJIS = ['🍰', '☕', '🍰', '☕'];
+
+function createSprites(): HTMLCanvasElement[] {
+    return EMOJIS.map((emoji) => {
         const c = document.createElement('canvas');
-        c.width = 36;
-        c.height = 36;
+        c.width = 32;
+        c.height = 32;
         const cx = c.getContext('2d')!;
-        cx.font = '26px serif';
+        cx.font = '22px serif';
         cx.textAlign = 'center';
         cx.textBaseline = 'middle';
-        cx.fillText(emoji, 18, 20);
+        cx.fillText(emoji, 16, 18);
         return c;
     });
 }
@@ -44,7 +45,7 @@ export default function CursorBeans() {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        spritesRef.current = createEmojiSprites();
+        spritesRef.current = createSprites();
 
         const resize = () => {
             canvas.width = window.innerWidth;
@@ -102,7 +103,7 @@ export default function CursorBeans() {
                 ctx.translate(bean.x, bean.y);
                 ctx.rotate(bean.rotation);
                 ctx.globalAlpha = bean.opacity;
-                ctx.drawImage(sprite, -18, -18);
+                ctx.drawImage(sprite, -16, -16);
                 ctx.restore();
             });
 

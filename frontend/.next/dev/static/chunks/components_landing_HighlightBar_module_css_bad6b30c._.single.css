@@ -1,76 +1,50 @@
 /* [project]/components/landing/HighlightBar.module.css [app-client] (css) */
-.HighlightBar-module___N3Zwa__section {
-  padding: var(--space-6) var(--space-4);
-  background-color: #1a1a1a;
+.HighlightBar-module___N3Zwa__bar {
+  background: linear-gradient(135deg, #451a03, #78350f);
+  padding: 40px 0;
 }
 
 .HighlightBar-module___N3Zwa__container {
-  gap: var(--space-6);
-  text-align: center;
-  grid-template-columns: repeat(2, 1fr);
+  justify-content: space-around;
+  gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  display: grid;
-}
-
-.HighlightBar-module___N3Zwa__item {
-  align-items: center;
-  gap: var(--space-1);
-  flex-direction: column;
+  padding: 0 24px;
   display: flex;
-  position: relative;
 }
 
-.HighlightBar-module___N3Zwa__value {
-  color: #fff;
-  letter-spacing: -.02em;
-  font-size: 1.5rem;
+.HighlightBar-module___N3Zwa__stat {
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  display: flex;
+}
+
+.HighlightBar-module___N3Zwa__emoji {
+  font-size: 2rem;
+}
+
+.HighlightBar-module___N3Zwa__number {
+  color: #fef08a;
+  font-size: 2rem;
   font-weight: 800;
-  line-height: 1;
 }
 
 .HighlightBar-module___N3Zwa__label {
-  color: #ffffff80;
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  font-size: .65rem;
+  color: #fef9c3cc;
+  font-size: .85rem;
   font-weight: 500;
 }
 
-@media (min-width: 768px) {
-  .HighlightBar-module___N3Zwa__section {
-    padding: var(--space-8) var(--space-6);
-  }
-
+@media (max-width: 640px) {
   .HighlightBar-module___N3Zwa__container {
-    justify-content: center;
-    align-items: center;
-    gap: var(--space-12);
-    display: flex;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    display: grid;
   }
 
-  .HighlightBar-module___N3Zwa__item {
-    gap: var(--space-2);
-  }
-
-  .HighlightBar-module___N3Zwa__item:not(:first-child):before {
-    content: "";
-    left: calc(var(--space-12) * -.5);
-    background-color: #ffffff26;
-    width: 1px;
-    height: 40px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  .HighlightBar-module___N3Zwa__value {
-    font-size: 2rem;
-  }
-
-  .HighlightBar-module___N3Zwa__label {
-    font-size: var(--text-sm);
-    letter-spacing: .15em;
+  .HighlightBar-module___N3Zwa__number {
+    font-size: 1.5rem;
   }
 }
 

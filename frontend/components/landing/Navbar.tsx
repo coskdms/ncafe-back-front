@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Coffee, Menu, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
@@ -10,58 +9,36 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
+        const handleScroll = () => setScrolled(window.scrollY > 50);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // 메뉴 열렸을 때 스크롤 잠금
     useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
+        document.body.style.overflow = isOpen ? 'hidden' : '';
         return () => { document.body.style.overflow = ''; };
     }, [isOpen]);
 
     return (
         <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
-            <div className={styles.container}>
-                <Link href="/" className={styles.logo} onClick={() => setIsOpen(false)}>
-                    <Coffee size={22} />
-                    <span>NCafe</span>
-                </Link>
-
-                {/* Desktop Links */}
+            <div className={styles.inner}>
+                <Link href="/" className={styles.logo}>🦆 고라파덕 카페</Link>
                 <div className={styles.desktopLinks}>
-                    <Link href="/" className={styles.link}>홈</Link>
-                    <Link href="/menus" className={styles.link}>메뉴</Link>
+                    <a href="#about">카페 소개</a>
+                    <a href="#menu">특별 메뉴</a>
+                    <a href="#">매장 안내</a>
                 </div>
-
-                {/* Mobile Toggle */}
-                <button
-                    className={styles.toggle}
-                    onClick={() => setIsOpen(!isOpen)}
-                    aria-label="Toggle menu"
-                >
-                    {isOpen ? <X size={24} /> : <Menu size={24} />}
+                <button className={styles.hamburger} onClick={() => setIsOpen(!isOpen)} aria-label="메뉴">
+                    {isOpen ? '✕' : '☰'}
                 </button>
             </div>
-
-            {/* Mobile Menu */}
-            <div className={`${styles.mobileMenu} ${isOpen ? styles.mobileMenuOpen : ''}`}>
-                <div className={styles.mobileLinks}>
-                    <Link href="/" className={styles.mobileLink} onClick={() => setIsOpen(false)}>
-                        홈
-                    </Link>
-                    <Link href="/menus" className={styles.mobileLink} onClick={() => setIsOpen(false)}>
-                        메뉴
-                    </Link>
+            {isOpen && (
+                <div className={styles.mobileMenu}>
+                    <a href="#about" onClick={() => setIsOpen(false)}>카페 소개</a>
+                    <a href="#menu" onClick={() => setIsOpen(false)}>특별 메뉴</a>
+                    <a href="#" onClick={() => setIsOpen(false)}>매장 안내</a>
                 </div>
-            </div>
+            )}
         </nav>
     );
 }

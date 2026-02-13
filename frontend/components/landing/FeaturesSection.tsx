@@ -1,43 +1,50 @@
-import React from 'react';
-import { Coffee, Award, Users } from 'lucide-react';
 import styles from './FeaturesSection.module.css';
 
-export default function FeaturesSection() {
-    const features = [
-        {
-            icon: <Coffee size={32} />,
-            title: "프리미엄 원두",
-            description: "지속 가능한 농장에서 수확한 최상급 원두만을 사용합니다."
-        },
-        {
-            icon: <Users size={32} />,
-            title: "전문 바리스타",
-            description: "숙련된 바리스타가 섬세한 기술로 완벽한 맛을 추출합니다."
-        },
-        {
-            icon: <Award size={32} />,
-            title: "검증된 맛",
-            description: "2024년부터 커피 맛과 서비스의 우수성을 인정받고 있습니다."
-        }
-    ];
+const features = [
+    {
+        emoji: '☕',
+        title: '시그니처 음료',
+        desc: '고라파덕 라떼, 피카츄 에이드 등 포켓몬 테마 음료를 즐겨보세요!',
+    },
+    {
+        emoji: '🍰',
+        title: '귀여운 디저트',
+        desc: '몬스터볼 마카롱, 고라파덕 케이크 등 귀여운 수제 디저트!',
+    },
+    {
+        emoji: '📸',
+        title: '포토존',
+        desc: '고라파덕과 함께 찍는 인생샷! SNS에 자랑해보세요 🦆',
+    },
+    {
+        emoji: '🎁',
+        title: '포켓몬 굿즈',
+        desc: '한정판 포켓몬 굿즈와 콜라보 상품을 만나보세요!',
+    },
+    {
+        emoji: '🛋️',
+        title: '아늑한 공간',
+        desc: '노란 쿠션이 가득한 편안한 카페에서 힐링 시간을 보내세요',
+    },
+    {
+        emoji: '💛',
+        title: '멤버십 혜택',
+        desc: '단골 트레이너에게는 특별한 할인과 시즌 한정 메뉴를 제공!',
+    },
+];
 
+export default function FeaturesSection() {
     return (
-        <section className={styles.section}>
+        <section id="menu" className={styles.features}>
             <div className={styles.container}>
-                <div className={styles.header}>
-                    <h2 className={styles.title}>NCafe를 선택해야 하는 이유</h2>
-                    <p className={styles.subtitle}>
-                        정성을 다해 내린 한 잔의 커피로 최고의 경험을 선사합니다.
-                    </p>
-                </div>
+                <span className={styles.label}>✨ 특별한 경험</span>
+                <h2 className={styles.heading}>고라파덕 카페에서만<br />할 수 있는 것들</h2>
                 <div className={styles.grid}>
-                    {features.map((feature, index) => (
-                        <div key={index} className={styles.card}>
-                            <div className={styles.iconWrapper}>
-                                {feature.icon}
-                            </div>
-                            <h3 className={styles.cardTitle}>{feature.title}</h3>
-                            <p className={styles.cardDescription}>{feature.description}</p>
+                    {features.map((f, i) => (
+                        <div key={i} className={styles.card}>
+                            <span className={styles.cardEmoji}>{f.emoji}</span>
+                            <h3 className={styles.cardTitle}>{f.title}</h3>
+                            <p className={styles.cardDesc}>{f.desc}</p>
                         </div>
                     ))}
                 </div>

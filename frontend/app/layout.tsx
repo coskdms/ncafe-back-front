@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "엔카페 - 프리미엄 스페셜티 커피",
-  description: "엔카페에서 최고급 스페셜티 원두로 만든 커피를 만나보세요.",
+  title: "고라파덕 카페 ☕🦆",
+  description: "고라파덕이 서빙해주는 세상에서 가장 귀여운 포켓몬 카페!",
 };
 
 export default function RootLayout({
