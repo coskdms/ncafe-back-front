@@ -1,23 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   async rewrites() {
-    if (process.env.NODE_ENV === 'development') {
-      return [
-        {
-          source: '/api/:path*',
-          destination: 'http://localhost:8080/:path*',
-        },
-        {
-          source: '/images/:path*',
-          destination: 'http://localhost:8080/images/:path*',
-        },
-      ];
-    }
-    return [];
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${backendUrl}/:path*`,
+      },
+      {
+        source: '/images/:path*',
+        destination: `${backendUrl}/images/:path*`,
+      },
+    ];
   },
   images: {
-    unoptimized: true, // 모든 외부 이미지 허용 (개발 편의성)
+    unoptimized: true,
   },
 };
 

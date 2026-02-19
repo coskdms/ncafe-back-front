@@ -1,0 +1,26 @@
+services:
+  # ── 백엔드 (Spring Boot) ──
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: ncafe-backend
+    ports:
+      - "8032:8032"
+    volumes:
+      - ./upload:/app/upload
+    restart: unless-stopped
+
+  # ── 프론트엔드 (Next.js) ──
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ncafe-frontend
+    ports:
+      - "3032:3032"
+    environment:
+      - BACKEND_URL=http://backend:8032
+    depends_on:
+      - backend
+    restart: unless-stopped
