@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    container_name: ncafe-backend
+    container_name: newnaeun-ncafe-backend
     ports:
       - "8032:8032"
     volumes:
@@ -16,7 +16,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: ncafe-frontend
+    container_name: newnaeun-ncafe-frontend
     ports:
       - "3032:3032"
     environment:
