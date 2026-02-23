@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from './HeroSection.module.css';
 
 export default function HeroSection() {
@@ -7,7 +8,7 @@ export default function HeroSection() {
             <div className={styles.patternBg} />
             <div className={styles.container}>
                 <div className={styles.textContent}>
-                    <span className={styles.badge}>🦆 포켓몬 테마 카페</span>
+                    <span className={styles.badge}>🐤 포켓몬 테마 카페</span>
                     <h1 className={styles.title}>
                         고라파덕이<br />
                         <span className={styles.highlight}>서빙</span>해주는<br />
@@ -18,8 +19,8 @@ export default function HeroSection() {
                         스페셜티 커피와 수제 디저트를 만나보세요!
                     </p>
                     <div className={styles.cta}>
-                        <a href="#about" className={styles.ctaButton}>카페 소개 보기 🦆</a>
-                        <a href="#menu" className={styles.ctaOutline}>메뉴 구경하기 →</a>
+                        <a href="#about" className={styles.ctaButton}>카페 소개 보기 🐤</a>
+                        <Link href="/menus" className={styles.ctaOutline}>메뉴 구경하기 →</Link>
                     </div>
                 </div>
                 <div className={styles.imageContent}>

@@ -1,0 +1,74 @@
+/* [project]/app/auth/login/page.module.css [app-client] (css) */
+.page-module__LBD7pW__page {
+  background: linear-gradient(135deg, #fffdf0 0%, #fef9c3 50%, #fef08a 100%);
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+}
+
+.page-module__LBD7pW__card {
+  background: #fff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 36px;
+  box-shadow: 0 20px 60px #4a37281f;
+}
+
+.page-module__LBD7pW__logo {
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 3rem;
+}
+
+.page-module__LBD7pW__title {
+  text-align: center;
+  color: #4a3728;
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.page-module__LBD7pW__subtitle {
+  text-align: center;
+  color: #a08060;
+  margin: 0 0 28px;
+  font-size: .9rem;
+}
+
+.page-module__LBD7pW__tabs {
+  background: #f5f0e8;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  padding: 4px;
+  display: flex;
+}
+
+.page-module__LBD7pW__tab {
+  color: #a08060;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  flex: 1;
+  padding: 10px;
+  font-size: .9rem;
+  font-weight: 600;
+  transition: all .2s;
+}
+
+.page-module__LBD7pW__tabActive {
+  color: #4a3728;
+  background: #fff;
+  box-shadow: 0 2px 8px #00000014;
+}
+
+@media (max-width: 480px) {
+  .page-module__LBD7pW__card {
+    padding: 32px 24px;
+  }
+}
+
+/*# sourceMappingURL=app_auth_login_page_module_css_bad6b30c._.single.css.map*/

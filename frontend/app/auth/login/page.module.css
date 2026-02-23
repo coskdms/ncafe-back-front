@@ -1,0 +1,71 @@
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #fffdf0 0%, #fef9c3 50%, #fef08a 100%);
+    padding: 20px;
+}
+
+.card {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    border-radius: 24px;
+    padding: 40px 36px;
+    box-shadow: 0 20px 60px rgba(74, 55, 40, 0.12);
+}
+
+.logo {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 8px;
+}
+
+.title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #4a3728;
+    margin: 0 0 4px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #a08060;
+    margin: 0 0 28px;
+}
+
+.tabs {
+    display: flex;
+    background: #f5f0e8;
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
+}
+
+.tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #a08060;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tabActive {
+    background: white;
+    color: #4a3728;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 32px 24px;
+    }
+}

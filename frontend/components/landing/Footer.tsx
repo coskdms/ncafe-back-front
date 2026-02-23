@@ -6,13 +6,13 @@ export default function Footer() {
         <footer className={styles.footer}>
             <div className={styles.container}>
                 <div className={styles.brand}>
-                    <span className={styles.logo}>🦆 고라파덕 카페</span>
+                    <span className={styles.logo}>🐤 고라파덕 카페</span>
                     <p className={styles.tagline}>세상에서 가장 귀여운 포켓몬 카페</p>
                 </div>
                 <div className={styles.links}>
                     <h4>고라파덕 카페</h4>
                     <a href="#about">카페 소개</a>
-                    <a href="#menu">메뉴</a>
+                    <Link href="/menus" style={{ color: 'inherit', textDecoration: 'none' }}>메뉴</Link>
                     <a href="#">매장 안내</a>
                 </div>
                 <div className={styles.links}>
@@ -27,7 +27,7 @@ export default function Footer() {
                         <Link href="/admin" style={{ color: 'inherit', textDecoration: 'none', cursor: 'text' }}>
                             고라파덕 카페
                         </Link>
-                        . All rights reserved. 🦆
+                        . All rights reserved. 🐤
                     </p>
                 </div>
             </div>

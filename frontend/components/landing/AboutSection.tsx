@@ -15,7 +15,7 @@ export default function AboutSection() {
                     />
                 </div>
                 <div className={styles.textArea}>
-                    <span className={styles.label}>🦆 우리 카페 이야기</span>
+                    <span className={styles.label}>🐤 우리 카페 이야기</span>
                     <h2 className={styles.heading}>
                         고라파덕과 함께하는<br />특별한 카페 시간
                     </h2>
@@ -40,7 +40,7 @@ export default function AboutSection() {
                             </div>
                         </div>
                         <div className={styles.featureItem}>
-                            <span className={styles.featureIcon}>🦆</span>
+                            <span className={styles.featureIcon}>🐤</span>
                             <div>
                                 <strong>고라파덕 서빙</strong>
                                 <p>세상에서 가장 귀여운 바리스타가 서빙해줘요</p>

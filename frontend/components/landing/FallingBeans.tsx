@@ -15,7 +15,7 @@ interface FallingItem {
     opacity: number;
 }
 
-const EMOJIS = ['⭐', '💛', '☕', '🦆', '⭐', '💛'];
+const EMOJIS = ['⭐', '💛', '☕', '🐤', '⭐', '💛'];
 
 function createSprites(): HTMLCanvasElement[] {
     return EMOJIS.map((emoji) => {

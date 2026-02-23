@@ -50,7 +50,9 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.react-server.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$landing$2f$HeroSection$2e$module$2e$css__$5b$app$2d$rsc$5d$__$28$css__module$29$__ = __turbopack_context__.i("[project]/components/landing/HeroSection.module.css [app-rsc] (css module)");
+;
 ;
 ;
 ;
@@ -62,7 +64,7 @@ function HeroSection() {
                 className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$landing$2f$HeroSection$2e$module$2e$css__$5b$app$2d$rsc$5d$__$28$css__module$29$__["default"].patternBg
             }, void 0, false, {
                 fileName: "[project]/components/landing/HeroSection.tsx",
-                lineNumber: 7,
+                lineNumber: 8,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -73,10 +75,10 @@ function HeroSection() {
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$landing$2f$HeroSection$2e$module$2e$css__$5b$app$2d$rsc$5d$__$28$css__module$29$__["default"].badge,
-                                children: "🦆 포켓몬 테마 카페"
+                                children: "🐤 포켓몬 테마 카페"
                             }, void 0, false, {
                                 fileName: "[project]/components/landing/HeroSection.tsx",
-                                lineNumber: 10,
+                                lineNumber: 11,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -85,7 +87,7 @@ function HeroSection() {
                                     "고라파덕이",
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                         fileName: "[project]/components/landing/HeroSection.tsx",
-                                        lineNumber: 12,
+                                        lineNumber: 13,
                                         columnNumber: 30
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -93,20 +95,20 @@ function HeroSection() {
                                         children: "서빙"
                                     }, void 0, false, {
                                         fileName: "[project]/components/landing/HeroSection.tsx",
-                                        lineNumber: 13,
+                                        lineNumber: 14,
                                         columnNumber: 25
                                     }, this),
                                     "해주는",
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                         fileName: "[project]/components/landing/HeroSection.tsx",
-                                        lineNumber: 13,
+                                        lineNumber: 14,
                                         columnNumber: 72
                                     }, this),
                                     "카페 ☕"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/landing/HeroSection.tsx",
-                                lineNumber: 11,
+                                lineNumber: 12,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -114,7 +116,7 @@ function HeroSection() {
                                 children: "세상에서 가장 귀여운 바리스타 고라파덕이 만들어주는 스페셜티 커피와 수제 디저트를 만나보세요!"
                             }, void 0, false, {
                                 fileName: "[project]/components/landing/HeroSection.tsx",
-                                lineNumber: 16,
+                                lineNumber: 17,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -123,31 +125,31 @@ function HeroSection() {
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
                                         href: "#about",
                                         className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$landing$2f$HeroSection$2e$module$2e$css__$5b$app$2d$rsc$5d$__$28$css__module$29$__["default"].ctaButton,
-                                        children: "카페 소개 보기 🦆"
+                                        children: "카페 소개 보기 🐤"
                                     }, void 0, false, {
                                         fileName: "[project]/components/landing/HeroSection.tsx",
-                                        lineNumber: 21,
+                                        lineNumber: 22,
                                         columnNumber: 25
                                     }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                                        href: "#menu",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
+                                        href: "/menus",
                                         className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$landing$2f$HeroSection$2e$module$2e$css__$5b$app$2d$rsc$5d$__$28$css__module$29$__["default"].ctaOutline,
                                         children: "메뉴 구경하기 →"
                                     }, void 0, false, {
                                         fileName: "[project]/components/landing/HeroSection.tsx",
-                                        lineNumber: 22,
+                                        lineNumber: 23,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/landing/HeroSection.tsx",
-                                lineNumber: 20,
+                                lineNumber: 21,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/landing/HeroSection.tsx",
-                        lineNumber: 9,
+                        lineNumber: 10,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -164,12 +166,12 @@ function HeroSection() {
                                     priority: true
                                 }, void 0, false, {
                                     fileName: "[project]/components/landing/HeroSection.tsx",
-                                    lineNumber: 27,
+                                    lineNumber: 28,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/landing/HeroSection.tsx",
-                                lineNumber: 26,
+                                lineNumber: 27,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -181,7 +183,7 @@ function HeroSection() {
                                 children: "☕"
                             }, void 0, false, {
                                 fileName: "[project]/components/landing/HeroSection.tsx",
-                                lineNumber: 36,
+                                lineNumber: 37,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -194,7 +196,7 @@ function HeroSection() {
                                 children: "🍰"
                             }, void 0, false, {
                                 fileName: "[project]/components/landing/HeroSection.tsx",
-                                lineNumber: 37,
+                                lineNumber: 38,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -207,25 +209,25 @@ function HeroSection() {
                                 children: "⭐"
                             }, void 0, false, {
                                 fileName: "[project]/components/landing/HeroSection.tsx",
-                                lineNumber: 38,
+                                lineNumber: 39,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/landing/HeroSection.tsx",
-                        lineNumber: 25,
+                        lineNumber: 26,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/landing/HeroSection.tsx",
-                lineNumber: 8,
+                lineNumber: 9,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/landing/HeroSection.tsx",
-        lineNumber: 6,
+        lineNumber: 7,
         columnNumber: 9
     }, this);
 }
@@ -289,7 +291,7 @@ function AboutSection() {
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                             className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$landing$2f$AboutSection$2e$module$2e$css__$5b$app$2d$rsc$5d$__$28$css__module$29$__["default"].label,
-                            children: "🦆 우리 카페 이야기"
+                            children: "🐤 우리 카페 이야기"
                         }, void 0, false, {
                             fileName: "[project]/components/landing/AboutSection.tsx",
                             lineNumber: 18,
@@ -405,7 +407,7 @@ function AboutSection() {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$landing$2f$AboutSection$2e$module$2e$css__$5b$app$2d$rsc$5d$__$28$css__module$29$__["default"].featureIcon,
-                                            children: "🦆"
+                                            children: "🐤"
                                         }, void 0, false, {
                                             fileName: "[project]/components/landing/AboutSection.tsx",
                                             lineNumber: 43,
@@ -503,7 +505,7 @@ const features = [
     {
         emoji: '📸',
         title: '포토존',
-        desc: '고라파덕과 함께 찍는 인생샷! SNS에 자랑해보세요 🦆'
+        desc: '고라파덕과 함께 찍는 인생샷! SNS에 자랑해보세요 🐤'
     },
     {
         emoji: '🎁',
@@ -641,7 +643,7 @@ function Footer() {
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                             className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$landing$2f$Footer$2e$module$2e$css__$5b$app$2d$rsc$5d$__$28$css__module$29$__["default"].logo,
-                            children: "🦆 고라파덕 카페"
+                            children: "🐤 고라파덕 카페"
                         }, void 0, false, {
                             fileName: "[project]/components/landing/Footer.tsx",
                             lineNumber: 9,
@@ -679,8 +681,12 @@ function Footer() {
                             lineNumber: 14,
                             columnNumber: 21
                         }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                            href: "#menu",
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
+                            href: "/menus",
+                            style: {
+                                color: 'inherit',
+                                textDecoration: 'none'
+                            },
                             children: "메뉴"
                         }, void 0, false, {
                             fileName: "[project]/components/landing/Footer.tsx",
@@ -760,7 +766,7 @@ function Footer() {
                                 lineNumber: 27,
                                 columnNumber: 25
                             }, this),
-                            ". All rights reserved. 🦆"
+                            ". All rights reserved. 🐤"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/landing/Footer.tsx",
@@ -811,7 +817,7 @@ const stats = [
     {
         number: '1,200+',
         label: '행복한 트레이너',
-        emoji: '🦆'
+        emoji: '🐤'
     },
     {
         number: '50+',

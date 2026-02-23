@@ -1,8 +1,3 @@
-import java.util.List;
-import java.util.Scanner;
-
-import com.newlecture.backend.repository.MenuRepository;
-import com.newlecture.backend.repository.NewMenuRepository;
 
 public class App {
     public static void main(String[] args) throws Exception {

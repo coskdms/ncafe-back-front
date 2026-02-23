@@ -14,7 +14,7 @@ const features = [
     {
         emoji: '📸',
         title: '포토존',
-        desc: '고라파덕과 함께 찍는 인생샷! SNS에 자랑해보세요 🦆',
+        desc: '고라파덕과 함께 찍는 인생샷! SNS에 자랑해보세요 🐤',
     },
     {
         emoji: '🎁',

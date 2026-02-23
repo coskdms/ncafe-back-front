@@ -1,0 +1,109 @@
+/* [project]/app/menus/_components/MenuCard/MenuCard.module.css [app-client] (css) */
+.MenuCard-module__zL7o0G__card {
+  text-align: center;
+  background: #fff;
+  border: 3px solid #fef08a;
+  border-radius: 28px;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: 32px 24px;
+  transition: all .4s cubic-bezier(.34, 1.56, .64, 1);
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 20px #fef08a4d;
+}
+
+.MenuCard-module__zL7o0G__card:before {
+  content: "";
+  z-index: 0;
+  background: #fef9c3;
+  border-radius: 24px 24px 100% 100%;
+  width: 100%;
+  height: 120px;
+  transition: all .4s;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.MenuCard-module__zL7o0G__card:hover {
+  border-color: #fde047;
+  transform: translateY(-10px);
+  box-shadow: 0 16px 30px #facc1566;
+}
+
+.MenuCard-module__zL7o0G__card:hover:before {
+  background: #fde047;
+  height: 140px;
+}
+
+.MenuCard-module__zL7o0G__cardImage {
+  object-fit: cover;
+  z-index: 1;
+  border: 6px solid #fff;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  margin-bottom: 24px;
+  transition: transform .4s cubic-bezier(.34, 1.56, .64, 1);
+  position: relative;
+  box-shadow: 0 8px 16px #0000001a;
+}
+
+.MenuCard-module__zL7o0G__card:hover .MenuCard-module__zL7o0G__cardImage {
+  transform: scale(1.1);
+}
+
+.MenuCard-module__zL7o0G__cardTitle {
+  color: #451a03;
+  z-index: 1;
+  margin-bottom: 6px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  position: relative;
+}
+
+.MenuCard-module__zL7o0G__cardSubtitle {
+  color: #92400e;
+  z-index: 1;
+  margin: 0 0 12px;
+  font-size: .85rem;
+  position: relative;
+}
+
+.MenuCard-module__zL7o0G__cardDesc {
+  color: #92400e;
+  z-index: 1;
+  flex-grow: 1;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  font-size: .95rem;
+  line-height: 1.6;
+  position: relative;
+}
+
+.MenuCard-module__zL7o0G__cardPriceContainer {
+  z-index: 1;
+  margin-top: auto;
+  position: relative;
+}
+
+.MenuCard-module__zL7o0G__cardPrice {
+  color: #b45309;
+  background: #fde047;
+  border-radius: 999px;
+  padding: 8px 24px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
+  display: inline-block;
+  box-shadow: 0 4px 10px #fde04780;
+}
+
+.MenuCard-module__zL7o0G__card:hover .MenuCard-module__zL7o0G__cardPrice {
+  transform: scale(1.1);
+}
+
+/*# sourceMappingURL=app_menus__components_MenuCard_MenuCard_module_css_bad6b30c._.single.css.map*/
