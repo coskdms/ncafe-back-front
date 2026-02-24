@@ -1,5 +1,6 @@
 services:
   # ── 백엔드 (Spring Boot) ──
+  # enviroment: db 매번 로컬이랑 도커랑 연결이 바꿔서 실행해야되서 환경변수로 설정
   backend:
     build:
       context: .
@@ -7,6 +8,8 @@ services:
     container_name: newnaeun-ncafe-backend
     ports:
       - "8032:8032"
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/ncafedb?useSSL=false&allowPublicKeyRetrieval=true
     volumes:
       - /home/newnaeun/dist/ncafe/upload:/app/upload
     restart: unless-stopped
@@ -29,7 +32,7 @@ services:
   db:
     image: postgres:17
     profiles: [ "with-db" ]
-    container_name: ${USER_ID:-ncafe}-db
+    container_name: newnaeun-ncafe-db
     environment:
       POSTGRES_DB: ncafedb
       POSTGRES_USER: ncafe
