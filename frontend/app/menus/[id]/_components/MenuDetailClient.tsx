@@ -2,6 +2,8 @@
 
 import { use, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/stores/authStore';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import { ChevronLeft, ShoppingCart, CreditCard } from 'lucide-react';
@@ -16,6 +18,8 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
     const { id } = use(params);
     const { menu, loading, error } = useMenuDetail(id);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const router = useRouter();
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
     const formatPrice = (price?: number) => {
         if (price === undefined || price === null) return '';
@@ -23,6 +27,11 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
     };
 
     const handleAddToCart = () => {
+        if (!isAuthenticated) {
+            alert('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
+            router.push('/login');
+            return;
+        }
         alert(`'${menu?.korName}' 카트에 귀엽게 담았습니다! 🐤`);
     };
 
