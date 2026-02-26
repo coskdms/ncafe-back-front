@@ -1,4 +1,8 @@
-[00:00:00.825] Server  LOG     ✓ Ready in 619ms
-[00:00:15.738] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:17.118] Server  ERROR   (node:97573) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+[00:00:02.564] Server  LOG     ✓ Ready in 2.3s
+[00:06:11.967] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:07:04.098] Server  LOG     ✓ Compiled in 57ms
+[00:07:55.694] Server  ERROR   (node:58162) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
+[00:15:44.079] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:15:44.358] Server  LOG     ✓ Compiled in 197ms
+[00:17:42.980] Server  LOG     ✓ Compiled in 57ms

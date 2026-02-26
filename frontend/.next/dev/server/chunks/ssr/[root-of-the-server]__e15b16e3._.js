@@ -11,7 +11,9 @@ __turbopack_context__.v({
   "desktopLinks": "Navbar-module__ALGTZa__desktopLinks",
   "hamburger": "Navbar-module__ALGTZa__hamburger",
   "inner": "Navbar-module__ALGTZa__inner",
+  "loginBtn": "Navbar-module__ALGTZa__loginBtn",
   "logo": "Navbar-module__ALGTZa__logo",
+  "mobileLoginBtn": "Navbar-module__ALGTZa__mobileLoginBtn",
   "mobileMenu": "Navbar-module__ALGTZa__mobileMenu",
   "nav": "Navbar-module__ALGTZa__nav",
   "scrolled": "Navbar-module__ALGTZa__scrolled",
@@ -90,6 +92,15 @@ function Navbar() {
                                 fileName: "[project]/components/landing/Navbar.tsx",
                                 lineNumber: 29,
                                 columnNumber: 21
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                href: "/login",
+                                className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$landing$2f$Navbar$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].loginBtn,
+                                children: "로그인"
+                            }, void 0, false, {
+                                fileName: "[project]/components/landing/Navbar.tsx",
+                                lineNumber: 30,
+                                columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
@@ -104,7 +115,7 @@ function Navbar() {
                         children: isOpen ? '✕' : '☰'
                     }, void 0, false, {
                         fileName: "[project]/components/landing/Navbar.tsx",
-                        lineNumber: 31,
+                        lineNumber: 32,
                         columnNumber: 17
                     }, this)
                 ]
@@ -122,7 +133,7 @@ function Navbar() {
                         children: "카페 소개"
                     }, void 0, false, {
                         fileName: "[project]/components/landing/Navbar.tsx",
-                        lineNumber: 37,
+                        lineNumber: 38,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -131,7 +142,7 @@ function Navbar() {
                         children: "특별 메뉴"
                     }, void 0, false, {
                         fileName: "[project]/components/landing/Navbar.tsx",
-                        lineNumber: 38,
+                        lineNumber: 39,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -140,13 +151,23 @@ function Navbar() {
                         children: "매장 안내"
                     }, void 0, false, {
                         fileName: "[project]/components/landing/Navbar.tsx",
-                        lineNumber: 39,
+                        lineNumber: 40,
+                        columnNumber: 21
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                        href: "/login",
+                        className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$landing$2f$Navbar$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].mobileLoginBtn,
+                        onClick: ()=>setIsOpen(false),
+                        children: "로그인"
+                    }, void 0, false, {
+                        fileName: "[project]/components/landing/Navbar.tsx",
+                        lineNumber: 41,
                         columnNumber: 21
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/landing/Navbar.tsx",
-                lineNumber: 36,
+                lineNumber: 37,
                 columnNumber: 17
             }, this)
         ]

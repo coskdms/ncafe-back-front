@@ -620,6 +620,7 @@
 }
 
 .Navbar-module__ALGTZa__desktopLinks {
+  align-items: center;
   gap: 32px;
   display: flex;
 }
@@ -642,6 +643,32 @@
 
 .Navbar-module__ALGTZa__scrolled .Navbar-module__ALGTZa__desktopLinks a:hover {
   color: #fef08a;
+}
+
+.Navbar-module__ALGTZa__desktopLinks .Navbar-module__ALGTZa__loginBtn {
+  color: #451a03;
+  background: #fef08a;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-weight: 700;
+  transition: all .3s;
+}
+
+.Navbar-module__ALGTZa__scrolled .Navbar-module__ALGTZa__desktopLinks .Navbar-module__ALGTZa__loginBtn {
+  color: #fef08a;
+  background: #451a03;
+  border: 1px solid #fef08a;
+}
+
+.Navbar-module__ALGTZa__desktopLinks .Navbar-module__ALGTZa__loginBtn:hover {
+  color: #fff;
+  background: #ca8a04;
+  transform: translateY(-2px);
+}
+
+.Navbar-module__ALGTZa__scrolled .Navbar-module__ALGTZa__desktopLinks .Navbar-module__ALGTZa__loginBtn:hover {
+  color: #451a03;
+  background: #fef08a;
 }
 
 .Navbar-module__ALGTZa__hamburger {
@@ -674,6 +701,14 @@
   font-size: 1.5rem;
   font-weight: 700;
   text-decoration: none;
+}
+
+.Navbar-module__ALGTZa__mobileMenu .Navbar-module__ALGTZa__mobileLoginBtn {
+  color: #451a03;
+  background: #fef08a;
+  border-radius: 30px;
+  margin-top: 20px;
+  padding: 12px 32px;
 }
 
 @media (max-width: 768px) {

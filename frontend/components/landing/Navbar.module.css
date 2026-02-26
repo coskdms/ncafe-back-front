@@ -38,6 +38,7 @@
 
 .desktopLinks {
     display: flex;
+    align-items: center;
     gap: 32px;
 }
 
@@ -59,6 +60,32 @@
 
 .scrolled .desktopLinks a:hover {
     color: #fef08a;
+}
+
+.desktopLinks .loginBtn {
+    background: #fef08a;
+    color: #451a03;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    transition: all 0.3s;
+}
+
+.scrolled .desktopLinks .loginBtn {
+    background: #451a03;
+    color: #fef08a;
+    border: 1px solid #fef08a;
+}
+
+.desktopLinks .loginBtn:hover {
+    background: #ca8a04;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.scrolled .desktopLinks .loginBtn:hover {
+    background: #fef08a;
+    color: #451a03;
 }
 
 .hamburger {
@@ -94,6 +121,14 @@
     font-weight: 700;
     color: #fef08a;
     text-decoration: none;
+}
+
+.mobileMenu .mobileLoginBtn {
+    background: #fef08a;
+    color: #451a03;
+    padding: 12px 32px;
+    border-radius: 30px;
+    margin-top: 20px;
 }
 
 /* ── Mobile ── */

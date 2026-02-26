@@ -27,6 +27,7 @@ export default function Navbar() {
                     <a href="#about">카페 소개</a>
                     <Link href="/menus">특별 메뉴</Link>
                     <a href="#">매장 안내</a>
+                    <Link href="/login" className={styles.loginBtn}>로그인</Link>
                 </div>
                 <button className={styles.hamburger} onClick={() => setIsOpen(!isOpen)} aria-label="메뉴">
                     {isOpen ? '✕' : '☰'}
@@ -37,6 +38,7 @@ export default function Navbar() {
                     <a href="#about" onClick={() => setIsOpen(false)}>카페 소개</a>
                     <Link href="/menus" onClick={() => setIsOpen(false)}>특별 메뉴</Link>
                     <a href="#" onClick={() => setIsOpen(false)}>매장 안내</a>
+                    <Link href="/login" className={styles.mobileLoginBtn} onClick={() => setIsOpen(false)}>로그인</Link>
                 </div>
             )}
         </nav>
