@@ -8,6 +8,8 @@ import Navbar from "@/components/landing/Navbar";
 import FallingBeans from "@/components/landing/FallingBeans";
 import CursorBeans from "@/components/landing/CursorBeans";
 
+import LocationSection from "@/components/landing/LocationSection";
+
 export default function Home() {
   return (
     <main className={styles.main}>
@@ -18,6 +20,7 @@ export default function Home() {
       <HighlightBar />
       <AboutSection />
       <FeaturesSection />
+      <LocationSection />
       <Footer />
     </main>
   );

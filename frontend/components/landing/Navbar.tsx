@@ -42,9 +42,9 @@ export default function Navbar() {
             <div className={styles.inner}>
                 <Link href="/" className={styles.logo}>🐤 고라파덕 카페</Link>
                 <div className={styles.desktopLinks}>
-                    <a href="#about">카페 소개</a>
+                    <Link href="/#about">카페 소개</Link>
                     <Link href="/menus">특별 메뉴</Link>
-                    <a href="#">매장 안내</a>
+                    <Link href="/#location">매장 안내</Link>
                     {!isLoading && (
                         isAuthenticated ? (
                             <>
@@ -62,9 +62,9 @@ export default function Navbar() {
             </div>
             {isOpen && (
                 <div className={styles.mobileMenu}>
-                    <a href="#about" onClick={() => setIsOpen(false)}>카페 소개</a>
+                    <Link href="/#about" onClick={() => setIsOpen(false)}>카페 소개</Link>
                     <Link href="/menus" onClick={() => setIsOpen(false)}>특별 메뉴</Link>
-                    <a href="#" onClick={() => setIsOpen(false)}>매장 안내</a>
+                    <Link href="/#location" onClick={() => setIsOpen(false)}>매장 안내</Link>
                     {!isLoading && (
                         isAuthenticated ? (
                             <>
