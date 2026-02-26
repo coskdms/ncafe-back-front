@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/components/landing/HighlightBar.module.css"],"sourcesContent":[".bar {\n    background: linear-gradient(135deg, #451a03, #78350f);\n    padding: 40px 0;\n}\n\n.container {\n    max-width: 1200px;\n    margin: 0 auto;\n    padding: 0 24px;\n    display: flex;\n    justify-content: space-around;\n    gap: 20px;\n}\n\n.stat {\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n    gap: 6px;\n}\n\n.emoji {\n    font-size: 2rem;\n}\n\n.number {\n    font-size: 2rem;\n    font-weight: 800;\n    color: #fef08a;\n}\n\n.label {\n    font-size: 0.85rem;\n    color: rgba(254, 249, 195, 0.8);\n    font-weight: 500;\n}\n\n/* ── Mobile ── */\n@media (max-width: 640px) {\n    .container {\n        display: grid;\n        grid-template-columns: repeat(2, 1fr);\n        gap: 30px;\n    }\n\n    .number {\n        font-size: 1.5rem;\n    }\n}"],"names":[],"mappings":"AAAA;;;;;AAKA;;;;;;;;;AASA;;;;;;;AAOA;;;;AAIA;;;;;;AAMA;;;;;;AAOA;EACI;;;;;;EAMA"}}]
-}
