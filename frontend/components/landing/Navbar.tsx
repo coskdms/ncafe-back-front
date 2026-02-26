@@ -38,30 +38,35 @@ export default function Navbar() {
     };
 
     return (
-        <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
-            <div className={styles.inner}>
-                <Link href="/" className={styles.logo}>🐤 고라파덕 카페</Link>
-                <div className={styles.desktopLinks}>
-                    <Link href="/#about">카페 소개</Link>
-                    <Link href="/menus">특별 메뉴</Link>
-                    <Link href="/#location">매장 안내</Link>
-                    {!isLoading && (
-                        isAuthenticated ? (
-                            <>
-                                <span className={styles.userName}>👋 {user?.username}님</span>
-                                <button onClick={handleLogout} className={styles.logoutBtn}>로그아웃</button>
-                            </>
-                        ) : (
-                            <Link href="/login" className={styles.loginBtn}>로그인</Link>
-                        )
-                    )}
+        <>
+            <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
+                <div className={styles.inner}>
+                    <Link href="/" className={styles.logo}>🐤 고라파덕 카페</Link>
+                    <div className={styles.desktopLinks}>
+                        <Link href="/#about">카페 소개</Link>
+                        <Link href="/menus">특별 메뉴</Link>
+                        <Link href="/#location">매장 안내</Link>
+                        {!isLoading && (
+                            isAuthenticated ? (
+                                <>
+                                    <span className={styles.userName}>👋 {user?.username}님</span>
+                                    <button onClick={handleLogout} className={styles.logoutBtn}>로그아웃</button>
+                                </>
+                            ) : (
+                                <Link href="/login" className={styles.loginBtn}>로그인</Link>
+                            )
+                        )}
+                    </div>
+                    <button className={styles.hamburger} onClick={() => setIsOpen(!isOpen)} aria-label="메뉴">
+                        {isOpen ? '✕' : '☰'}
+                    </button>
                 </div>
-                <button className={styles.hamburger} onClick={() => setIsOpen(!isOpen)} aria-label="메뉴">
-                    {isOpen ? '✕' : '☰'}
-                </button>
-            </div>
+            </nav>
             {isOpen && (
                 <div className={styles.mobileMenu}>
+                    <button className={styles.closeBtn} onClick={() => setIsOpen(false)} aria-label="닫기">
+                        ✕
+                    </button>
                     <Link href="/#about" onClick={() => setIsOpen(false)}>카페 소개</Link>
                     <Link href="/menus" onClick={() => setIsOpen(false)}>특별 메뉴</Link>
                     <Link href="/#location" onClick={() => setIsOpen(false)}>매장 안내</Link>
@@ -77,6 +82,6 @@ export default function Navbar() {
                     )}
                 </div>
             )}
-        </nav>
+        </>
     );
 }

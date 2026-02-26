@@ -95,6 +95,8 @@
     border: none;
     color: #451a03;
     cursor: pointer;
+    position: relative;
+    z-index: 10001;
 }
 
 .scrolled .hamburger {
@@ -103,7 +105,7 @@
 
 .mobileMenu {
     position: fixed;
-    top: 60px;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
@@ -113,7 +115,19 @@
     align-items: center;
     justify-content: center;
     gap: 40px;
-    z-index: 999;
+    z-index: 10000;
+    overflow: hidden;
+}
+
+.closeBtn {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    font-size: 1.8rem;
+    background: none;
+    border: none;
+    color: #fef08a;
+    cursor: pointer;
 }
 
 .mobileMenu a {
