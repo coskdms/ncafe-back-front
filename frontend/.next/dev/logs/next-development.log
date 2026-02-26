@@ -6,3 +6,25 @@
 [00:15:44.079] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
 [00:15:44.358] Server  LOG     ✓ Compiled in 197ms
 [00:17:42.980] Server  LOG     ✓ Compiled in 57ms
+[00:24:29.590] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:55:11.283] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:55:17.248] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:55:17.662] Browser WARN    Image with src "/images/capuchino.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:55:18.977] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:55:35.799] Browser LOG     로그인 성공!
+[00:57:45.797] Server  LOG     ✓ Compiled in 740ms
+[00:58:08.088] Server  LOG     ✓ Compiled in 670ms
+[00:58:28.095] Server  LOG     ✓ Compiled in 75ms
+[01:03:35.870] Server  LOG     ✓ Compiled in 235ms
+[01:06:14.060] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:09:51.976] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:10:03.469] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:10:04.330] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:10:10.906] Browser LOG     로그인 성공!
+[01:12:25.248] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:14:01.038] Server  LOG     ✓ Compiled in 48ms
+[01:14:17.870] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:14:21.005] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:14:57.927] Browser LOG     로그인 성공!
+[01:16:05.663] Browser LOG     로그인 성공!

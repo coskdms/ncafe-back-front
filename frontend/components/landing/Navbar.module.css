@@ -129,6 +129,54 @@
     padding: 12px 32px;
     border-radius: 30px;
     margin-top: 20px;
+    border: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ── 사용자 이름 & 로그아웃 ── */
+.userName {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #78350f;
+}
+
+.scrolled .userName {
+    color: #fef08a;
+}
+
+.logoutBtn {
+    background: transparent;
+    border: 1.5px solid #78350f;
+    color: #78350f;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.scrolled .logoutBtn {
+    border-color: #fef08a;
+    color: #fef08a;
+}
+
+.logoutBtn:hover {
+    background: #78350f;
+    color: #fff;
+}
+
+.scrolled .logoutBtn:hover {
+    background: #fef08a;
+    color: #451a03;
+}
+
+.mobileUserName {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fef08a;
 }
 
 /* ── Mobile ── */

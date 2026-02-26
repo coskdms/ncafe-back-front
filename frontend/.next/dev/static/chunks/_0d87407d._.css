@@ -124,10 +124,57 @@
 
 .Navbar-module__ALGTZa__mobileMenu .Navbar-module__ALGTZa__mobileLoginBtn {
   color: #451a03;
+  cursor: pointer;
   background: #fef08a;
+  border: none;
   border-radius: 30px;
   margin-top: 20px;
   padding: 12px 32px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.Navbar-module__ALGTZa__userName {
+  color: #78350f;
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+.Navbar-module__ALGTZa__scrolled .Navbar-module__ALGTZa__userName {
+  color: #fef08a;
+}
+
+.Navbar-module__ALGTZa__logoutBtn {
+  color: #78350f;
+  cursor: pointer;
+  background: none;
+  border: 1.5px solid #78350f;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: .85rem;
+  font-weight: 600;
+  transition: all .3s;
+}
+
+.Navbar-module__ALGTZa__scrolled .Navbar-module__ALGTZa__logoutBtn {
+  color: #fef08a;
+  border-color: #fef08a;
+}
+
+.Navbar-module__ALGTZa__logoutBtn:hover {
+  color: #fff;
+  background: #78350f;
+}
+
+.Navbar-module__ALGTZa__scrolled .Navbar-module__ALGTZa__logoutBtn:hover {
+  color: #451a03;
+  background: #fef08a;
+}
+
+.Navbar-module__ALGTZa__mobileUserName {
+  color: #fef08a;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 @media (max-width: 768px) {

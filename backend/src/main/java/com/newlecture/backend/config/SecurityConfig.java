@@ -2,12 +2,9 @@ package com.newlecture.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,21 +20,44 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
+                                // 프론트엔드(Next.js)와 백엔드(Spring)가 분리된 구조에서는
+                                // CSRF 토큰을 주고받기 어려우므로 비활성화합니다.
+                                .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
-                                                // /cookie/create 경로는 인증(로그인)된 사용자만 접근 가능
-                                                // .requestMatchers("/api/admin/**").hasAuthority("MENU_CREATE")
-                                                .requestMatchers("/api/admin/**").hasRole("ADMIN") // DB에서는 ROLE_ADMIN으로
-                                                                                                   // 저장됨, ROLE이 안붙으면
-                                                                                                   // 에러남
-                                                .requestMatchers("/cookie/create").authenticated()
-                                                .requestMatchers("/cookie/session/create").authenticated()
+                                                // 관리자 API는 ADMIN 권한 필요
+                                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                                 // 나머지 경로는 누구나 접근 가능
                                                 .anyRequest().permitAll())
-                                // 권한이 필요한 페이지 접근 시 기본 로그인 폼으로 이동
-                                // .formLogin(form -> form.permitAll());
-                                // customer 설정 가능
-                                .formLogin(Customizer.withDefaults());
-                // 사용자 정보를 제공하는 프로바이더를 만들 생각이야
+                                // 폼 로그인 설정: 프론트엔드에서 POST /login 으로 요청하면 처리
+                                .formLogin(form -> form
+                                                // 로그인 성공 시: 302 리다이렉트 대신 200 OK 반환
+                                                .successHandler((request, response, authentication) -> {
+                                                        response.setStatus(200);
+                                                        response.setContentType("application/json;charset=UTF-8");
+                                                        response.getWriter()
+                                                                        .write("{\"message\":\"로그인 성공\",\"username\":\""
+                                                                                        + authentication.getName()
+                                                                                        + "\"}");
+                                                })
+                                                // 로그인 실패 시: 401 Unauthorized 반환
+                                                .failureHandler((request, response, exception) -> {
+                                                        response.setStatus(401);
+                                                        response.setContentType("application/json;charset=UTF-8");
+                                                        response.getWriter()
+                                                                        .write("{\"error\":\"아이디 또는 비밀번호가 올바르지 않습니다.\"}");
+                                                })
+                                                .permitAll())
+                                // 로그아웃 설정: 프론트엔드에서 POST /logout 으로 요청하면 처리
+                                .logout(logout -> logout
+                                                .logoutUrl("/logout")
+                                                .logoutSuccessHandler((request, response, authentication) -> {
+                                                        response.setStatus(200);
+                                                        response.setContentType("application/json;charset=UTF-8");
+                                                        response.getWriter().write("{\"message\":\"로그아웃 성공\"}");
+                                                })
+                                                .invalidateHttpSession(true) // 세션 무효화
+                                                .deleteCookies("JSESSIONID") // 세션 쿠키 삭제
+                                );
 
                 return http.build();
         }
@@ -49,52 +69,6 @@ public class SecurityConfig {
         public PasswordEncoder passwordEncoder() {
                 // 내부적으로 최신 암호화 방식(Bcrypt)을 지원해주며 `{bcrypt}` 등 접두사를 유연하게 처리해주는 강력한 도구입니다!
                 return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        }
-
-        // =========================================================================
-        // [현재 사용 중인 방식] 메모리(InMemory)에 임시로 사용자를 만들어두는 방식
-        // =========================================================================
-        // @Bean
-        public UserDetailsService userDetailsService() {
-
-                // --- 1. 유저님이 제일 처음 작성하셨던 기존 방식 (주석 처리) ---
-                /*
-                 * // 테스트용 일반 사용자 계정 (chaena / 1234)
-                 * // {noop}을 붙이면 비밀번호를 별도로 암호화(해싱)하지 않고 그대로 사용하겠다는 뜻입니다.
-                 * UserDetails user = User.builder()
-                 * .username("chaena")
-                 * .password("{noop}1234")
-                 * .roles("USER")
-                 * .build();
-                 * 
-                 * // 관리자 계정 (admin / 1234)
-                 * UserDetails admin = User.builder()
-                 * .username("admin")
-                 * .password("{noop}1234")
-                 * .roles("ADMIN")
-                 * .build();
-                 * 
-                 * return new InMemoryUserDetailsManager(user, admin);
-                 */
-
-                // --- 2. 캡처로 보여주신 withDefaultPasswordEncoder() 방식 (현재 활성화) ---
-                // 이 방식은 스프링에서 내부적으로 BCrypt 로 암호화를 자동으로 해줍니다.
-                // 하지만 최신 버전에서는 "보안상 위험하니 쓰지 말라"는 의미로
-                // 메서드에 취소선(Deprecated)이 그어지는 것을 보실 수 있습니다.
-                var admin = User.withDefaultPasswordEncoder()
-                                .username("admin")
-                                .password("1234")
-                                .roles("ADMIN")
-                                .build();
-
-                var user = User.withDefaultPasswordEncoder()
-                                .username("user")
-                                .password("1234")
-                                .roles("USER")
-                                .build();
-
-                // 위에서 생성한 유저 정보를 메모리(InMemory)에 담아서 스프링 시큐리티에 제공(Manager)
-                return new InMemoryUserDetailsManager(admin, user);
         }
 
         // =========================================================================

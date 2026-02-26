@@ -4,31 +4,31 @@ import { useState } from 'react';
 import styles from './LoginForm.module.css';
 
 interface LoginFormProps {
-    onLogin: (email: string, password: string) => void;
+    onLogin: (nickname: string, password: string) => void;
     error?: string;
     isLoading?: boolean;
 }
 
 export default function LoginForm({ onLogin, error, isLoading }: LoginFormProps) {
-    const [email, setEmail] = useState('');
+    const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onLogin(email, password);
+        onLogin(nickname, password);
     };
 
     return (
         <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.inputGroup}>
-                <label htmlFor="login-email" className={styles.label}>이메일</label>
+                <label htmlFor="login-nickname" className={styles.label}>아이디</label>
                 <input
-                    id="login-email"
-                    type="email"
+                    id="login-nickname"
+                    type="text"
                     className={styles.input}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="이메일을 입력하세요"
+                    value={nickname}
+                    onChange={(e) => setNickname(e.target.value)}
+                    placeholder="아이디를 입력하세요"
                     required
                 />
             </div>

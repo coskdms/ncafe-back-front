@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/stores/authStore';
 import LoginForm from './_components/LoginForm/LoginForm';
 import SignupForm from './_components/SignupForm/SignupForm';
 import styles from './page.module.css';
@@ -10,29 +11,20 @@ type Tab = 'login' | 'signup';
 
 export default function LoginPage() {
     const router = useRouter();
+    const login = useAuthStore((state) => state.login);
     const [activeTab, setActiveTab] = useState<Tab>('login');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = async (email: string, password: string) => {
+    const handleLogin = async (nickname: string, password: string) => {
         setError('');
         setIsLoading(true);
 
         try {
-            const res = await fetch('/api/v1/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.error || '로그인에 실패했습니다.');
-            }
-
-            const user = await res.json();
-            // TODO: 로그인 상태 관리 (zustand, 세션 등)
-            console.log('로그인 성공:', user);
+            // Zustand authStore의 login 액션을 호출합니다.
+            // 내부적으로 Spring Security POST /login → GET /api/auth/me 순서로 처리됩니다.
+            await login(nickname, password);
+            console.log('로그인 성공!');
             router.push('/');
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : '로그인에 실패했습니다.');

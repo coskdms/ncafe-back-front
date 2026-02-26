@@ -49,11 +49,11 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$login$2f$_components$
 ;
 ;
 function LoginForm({ onLogin, error, isLoading }) {
-    const [email, setEmail] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
+    const [nickname, setNickname] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [password, setPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const handleSubmit = (e)=>{
         e.preventDefault();
-        onLogin(email, password);
+        onLogin(nickname, password);
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$login$2f$_components$2f$LoginForm$2f$LoginForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].form,
@@ -63,21 +63,21 @@ function LoginForm({ onLogin, error, isLoading }) {
                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$login$2f$_components$2f$LoginForm$2f$LoginForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputGroup,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                        htmlFor: "login-email",
+                        htmlFor: "login-nickname",
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$login$2f$_components$2f$LoginForm$2f$LoginForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].label,
-                        children: "이메일"
+                        children: "아이디"
                     }, void 0, false, {
                         fileName: "[project]/app/login/_components/LoginForm/LoginForm.tsx",
                         lineNumber: 24,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                        id: "login-email",
-                        type: "email",
+                        id: "login-nickname",
+                        type: "text",
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$login$2f$_components$2f$LoginForm$2f$LoginForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].input,
-                        value: email,
-                        onChange: (e)=>setEmail(e.target.value),
-                        placeholder: "이메일을 입력하세요",
+                        value: nickname,
+                        onChange: (e)=>setNickname(e.target.value),
+                        placeholder: "아이디를 입력하세요",
                         required: true
                     }, void 0, false, {
                         fileName: "[project]/app/login/_components/LoginForm/LoginForm.tsx",
@@ -387,28 +387,32 @@ function LoginPage() {
     const [activeTab, setActiveTab] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('login');
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const handleLogin = async (email, password)=>{
+    const handleLogin = async (nickname, password)=>{
         setError('');
         setIsLoading(true);
         try {
-            const res = await fetch('/api/v1/auth/login', {
+            // Spring Security의 기본 폼 로그인 방식:
+            // POST /login 으로 username과 password를 form-data로 전송합니다.
+            // 성공하면 Spring이 JSESSIONID 쿠키를 자동으로 발급해줍니다!
+            const formData = new URLSearchParams();
+            formData.append('username', nickname);
+            formData.append('password', password);
+            const res = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: JSON.stringify({
-                    email,
-                    password
-                })
+                body: formData.toString()
             });
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.error || '로그인에 실패했습니다.');
+            if (res.ok) {
+                // 로그인 성공! Spring Security가 JSESSIONID 쿠키를 자동 발급해줍니다.
+                console.log('로그인 성공!');
+                router.push('/');
+            } else if (res.status === 401) {
+                throw new Error('아이디 또는 비밀번호가 올바르지 않습니다.');
+            } else {
+                throw new Error('서버 오류가 발생했습니다.');
             }
-            const user = await res.json();
-            // TODO: 로그인 상태 관리 (zustand, 세션 등)
-            console.log('로그인 성공:', user);
-            router.push('/');
         } catch (err) {
             setError(err instanceof Error ? err.message : '로그인에 실패했습니다.');
         } finally{
@@ -454,7 +458,7 @@ function LoginPage() {
                     children: "🐤☕"
                 }, void 0, false, {
                     fileName: "[project]/app/login/page.tsx",
-                    lineNumber: 74,
+                    lineNumber: 81,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -462,7 +466,7 @@ function LoginPage() {
                     children: "고라파덕 카페"
                 }, void 0, false, {
                     fileName: "[project]/app/login/page.tsx",
-                    lineNumber: 75,
+                    lineNumber: 82,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -470,7 +474,7 @@ function LoginPage() {
                     children: "커피 한 잔의 여유를 만나보세요"
                 }, void 0, false, {
                     fileName: "[project]/app/login/page.tsx",
-                    lineNumber: 76,
+                    lineNumber: 83,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -485,7 +489,7 @@ function LoginPage() {
                             children: "로그인"
                         }, void 0, false, {
                             fileName: "[project]/app/login/page.tsx",
-                            lineNumber: 79,
+                            lineNumber: 86,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -497,13 +501,13 @@ function LoginPage() {
                             children: "회원가입"
                         }, void 0, false, {
                             fileName: "[project]/app/login/page.tsx",
-                            lineNumber: 85,
+                            lineNumber: 92,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/login/page.tsx",
-                    lineNumber: 78,
+                    lineNumber: 85,
                     columnNumber: 17
                 }, this),
                 activeTab === 'login' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$login$2f$_components$2f$LoginForm$2f$LoginForm$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -512,7 +516,7 @@ function LoginPage() {
                     isLoading: isLoading
                 }, void 0, false, {
                     fileName: "[project]/app/login/page.tsx",
-                    lineNumber: 94,
+                    lineNumber: 101,
                     columnNumber: 21
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$login$2f$_components$2f$SignupForm$2f$SignupForm$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                     onSignup: handleSignup,
@@ -520,18 +524,18 @@ function LoginPage() {
                     isLoading: isLoading
                 }, void 0, false, {
                     fileName: "[project]/app/login/page.tsx",
-                    lineNumber: 96,
+                    lineNumber: 103,
                     columnNumber: 21
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/login/page.tsx",
-            lineNumber: 73,
+            lineNumber: 80,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/login/page.tsx",
-        lineNumber: 72,
+        lineNumber: 79,
         columnNumber: 9
     }, this);
 }
