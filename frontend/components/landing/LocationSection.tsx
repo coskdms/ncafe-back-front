@@ -8,7 +8,7 @@ export default function LocationSection() {
                 <div className={styles.textArea}>
                     <span className={styles.label}>📍 오시는 길</span>
                     <h2 className={styles.heading}>
-                        한강 한가운데서 만나는<br />고라파덕 카페
+                        한강 한가운데서 만나는<br />두둥실 고라파덕 카페
                     </h2>
                     <p className={styles.desc}>
                         머리가 아플 땐 시원한 강바람이 최고잖아요? 🌊<br />
@@ -22,6 +22,10 @@ export default function LocationSection() {
                         <div className={styles.infoItem}>
                             <strong>🚗 주차안내</strong>
                             <p>원효대교 밑둥에 튜브 주차 가능 (구명조끼 지참 필수)</p>
+                        </div>
+                        <div className={styles.infoItem}>
+                            <strong>💨 참고</strong>
+                            <p>젖은 옷은 고라파덕의 염동력으로 순식간에 말려드립니다 🐤✨</p>
                         </div>
                     </div>
                 </div>
