@@ -8,20 +8,20 @@ export default function LocationSection() {
                 <div className={styles.textArea}>
                     <span className={styles.label}>📍 오시는 길</span>
                     <h2 className={styles.heading}>
-                        원효대교 위에서 만나는<br />특별한 커피 한 잔
+                        한강 한가운데서 만나는<br />고라파덕 카페
                     </h2>
                     <p className={styles.desc}>
-                        탁 트인 한강 뷰와 함께 여유로운 시간을 보내세요.<br />
-                        <strong>주소:</strong> 서울특별시 영등포구 여의동 원효대교 중간
+                        머리가 아플 땐 시원한 강바람이 최고잖아요? 🌊<br />
+                        <strong>주소:</strong> 서울 영등포구 여의동 원효대교 바로 밑 강물 위
                     </p>
                     <div className={styles.infoBox}>
                         <div className={styles.infoItem}>
-                            <strong>🕒 영업시간</strong>
-                            <p>매일 08:00 - 22:00</p>
+                            <strong>🚣‍♀️ 오시는 길</strong>
+                            <p>여의도 한강공원에서 오리배(10분) 또는 자유형(5분) 🏊‍♂️</p>
                         </div>
                         <div className={styles.infoItem}>
                             <strong>🚗 주차안내</strong>
-                            <p>여의도 한강공원 제1주차장 이용 (도보 5분)</p>
+                            <p>원효대교 밑둥에 튜브 주차 가능 (구명조끼 지참 필수)</p>
                         </div>
                     </div>
                 </div>

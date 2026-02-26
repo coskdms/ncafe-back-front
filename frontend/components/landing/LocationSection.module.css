@@ -91,4 +91,12 @@
     .heading {
         font-size: 2rem;
     }
+
+    .imageArea {
+        width: 100%;
+    }
+
+    .mapWrapper {
+        aspect-ratio: 1 / 1;
+    }
 }
