@@ -83,13 +83,18 @@ public class AdminMenuCommandService
     @Transactional
     public void updateMenuImages(Long menuId, List<MultipartFile> files, List<Long> retainedImageIds,
             List<String> imageOrder) {
+
+        // retainedImageIds가 null이면 빈 리스트로 초기화 (방어 로직)
+        List<Long> finalRetainedIds = retainedImageIds != null ? retainedImageIds : new ArrayList<>();
+
         // 1. 유지할 이미지를 제외한 나머지 이미지 삭제 처리
-        menuImageRepository.deleteByMenuIdAndIdNotIn(menuId, retainedImageIds);
+        menuImageRepository.deleteByMenuIdAndIdNotIn(menuId, finalRetainedIds);
 
         // 2. 새 파일들을 폴더에 저장
         List<String> newFileNames = new ArrayList<>();
         if (files != null && !files.isEmpty()) {
-            Path uploadDir = Paths.get("upload/images").toAbsolutePath().normalize();
+            // "upload/images" 경로를 현재 실행 위치 기준으로 확보
+            Path uploadDir = Paths.get("upload", "images").toAbsolutePath().normalize();
             try {
                 if (!Files.exists(uploadDir)) {
                     Files.createDirectories(uploadDir);
