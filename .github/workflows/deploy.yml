@@ -36,7 +36,11 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
-      # 단계 3: Docker Compose로 빌드 및 실행
+      # 단계 3: 기존 컨테이너 정리 (이름 충돌 방지)
+      - name: Stop old containers
+        run: docker compose --profile with-db down --remove-orphans || true
+
+      # 단계 4: Docker Compose로 빌드 및 실행
       - name: Build and Deploy
         run: docker compose --profile with-db up --build -d
 
