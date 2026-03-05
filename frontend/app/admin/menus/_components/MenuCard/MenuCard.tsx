@@ -68,7 +68,7 @@ export default function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled 
                 {menu.imagesSrc ? (
 
                     <Image
-                        src={`/next-images/${menu.imagesSrc}`}
+                        src={`/images/${menu.imagesSrc}`}
                         alt={menu.korName}
                         fill
                         sizes="(max-width: 768px) 100vw, 300px"
