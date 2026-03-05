@@ -43,14 +43,14 @@ jobs:
       - name: Verify deployment
         run: |
           echo "=== Container Status ==="
-          docker compose ps
+          docker compose --profile with-db ps
           sleep 15
           echo ""
           echo "=== Health Check ==="
           # 프론트엔드: 외부 포트로 확인
           curl -sf --max-time 10 -o /dev/null -w "Frontend : HTTP %{http_code}\n" http://localhost:${FRONTEND_PORT:-3032} || echo "Frontend : not responding"
           # 백엔드: 외부 포트가 없으므로 Docker 내부에서 확인
-          docker compose exec -T backend curl -sf --max-time 10 -o /dev/null -w "Backend  : HTTP %{http_code}\n" http://localhost:8032 || echo "Backend  : not responding"
+          docker compose --profile with-db exec -T backend curl -sf --max-time 10 -o /dev/null -w "Backend  : HTTP %{http_code}\n" http://localhost:8032 || echo "Backend  : not responding"
         env:
           FRONTEND_PORT: ${{ secrets.FRONTEND_PORT }}
 

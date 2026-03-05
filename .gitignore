@@ -22,4 +22,3 @@ build/
 .gradle/
 node_modules/
 dist/
-docker-compose.override.yml
