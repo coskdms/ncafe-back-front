@@ -38,6 +38,7 @@ async function proxyRequest(req: NextRequest) {
         'te',                 // 전송 인코딩 관련
         'trailers',
         'transfer-encoding',
+        'content-length',      // 실제 바디 크기에 맞게 fetch가 재설정하도록 제외
         'upgrade'             // 프로토콜 업그레이드 (WebSocket 등)
     ];
 
@@ -53,17 +54,18 @@ async function proxyRequest(req: NextRequest) {
         headers.set('Authorization', `Bearer ${session.token}`);
     }
 
-    // 요청 본문 전달
+    // 4. 요청 본문 전달 (Body Proxy)
     let body: BodyInit | null = null;
     const contentType = req.headers.get('content-type');
 
     if (req.method !== 'GET' && req.method !== 'HEAD') {
         if (contentType?.includes('multipart/form-data')) {
-            const formData = await req.formData();
-            body = formData as unknown as BodyInit;  // 파일 업로드
-            headers.delete('Content-Type');  // multipart는 boundary가 자동 설정되어야 함
+            // 파일 업로드의 경우, 원본 바디를 그대로(ArrayBuffer) 전달해야 
+            // 브라우저가 생성한 boundary 정보가 훼손되지 않습니다.
+            // 이때 'Content-Type' 헤더도 삭제하지 않고 원본 그대로 유지합니다.
+            body = await req.arrayBuffer();
         } else {
-            body = await req.text();  // JSON 등
+            body = await req.text();
         }
     }
 
