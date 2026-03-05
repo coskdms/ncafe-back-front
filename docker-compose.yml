@@ -29,12 +29,14 @@ services:
       dockerfile: Dockerfile
     container_name: ${USER_ID:-newnaeun}-ncafe-frontend
     ports:
-      - "${FRONTEND_PORT:-3032}:3032"
+      - "${FRONTEND_PORT:-3032}:3000"
     environment:
       # 프론트엔드 BFF 프록시가 백엔드에 접속할 때 사용하는 환경변수 (Docker 내부 네트워크)
       - API_BASE_URL=http://backend:8032
       # iron-session 암호화 키 (32자 이상, GitHub Secrets에서 주입)
       - SESSION_SECRET=${SESSION_SECRET}
+      # 앱 내부 포트 명시
+      - PORT=3000
     depends_on:
       - backend
     restart: unless-stopped
