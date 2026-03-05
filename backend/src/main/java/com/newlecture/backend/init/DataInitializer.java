@@ -158,24 +158,18 @@ public class DataInitializer implements ApplicationRunner {
                                 ")";
                 jdbcTemplate.execute(createTableSql);
 
-                // 3. (비활성화) 배포 환경에서는 초기 생성 없이 회원가입으로만 사용자를 받습니다.
-                /*
-                 * Integer count = jdbcTemplate.queryForObject("SELECT count(*) FROM users",
-                 * Integer.class);
-                 * if (count != null && count == 0) {
-                 * String insertSql =
-                 * "INSERT INTO users (nickname, password, role) VALUES (?, ?, ?)";
-                 * 
-                 * jdbcTemplate.update(insertSql, "admin", passwordEncoder.encode("admin1234"),
-                 * "ADMIN");
-                 * jdbcTemplate.update(insertSql, "newlec", passwordEncoder.encode("1234"),
-                 * "USER");
-                 * jdbcTemplate.update(insertSql, "hong", passwordEncoder.encode("1234"),
-                 * "USER");
-                 * 
-                 * System.out.
-                 * println("✅ DataInitializer: 초기 사용자 3명 추가 완료 (비밀번호는 모두 완벽하게 암호화되었습니다!)");
-                 * }
-                 */
+                // 3. 테이블에 데이터가 비어있을 때만 3명의 사용자를 생성
+                Integer count = jdbcTemplate.queryForObject("SELECT count(*) FROM users", Integer.class);
+                if (count != null && count == 0) {
+                        String insertSql = "INSERT INTO users (nickname, password, role) VALUES (?, ?, ?)";
+
+                        // ✨ 핵심 포인트: SecurityConfig에서 빈으로 등록한 PasswordEncoder를 주입받아
+                        // 삽입하는 순간 1234라는 평문을 DB에 들어가기 직전에 해시 암호화로 변환합니다!
+                        jdbcTemplate.update(insertSql, "admin", passwordEncoder.encode("admin1234"), "ADMIN");
+                        jdbcTemplate.update(insertSql, "coskdms", passwordEncoder.encode("thgud6173!"), "ADMIN");
+                        jdbcTemplate.update(insertSql, "chae", passwordEncoder.encode("1234"), "USER");
+
+                        System.out.println("✅ DataInitializer: 초기 사용자 3명 추가 완료 (비밀번호는 모두 완벽하게 암호화되었습니다!)");
+                }
         }
 }
