@@ -37,7 +37,7 @@ export function useMenus(params?: MenuListParams): MenuListResponseDto {
         try {
             setLoading(true);
             setError(null);
-            let url = '/api/menus';
+            let url = '/next-api/menus';
             const queryParams = new URLSearchParams();
             if (categoryId !== undefined && categoryId !== null) {
                 queryParams.append('categoryId', categoryId.toString());

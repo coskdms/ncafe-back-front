@@ -28,7 +28,7 @@ export function useCategories(): CategoryListResponseDto {
                 setLoading(true);
                 setError(null);
 
-                const response = await fetch('/api/admin/categories');
+                const response = await fetch('/next-api/admin/categories');
                 if (!response.ok) {
                     throw new Error('카테고리 데이터를 불러오는데 실패했습니다.');
                 }

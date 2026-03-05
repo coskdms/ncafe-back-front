@@ -6,19 +6,19 @@ const API_BASE = process.env.API_BASE_URL || 'http://localhost:8032';
 /**
  * Catch-All API 프록시 (BFF 패턴의 핵심)
  *
- * 클라이언트의 모든 /api/* 요청을 받아서:
+ * 클라이언트의 모든 /next-api/* 요청을 받아서:
  * 1. 세션 쿠키에서 JWT를 꺼냄
  * 2. Authorization: Bearer {JWT} 헤더를 주입
  * 3. Spring Boot로 전달
  *
- * ★ 클라이언트는 JWT를 전혀 모른 채 그냥 fetch('/api/...')만 하면 됩니다!
+ * ★ 클라이언트는 JWT를 전혀 모른 채 그냥 fetch('/next-api/...')만 하면 됩니다!
  */
 async function proxyRequest(req: NextRequest) {
     const session = await getSession();
 
-    // /api/menus → /menus (Spring Boot 경로)
+    // /next-api/menus → /menus (Spring Boot 경로)
     // Next.js에서는 /api prefix가 있지만, Spring Boot에는 없음
-    const path = req.nextUrl.pathname.replace(/^\/api/, '');
+    const path = req.nextUrl.pathname.replace(/^\/next-api/, '');
     const search = req.nextUrl.search;
     const targetUrl = `${API_BASE}${path}${search}`;
 

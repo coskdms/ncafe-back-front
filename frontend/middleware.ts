@@ -32,7 +32,7 @@ const sessionOptions: SessionOptions = {
 const PROTECTED_PATHS = ['/admin'];
 
 // 인증 체크 건너뛸 경로
-const PUBLIC_PATHS = ['/login', '/signup', '/api', '/_next'];
+const PUBLIC_PATHS = ['/login', '/signup', '/api', '/next-api', '/_next'];
 
 export async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;

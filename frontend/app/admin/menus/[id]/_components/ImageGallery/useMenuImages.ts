@@ -27,7 +27,7 @@ export function useMenuImages(menuId: number): UseMenuImagesResult {
             setLoading(true);
             setError(null);
 
-            const response = await fetch(`/api/admin/menus/${menuId}/menu-images`);
+            const response = await fetch(`/next-api/admin/menus/${menuId}/menu-images`);
             if (!response.ok) {
                 throw new Error('이미지 목록을 불러오는데 실패했습니다.');
             }

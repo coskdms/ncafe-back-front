@@ -1,13 +1,13 @@
 /**
  * BFF 패턴에서 사용하는 API 유틸리티
- * 모든 요청은 /api/... 로 보내면, Next.js API Route가
+ * 모든 요청은 /next-api/... 로 보내면, Next.js API Route가
  * 세션 쿠키에서 JWT를 꺼내 Spring Boot에 자동 주입합니다.
  *
  * ★ 클라이언트 코드에서는 JWT를 전혀 신경 쓸 필요 없습니다!
  */
 export async function fetchAPI(endpoint: string, options?: RequestInit) {
     try {
-        const res = await fetch(`/api${endpoint}`, {
+        const res = await fetch(`/next-api${endpoint}`, {
             ...options,
             headers: {
                 'Content-Type': 'application/json',
