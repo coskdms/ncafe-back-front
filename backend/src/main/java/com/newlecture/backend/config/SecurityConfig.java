@@ -34,10 +34,10 @@ public class SecurityConfig {
                                 // 경로별 권한 설정
                                 .authorizeHttpRequests(auth -> auth
                                                 // 인증 관련 API는 누구나 접근 가능
-                                                .requestMatchers("/v1/auth/**").permitAll()
+                                                .requestMatchers("/auth/**").permitAll()
                                                 // 관리자 API는 ADMIN 권한 필요
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                                                // 나머지는 누구나 접근 가능
+                                                // 나머지는 누구나 접근 가능 (기존 설정)
                                                 .anyRequest().permitAll())
 
                                 // ★ 폼 로그인 비활성화 (더 이상 Spring Security의 /login 사용 안 함)
