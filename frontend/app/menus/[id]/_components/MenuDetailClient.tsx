@@ -90,11 +90,11 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                         <div className={styles.imageSection}>
                             <div className={styles.imageContainer}>
                                 <img
-                                    src={`/next-images/${currentImage}`}
+                                    src={`/images/${currentImage}`}
                                     alt={menu.korName}
                                     className={styles.image}
                                     onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/next-images/blank.png';
+                                        (e.target as HTMLImageElement).src = '/images/blank.png';
                                     }}
                                 />
                             </div>
@@ -110,11 +110,11 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                                             aria-label={`이미지 ${index + 1} 보기`}
                                         >
                                             <img
-                                                src={`/next-images/${imgSrc}`}
+                                                src={`/images/${imgSrc}`}
                                                 alt={`${menu.korName} 썸네일 ${index + 1}`}
                                                 className={styles.thumbnailImg}
                                                 onError={(e) => {
-                                                    (e.target as HTMLImageElement).src = '/next-images/blank.png';
+                                                    (e.target as HTMLImageElement).src = '/images/blank.png';
                                                 }}
                                             />
                                         </button>
