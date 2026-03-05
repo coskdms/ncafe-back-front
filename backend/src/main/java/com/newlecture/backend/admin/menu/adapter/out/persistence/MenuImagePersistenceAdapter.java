@@ -29,4 +29,26 @@ public class MenuImagePersistenceAdapter implements MenuImageRepository {
                 .map(MenuImageJpaEntity::toDomain)
                 .toList();
     }
+
+    @Override
+    public void deleteByMenuIdAndIdNotIn(Long menuId, List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            menuImageJpaRepository.deleteByMenuId(menuId);
+        } else {
+            menuImageJpaRepository.deleteByMenuIdAndIdNotIn(menuId, ids);
+        }
+    }
+
+    @Override
+    public void deleteByMenuId(Long menuId) {
+        menuImageJpaRepository.deleteByMenuId(menuId);
+    }
+
+    @Override
+    public void saveAll(List<MenuImage> menuImages) {
+        List<MenuImageJpaEntity> entities = menuImages.stream()
+                .map(MenuImageJpaEntity::fromDomain)
+                .toList();
+        menuImageJpaRepository.saveAll(entities);
+    }
 }

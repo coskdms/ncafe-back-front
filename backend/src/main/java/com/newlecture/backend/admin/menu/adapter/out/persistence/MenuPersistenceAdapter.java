@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.newlecture.backend.admin.menu.adapter.out.persistence.entity.MenuJpaEntity;
+import com.newlecture.backend.admin.menu.adapter.out.persistence.repository.AdminMenuImageJpaRepository;
 import com.newlecture.backend.admin.menu.adapter.out.persistence.repository.AdminMenuJpaRepository;
 import com.newlecture.backend.admin.menu.application.port.out.MenuRepository;
 import com.newlecture.backend.admin.menu.domain.Menu;
@@ -24,9 +25,13 @@ import com.newlecture.backend.admin.menu.domain.Menu;
 public class MenuPersistenceAdapter implements MenuRepository {
 
     private final AdminMenuJpaRepository menuJpaRepository;
+    private final AdminMenuImageJpaRepository menuImageJpaRepository;
 
-    public MenuPersistenceAdapter(AdminMenuJpaRepository menuJpaRepository) {
+    public MenuPersistenceAdapter(
+            AdminMenuJpaRepository menuJpaRepository,
+            AdminMenuImageJpaRepository menuImageJpaRepository) {
         this.menuJpaRepository = menuJpaRepository;
+        this.menuImageJpaRepository = menuImageJpaRepository;
     }
 
     @Override
@@ -34,15 +39,16 @@ public class MenuPersistenceAdapter implements MenuRepository {
         List<MenuJpaEntity> entities;
 
         boolean hasCategoryId = categoryId != null;
-        boolean hasSearchQuery = searchQuery != null && !searchQuery.trim().isEmpty();
+        String finalSearchQuery = (searchQuery != null) ? searchQuery.trim() : "";
+        boolean hasSearchQuery = !finalSearchQuery.isEmpty();
 
         if (hasCategoryId && hasSearchQuery) {
             entities = menuJpaRepository.findByCategoryIdAndKorNameContaining(
-                    String.valueOf(categoryId), searchQuery.trim());
+                    String.valueOf(categoryId), finalSearchQuery);
         } else if (hasCategoryId) {
             entities = menuJpaRepository.findByCategoryId(String.valueOf(categoryId));
         } else if (hasSearchQuery) {
-            entities = menuJpaRepository.findByKorNameContaining(searchQuery.trim());
+            entities = menuJpaRepository.findByKorNameContaining(finalSearchQuery);
         } else {
             entities = menuJpaRepository.findAll();
         }
@@ -57,5 +63,18 @@ public class MenuPersistenceAdapter implements MenuRepository {
         return menuJpaRepository.findById(id)
                 .map(MenuJpaEntity::toDomain)
                 .orElse(null);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        menuImageJpaRepository.deleteByMenuId(id);
+        menuJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public Menu save(Menu menu) {
+        MenuJpaEntity entity = MenuJpaEntity.fromDomain(menu);
+        MenuJpaEntity savedEntity = menuJpaRepository.save(entity);
+        return savedEntity.toDomain();
     }
 }

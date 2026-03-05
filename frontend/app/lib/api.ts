@@ -7,11 +7,20 @@
  */
 export async function fetchAPI(endpoint: string, options?: RequestInit) {
     try {
+        const isFormData = typeof FormData !== 'undefined' && options?.body instanceof FormData;
+
+        const defaultHeaders: Record<string, string> = {
+            'Accept': 'application/json',
+        };
+
+        if (!isFormData) {
+            defaultHeaders['Content-Type'] = 'application/json';
+        }
+
         const res = await fetch(`/api${endpoint}`, {
             ...options,
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                ...defaultHeaders,
                 ...options?.headers,
             },
             // credentials: 'same-origin' 이 기본값이므로 쿠키 자동 전송

@@ -11,29 +11,13 @@ import styles from './DetailHeader.module.css';
 //     updatedAt: string;
 // }
 
-export default function DetailHeader({ title }: { title: string }) {
-    // 날짜 포맷팅 함수
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
-
+export default function DetailHeader() {
     return (
         <header className={styles.header}>
-            {/* <Link href={backUrl} className={styles.backButton}>
-                <ArrowLeft size={20} />
-                <span>{backLabel}</span>
+            <Link href="/admin/menus" className={styles.backButton}>
+                <ArrowLeft size={18} />
+                <span>목록</span>
             </Link>
-            <div className={styles.dateInfo}>
-                <span>생성: {formatDate(createdAt)}</span>
-                <span>수정: {formatDate(updatedAt)}</span>
-            </div> */}
         </header>
     );
 }

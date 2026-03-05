@@ -7,6 +7,7 @@ import Button from '@/components/common/Button';
 import MenuCard from '../MenuCard';
 import styles from './MenuList.module.css';
 import { useMenus, MenuListParams } from './useMenus';
+import { fetchAPI } from '@/app/lib/api';
 
 const ITEMS_PER_PAGE = 8; // 페이지당 메뉴 개수
 
@@ -92,8 +93,14 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
     // 메뉴 삭제
     const handleDelete = async (id: number) => {
         if (confirm('정말 이 메뉴를 삭제하시겠습니까?')) {
-            // TODO: 백엔드 API 호출하여 메뉴 삭제
-            setMenus(prev => prev.filter(m => m.id !== id));
+            try {
+                await fetchAPI(`/admin/menus/${id}`, { method: 'DELETE' });
+                alert('삭제되었습니다.');
+                refetch();
+            } catch (error) {
+                console.error('삭제 오류:', error);
+                alert('메뉴를 삭제하는 중 오류가 발생했습니다.');
+            }
         }
     };
 

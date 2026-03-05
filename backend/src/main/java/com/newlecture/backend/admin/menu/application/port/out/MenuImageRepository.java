@@ -9,4 +9,10 @@ import com.newlecture.backend.admin.menu.domain.MenuImage;
  */
 public interface MenuImageRepository {
     List<MenuImage> findAllByMenuId(Long menuId);
+
+    void deleteByMenuIdAndIdNotIn(Long menuId, List<Long> ids);
+
+    void deleteByMenuId(Long menuId);
+
+    void saveAll(List<MenuImage> menuImages);
 }

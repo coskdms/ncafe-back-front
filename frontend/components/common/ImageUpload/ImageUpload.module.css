@@ -54,6 +54,17 @@
     border-radius: var(--radius-md);
     overflow: hidden;
     border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.previewItem.primary {
+    border: 2px solid var(--color-primary-500);
+}
+
+.previewItem:not(.primary):hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary-400);
 }
 
 .image {

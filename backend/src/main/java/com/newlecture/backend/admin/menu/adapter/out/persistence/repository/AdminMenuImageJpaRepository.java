@@ -12,4 +12,8 @@ import com.newlecture.backend.admin.menu.adapter.out.persistence.entity.MenuImag
 public interface AdminMenuImageJpaRepository extends JpaRepository<MenuImageJpaEntity, Long> {
 
     List<MenuImageJpaEntity> findByMenuIdOrderBySortOrder(Long menuId);
+
+    void deleteByMenuId(Long menuId);
+
+    void deleteByMenuIdAndIdNotIn(Long menuId, List<Long> ids);
 }

@@ -45,7 +45,8 @@ async function proxyRequest(req: NextRequest) {
     let body: BodyInit | null = null;
     if (req.method !== 'GET' && req.method !== 'HEAD') {
         if (contentType?.includes('multipart/form-data')) {
-            body = await req.blob();  // 파일 업로드
+            const formData = await req.formData();
+            body = formData as unknown as BodyInit;  // 파일 업로드
             delete headers['Content-Type'];  // multipart는 boundary가 자동 설정되어야 함
         } else {
             body = await req.text();  // JSON 등

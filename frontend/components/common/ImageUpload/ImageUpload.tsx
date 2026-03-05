@@ -102,7 +102,12 @@ export default function ImageUpload({ images, onChange, maxFiles = 5 }: ImageUpl
             {images.length > 0 && (
                 <div className={styles.previewGrid}>
                     {images.map((file, index) => (
-                        <div key={index} className={styles.previewItem}>
+                        <div
+                            key={index}
+                            className={`${styles.previewItem} ${index === 0 ? styles.primary : ''}`}
+                            onClick={() => setPrimary(index)}
+                            title={index === 0 ? "대표 이미지입니다" : "클릭하여 대표 이미지로 설정"}
+                        >
                             <Image
                                 src={getImageSrc(file)}
                                 alt={`Preview ${index}`}
@@ -125,10 +130,7 @@ export default function ImageUpload({ images, onChange, maxFiles = 5 }: ImageUpl
                             {index === 0 ? (
                                 <span className={styles.primaryBadge}>대표</span>
                             ) : (
-                                <div
-                                    className={styles.setPrimaryOverlay}
-                                    onClick={() => setPrimary(index)}
-                                >
+                                <div className={styles.setPrimaryOverlay}>
                                     <span className={styles.setPrimaryBtn}>대표 설정</span>
                                 </div>
                             )}

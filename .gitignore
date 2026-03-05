@@ -22,3 +22,6 @@ build/
 .gradle/
 node_modules/
 dist/
+
+# Uploads
+backend/upload/
