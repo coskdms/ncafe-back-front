@@ -12,7 +12,7 @@ export default function CategoryButtons({ onCategoryChange }: CategoryButtonsPro
 
     useEffect(() => {
         const fetchCategories = async () => {
-            const response = await fetch('/next-api/admin/categories');
+            const response = await fetch('/api/admin/categories');
             const data = await response.json();
             setCategories(data);
         }

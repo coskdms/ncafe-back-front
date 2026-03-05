@@ -33,7 +33,7 @@ export function useBasicInfo(menuId: number): UseBasicInfoResult {
             setLoading(true);
             setError(null);
 
-            const response = await fetch(`/next-api/admin/menus/${menuId}`);
+            const response = await fetch(`/api/admin/menus/${menuId}`);
             if (!response.ok) {
                 throw new Error('메뉴 데이터를 불러오는데 실패했습니다.');
             }

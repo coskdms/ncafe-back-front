@@ -27,7 +27,7 @@ export function useMenuDetail(id: string): MenuDetailResponseDto {
         try {
             setLoading(true);
             setError(false);
-            const res = await fetch(`/next-api/menus/${id}`);
+            const res = await fetch(`/api/menus/${id}`);
             if (res.ok) {
                 const data = await res.json();
                 if (data) {

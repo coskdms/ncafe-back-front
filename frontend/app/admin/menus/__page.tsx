@@ -13,7 +13,7 @@ export default function MenusPage() {
     const fetchMenus = async () => {
         // new URL()을 사용하면 url을 쉽게 만들 수 있다.
         // ?을 굳이 안붙여줘도 붙어진다
-        const url = new URL("/next-api/admin/menus", window.location.origin);
+        const url = new URL("/api/admin/menus", window.location.origin);
         const params = url.searchParams
         if (categoryId) {
             params.append('cid', categoryId.toString());
