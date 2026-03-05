@@ -23,10 +23,25 @@ async function proxyRequest(req: NextRequest) {
     const search = req.nextUrl.search;
     const targetUrl = `${API_BASE}${path}${search}`;
 
-    // 요청 헤더 구성
+    // 1. 요청 헤더 구성 (백엔드로 전달할 송장 만들기)
     const headers = new Headers();
-    const skipHeaders = ['host', 'cookie', 'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailers', 'transfer-encoding', 'upgrade'];
 
+    // 2. 백엔드로 전달하지 않을 헤더 목록 (hop-by-hop 헤더 등)
+    // 브라우저-BFF 사이의 연결 설정을 백엔드-BFF 사이로 그대로 넘기면 에러가 발생하므로 필터링이 필수입니다.
+    const skipHeaders = [
+        'host',               // 대상 서버(백엔드)의 호스트로 자동 재설정되어야 함
+        'cookie',             // 브라우저 쿠키는 직접 전달하지 않고 세션에서 꺼낸 JWT만 사용
+        'connection',         // 연결 제어용 (Node.js fetch에서 'invalid connection header' 에러 유발 주범)
+        'keep-alive',         // 연결 유지용
+        'proxy-authenticate', // 프록시 인증 관련
+        'proxy-authorization',
+        'te',                 // 전송 인코딩 관련
+        'trailers',
+        'transfer-encoding',
+        'upgrade'             // 프로토콜 업그레이드 (WebSocket 등)
+    ];
+
+    // 3. 안전한 헤더물만 선별하여 새 헤더 바구니에 담기
     req.headers.forEach((value, key) => {
         if (!skipHeaders.includes(key.toLowerCase())) {
             headers.set(key, value);
