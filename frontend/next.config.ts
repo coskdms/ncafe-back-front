@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/next-images/:path*',
-        destination: `${backendUrl}/:path*`,
+        destination: `${backendUrl}/images/:path*`,
       },
     ];
   },
