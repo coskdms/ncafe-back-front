@@ -20,7 +20,7 @@ import java.util.Map;
  * → 브라우저에는 JWT가 절대 노출되지 않음!
  */
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthUseCase authUseCase;

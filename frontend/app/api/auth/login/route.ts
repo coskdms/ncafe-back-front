@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     // 1. Spring Boot 로그인 API 호출 (서버 → 서버, 직접 통신)
-    const loginRes = await fetch(`${API_BASE}/v1/auth/login`, {
+    const loginRes = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
