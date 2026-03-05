@@ -46,7 +46,7 @@ export default function ImageGallery({ menuId }: { menuId: number }) {
                 <div className={styles.imageContainer}>
                     <Image
                         key={mainImage.srcUrl}
-                        src={`/images/${mainImage.srcUrl}`}
+                        src={`/next-images/${mainImage.srcUrl}`}
                         alt={mainImage.altText || "Menu Main Image"}
                         fill
                         className={styles.mainImage}
@@ -66,7 +66,7 @@ export default function ImageGallery({ menuId }: { menuId: number }) {
                         >
                             <div className={styles.thumbnailImageWrapper}>
                                 <Image
-                                    src={`/images/${img.srcUrl}`}
+                                    src={`/next-images/${img.srcUrl}`}
                                     alt={`${img.altText || 'Thumbnail'} ${idx + 1}`}
                                     fill
                                     className={styles.thumbnailImage}

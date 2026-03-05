@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
     const backendUrl = process.env.API_BASE_URL || 'http://localhost:8032';
     return [
       {
-        source: '/images/:path*',
-        destination: `${backendUrl}/images/:path*`,
+        source: '/next-images/:path*',
+        destination: `${backendUrl}/:path*`,
       },
     ];
   },
