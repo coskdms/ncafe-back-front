@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/app/lib/session';
 
-const API_BASE = process.env.API_BASE_URL || 'http://localhost:8032';
+const API_BASE = process.env.API_BASE_URL ||
+    (process.env.NODE_ENV === 'production' ? 'http://backend:8032' : 'http://localhost:8032');
 
 /**
  * Catch-All API 프록시 (BFF 패턴의 핵심)
