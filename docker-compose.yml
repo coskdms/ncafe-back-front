@@ -10,6 +10,7 @@ services:
     # 다만 Nginx 라우팅 등 기존 인프라와 호환을 위해 8032 포트를 열어둡니다.
     ports:
       - "8032:8032"
+    environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/ncafedb}
       - JWT_SECRET=${JWT_SECRET}
