@@ -7,8 +7,9 @@ services:
       dockerfile: backend/Dockerfile
     container_name: ${USER_ID:-newnaeun}-ncafe-backend
     # BFF 패턴: 백엔드는 외부 공개 불필요 (프론트엔드가 내부 네트워크로 접근)
-    # 로컬에서 포트 노출이 필요하면 docker-compose.override.yml을 사용하세요.
-    environment:
+    # 다만 Nginx 라우팅 등 기존 인프라와 호환을 위해 8032 포트를 열어둡니다.
+    ports:
+      - "8032:8032"
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/ncafedb}
       - JWT_SECRET=${JWT_SECRET}
