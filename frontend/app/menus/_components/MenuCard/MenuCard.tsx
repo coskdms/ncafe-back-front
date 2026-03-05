@@ -22,11 +22,11 @@ export default function MenuCard({ menu }: MenuCardProps) {
         <Link href={`/menus/${menu.id}`} style={{ textDecoration: 'none' }}>
             <div className={styles.card}>
                 <img
-                    src={`/next-images/${firstImage}`}
+                    src={`/images/${firstImage}`}
                     alt={menu.korName}
                     className={styles.cardImage}
                     onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/next-images/blank.png';
+                        (e.target as HTMLImageElement).src = '/images/blank.png';
                     }}
                 />
                 <h3 className={styles.cardTitle}>{menu.korName}</h3>
