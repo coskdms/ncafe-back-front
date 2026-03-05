@@ -1,29 +1,40 @@
 services:
   # ── 백엔드 (Spring Boot) ──
-  # enviroment: db 매번 로컬이랑 도커랑 연결이 바꿔서 실행해야되서 환경변수로 설정
   backend:
+    image: ${BACKEND_IMAGE:-ncafe-backend:latest}
     build:
       context: .
       dockerfile: backend/Dockerfile
-    container_name: newnaeun-ncafe-backend
+    container_name: ${USER_ID:-newnaeun}-ncafe-backend
+    # BFF 패턴: 브라우저→프론트엔드→백엔드 이므로 백엔드는 외부 공개 불필요.
+    # 로컬에서 Postman 테스트가 필요하면 .env에 BACKEND_PORT_MAPPING=8032:8032 를 추가하세요.
     ports:
-      - "8032:8032"
+      - "${BACKEND_PORT_MAPPING:-}"
     environment:
-      - DB_URL=jdbc:postgresql://db:5432/ncafedb?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/ncafedb}
+      - JWT_SECRET=${JWT_SECRET}
+      - DB_PASSWORD=${DB_PASSWORD}
     volumes:
-      - /home/newnaeun/dist/ncafe/upload:/app/upload
+      - /home/${USER_ID:-newnaeun}/dist/ncafe/upload:/app/upload
     restart: unless-stopped
+    depends_on:
+      - db
 
   # ── 프론트엔드 (Next.js) ──
   frontend:
+    image: ${FRONTEND_IMAGE:-ncafe-frontend:latest}
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: newnaeun-ncafe-frontend
+    container_name: ${USER_ID:-newnaeun}-ncafe-frontend
     ports:
-      - "3032:3032"
+      - "${FRONTEND_PORT:-3032}:3032"
     environment:
-      - BACKEND_URL=http://backend:8032
+      # 프론트엔드 BFF 프록시가 백엔드에 접속할 때 사용하는 환경변수 (Docker 내부 네트워크)
+      - API_BASE_URL=http://backend:8032
+      # iron-session 암호화 키 (32자 이상, GitHub Secrets에서 주입)
+      - SESSION_SECRET=${SESSION_SECRET}
     depends_on:
       - backend
     restart: unless-stopped
@@ -32,13 +43,15 @@ services:
   db:
     image: postgres:17
     profiles: [ "with-db" ]
-    container_name: newnaeun-ncafe-db
+    container_name: ${USER_ID:-newnaeun}-ncafe-db
     environment:
       POSTGRES_DB: ncafedb
       POSTGRES_USER: ncafe
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-1234}
+    # 로컬 개발 시 VS Code 연결이 필요하면 .env 파일에 DB_PORT_MAPPING=5332:5432 를 추가하세요.
+    # 서버(배포) 환경에서는 이 변수를 비워두어 포트 노출을 원천 차단하고 충돌을 방지합니다.
     ports:
-      - "${DB_PORT:-5332}:5432"
+      - "${DB_PORT_MAPPING:-}"
     volumes:
       - ncafe-db-data:/var/lib/postgresql/data
     restart: unless-stopped

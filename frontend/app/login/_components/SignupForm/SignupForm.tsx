@@ -4,23 +4,22 @@ import { useState } from 'react';
 import styles from './SignupForm.module.css';
 
 interface SignupFormProps {
-    onSignup: (email: string, password: string, nickname: string) => void;
+    onSignup: (nickname: string, password: string) => void;
     error?: string;
     isLoading?: boolean;
 }
 
 export default function SignupForm({ onSignup, error, isLoading }: SignupFormProps) {
-    const [email, setEmail] = useState('');
+    const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
-    const [nickname, setNickname] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (password !== passwordConfirm) {
             return;
         }
-        onSignup(email, password, nickname);
+        onSignup(nickname, password);
     };
 
     const passwordMismatch = passwordConfirm.length > 0 && password !== passwordConfirm;
@@ -28,26 +27,14 @@ export default function SignupForm({ onSignup, error, isLoading }: SignupFormPro
     return (
         <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.inputGroup}>
-                <label htmlFor="signup-email" className={styles.label}>이메일</label>
-                <input
-                    id="signup-email"
-                    type="email"
-                    className={styles.input}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="이메일을 입력하세요"
-                    required
-                />
-            </div>
-            <div className={styles.inputGroup}>
-                <label htmlFor="signup-nickname" className={styles.label}>닉네임</label>
+                <label htmlFor="signup-nickname" className={styles.label}>아이디</label>
                 <input
                     id="signup-nickname"
                     type="text"
                     className={styles.input}
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
-                    placeholder="닉네임을 입력하세요"
+                    placeholder="아이디를 입력하세요"
                     required
                 />
             </div>

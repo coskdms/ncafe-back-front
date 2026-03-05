@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import LoginForm from './_components/LoginForm/LoginForm';
 import SignupForm from './_components/SignupForm/SignupForm';
@@ -11,6 +11,7 @@ type Tab = 'login' | 'signup';
 
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const login = useAuthStore((state) => state.login);
     const [activeTab, setActiveTab] = useState<Tab>('login');
     const [error, setError] = useState('');
@@ -21,11 +22,11 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            // Zustand authStore의 login 액션을 호출합니다.
-            // 내부적으로 Spring Security POST /login → GET /api/auth/me 순서로 처리됩니다.
             await login(nickname, password);
-            console.log('로그인 성공!');
-            router.push('/');
+
+            // 리다이렉트 (middleware에서 보낸 redirect 파라미터 확인)
+            const redirect = searchParams.get('redirect') || '/';
+            router.push(redirect);
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : '로그인에 실패했습니다.');
         } finally {
@@ -33,23 +34,22 @@ export default function LoginPage() {
         }
     };
 
-    const handleSignup = async (email: string, password: string, nickname: string) => {
+    const handleSignup = async (nickname: string, password: string) => {
         setError('');
         setIsLoading(true);
 
         try {
-            const res = await fetch('/api/v1/auth/signup', {
+            const res = await fetch('/api/auth/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password, nickname }),
+                body: JSON.stringify({ nickname, password }),
             });
 
             if (!res.ok) {
                 const data = await res.json();
-                throw new Error(data.error || '회원가입에 실패했습니다.');
+                throw new Error(data.message || '회원가입에 실패했습니다.');
             }
 
-            // 가입 성공 → 로그인 탭으로 전환
             setActiveTab('login');
             setError('');
             alert('회원가입이 완료되었습니다! 로그인해주세요.');

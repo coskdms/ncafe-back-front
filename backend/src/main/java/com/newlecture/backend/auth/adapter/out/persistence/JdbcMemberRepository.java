@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 아웃바운드 어댑터: JDBC 구현체
- * MemberRepository(아웃바운드 포트)를 구현합니다.
- * DB 기술이 바뀌면 이 클래스만 교체하면 됩니다.
+ * users 테이블에 접근합니다.
  */
 @Repository
 public class JdbcMemberRepository implements MemberRepository {
@@ -24,10 +24,9 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     private final RowMapper<Member> memberRowMapper = (rs, rowNum) -> Member.builder()
-            .id(rs.getLong("id"))
-            .email(rs.getString("email"))
-            .password(rs.getString("password"))
+            .id(rs.getString("id"))
             .nickname(rs.getString("nickname"))
+            .password(rs.getString("password"))
             .role(rs.getString("role"))
             .createdAt(rs.getTimestamp("created_at") != null
                     ? rs.getTimestamp("created_at").toLocalDateTime()
@@ -38,34 +37,36 @@ public class JdbcMemberRepository implements MemberRepository {
             .build();
 
     @Override
-    public Optional<Member> findByEmail(String email) {
-        String sql = "SELECT * FROM member WHERE email = ?";
-        List<Member> members = jdbcTemplate.query(sql, memberRowMapper, email);
+    public Optional<Member> findByNickname(String nickname) {
+        String sql = "SELECT * FROM users WHERE nickname = ?";
+        List<Member> members = jdbcTemplate.query(sql, memberRowMapper, nickname);
         return members.stream().findFirst();
     }
 
     @Override
     public Member save(Member member) {
+        // DB의 id 컬럼이 uuid 타입이므로, 문자열이 아닌 UUID 객체를 직접 전달
         String sql = """
-                INSERT INTO member (email, password, nickname, role, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO users (id, nickname, password, role, created_at, updated_at)
+                VALUES (?::uuid, ?, ?, ?, ?, ?)
                 """;
+        String id = UUID.randomUUID().toString();
         jdbcTemplate.update(sql,
-                member.getEmail(),
-                member.getPassword(),
+                id,
                 member.getNickname(),
+                member.getPassword(),
                 member.getRole(),
                 member.getCreatedAt(),
                 member.getUpdatedAt());
 
-        // 저장 후 조회하여 ID 포함한 정보 반환
-        return findByEmail(member.getEmail()).orElse(member);
+        member.setId(id);
+        return member;
     }
 
     @Override
-    public boolean existsByEmail(String email) {
-        String sql = "SELECT COUNT(*) FROM member WHERE email = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
+    public boolean existsByNickname(String nickname) {
+        String sql = "SELECT COUNT(*) FROM users WHERE nickname = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, nickname);
         return count != null && count > 0;
     }
 }

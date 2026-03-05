@@ -18,6 +18,16 @@ export default function Navbar() {
     // (페이지 새로고침 후에도 로그인 상태를 복구하기 위함)
     useEffect(() => {
         checkAuth();
+
+        // BFF: 다른 컴포넌트에서 login/logout 이벤트 발생 시 상태 갱신
+        const onLogin = () => checkAuth();
+        const onLogout = () => checkAuth();
+        window.addEventListener('login', onLogin);
+        window.addEventListener('logout', onLogout);
+        return () => {
+            window.removeEventListener('login', onLogin);
+            window.removeEventListener('logout', onLogout);
+        };
     }, [checkAuth]);
 
     useEffect(() => {
@@ -49,7 +59,7 @@ export default function Navbar() {
                         {!isLoading && (
                             isAuthenticated ? (
                                 <>
-                                    <span className={styles.userName}>👋 {user?.username}님</span>
+                                    <span className={styles.userName}>👋 {user?.nickname}님</span>
                                     <button onClick={handleLogout} className={styles.logoutBtn}>로그아웃</button>
                                 </>
                             ) : (
@@ -73,7 +83,7 @@ export default function Navbar() {
                     {!isLoading && (
                         isAuthenticated ? (
                             <>
-                                <span className={styles.mobileUserName}>👋 {user?.username}님</span>
+                                <span className={styles.mobileUserName}>👋 {user?.nickname}님</span>
                                 <button onClick={handleLogout} className={styles.mobileLoginBtn}>로그아웃</button>
                             </>
                         ) : (

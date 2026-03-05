@@ -12,10 +12,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
-    private Long id;
-    private String email;
+    private String id; // UUID 문자열
+    private String nickname; // 로그인 식별자 (아이디)
     private String password;
-    private String nickname;
     private String role; // "USER", "ADMIN"
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
