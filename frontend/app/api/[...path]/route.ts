@@ -24,30 +24,29 @@ async function proxyRequest(req: NextRequest) {
     const targetUrl = `${API_BASE}${path}${search}`;
 
     // 요청 헤더 구성
-    const headers: Record<string, string> = {};
+    const headers = new Headers();
+    const skipHeaders = ['host', 'cookie', 'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailers', 'transfer-encoding', 'upgrade'];
 
-    const contentType = req.headers.get('content-type');
-    if (contentType) {
-        headers['Content-Type'] = contentType;
-    }
-
-    const accept = req.headers.get('accept');
-    if (accept) {
-        headers['Accept'] = accept;
-    }
+    req.headers.forEach((value, key) => {
+        if (!skipHeaders.includes(key.toLowerCase())) {
+            headers.set(key, value);
+        }
+    });
 
     // ★ 핵심: 세션에 JWT가 있으면 Authorization 헤더 주입
     if (session.token) {
-        headers['Authorization'] = `Bearer ${session.token}`;
+        headers.set('Authorization', `Bearer ${session.token}`);
     }
 
     // 요청 본문 전달
     let body: BodyInit | null = null;
+    const contentType = req.headers.get('content-type');
+
     if (req.method !== 'GET' && req.method !== 'HEAD') {
         if (contentType?.includes('multipart/form-data')) {
             const formData = await req.formData();
             body = formData as unknown as BodyInit;  // 파일 업로드
-            delete headers['Content-Type'];  // multipart는 boundary가 자동 설정되어야 함
+            headers.delete('Content-Type');  // multipart는 boundary가 자동 설정되어야 함
         } else {
             body = await req.text();  // JSON 등
         }

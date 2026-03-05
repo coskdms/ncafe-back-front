@@ -27,6 +27,7 @@ jobs:
           echo "JWT_SECRET=${JWT_SECRET}" >> .env
           echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
           echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}" >> .env
+          echo "SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}" >> .env
         env:
           COMPOSE_PROJECT_NAME: ${{ vars.COMPOSE_PROJECT_NAME }}
           USER_ID: ${{ vars.USER_ID }}
@@ -35,6 +36,7 @@ jobs:
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          SPRING_DATASOURCE_USERNAME: ${{ vars.SPRING_DATASOURCE_USERNAME }}
 
       # 단계 3: 기존 컨테이너 정리 (이름 충돌 방지)
       - name: Stop old containers
