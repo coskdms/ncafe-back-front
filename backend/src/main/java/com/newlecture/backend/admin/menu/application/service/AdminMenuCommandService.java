@@ -125,7 +125,6 @@ public class AdminMenuCommandService
         }
 
         // 3. imageOrder가 있으면 해당 순서대로 모든 이미지 DB 반영
-        // imageOrder 예: ["id:10", "file:0", "id:11"]
         if (imageOrder != null && !imageOrder.isEmpty()) {
             List<MenuImage> existingImages = menuImageRepository.findAllByMenuId(menuId);
             List<MenuImage> imagesToSave = new ArrayList<>();
@@ -133,26 +132,31 @@ public class AdminMenuCommandService
             for (int i = 0; i < imageOrder.size(); i++) {
                 String orderItem = imageOrder.get(i);
                 final int sortOrder = i;
-                if (orderItem.startsWith("id:")) {
-                    Long id = Long.parseLong(orderItem.substring(3));
-                    existingImages.stream()
-                            .filter(img -> img.getId().equals(id))
-                            .findFirst()
-                            .ifPresent(img -> {
-                                img.setSortOrder(sortOrder);
-                                imagesToSave.add(img);
-                            });
-                } else if (orderItem.startsWith("file:")) {
-                    int fileIndex = Integer.parseInt(orderItem.substring(5));
-                    if (fileIndex < newFileNames.size()) {
-                        MenuImage newImage = MenuImage.builder()
-                                .menuId(menuId)
-                                .srcUrl(newFileNames.get(fileIndex))
-                                .sortOrder(i)
-                                .createdAt(LocalDateTime.now())
-                                .build();
-                        imagesToSave.add(newImage);
+                try {
+                    if (orderItem.startsWith("id:")) {
+                        Long id = Long.parseLong(orderItem.substring(3));
+                        existingImages.stream()
+                                .filter(img -> img.getId().equals(id))
+                                .findFirst()
+                                .ifPresent(img -> {
+                                    img.setSortOrder(sortOrder);
+                                    imagesToSave.add(img);
+                                });
+                    } else if (orderItem.startsWith("file:")) {
+                        int fileIndex = Integer.parseInt(orderItem.substring(5));
+                        if (fileIndex >= 0 && fileIndex < newFileNames.size()) {
+                            MenuImage newImage = MenuImage.builder()
+                                    .menuId(menuId)
+                                    .srcUrl(newFileNames.get(fileIndex))
+                                    .sortOrder(sortOrder)
+                                    .createdAt(LocalDateTime.now())
+                                    .build();
+                            imagesToSave.add(newImage);
+                        }
                     }
+                } catch (Exception e) {
+                    // 개별 파싱 에러가 전체 프로세스를 중단시키지 않도록 로깅 후 스킵
+                    System.err.println("[이미지 순서 파싱 오류] orderItem: " + orderItem + ", error: " + e.getMessage());
                 }
             }
             if (!imagesToSave.isEmpty()) {
