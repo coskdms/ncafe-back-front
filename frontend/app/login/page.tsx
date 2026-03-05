@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import LoginForm from './_components/LoginForm/LoginForm';
@@ -9,7 +9,7 @@ import styles from './page.module.css';
 
 type Tab = 'login' | 'signup';
 
-export default function LoginPage() {
+function LoginContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const login = useAuthStore((state) => state.login);
@@ -89,5 +89,13 @@ export default function LoginPage() {
                 )}
             </div>
         </main>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense>
+            <LoginContent />
+        </Suspense>
     );
 }
