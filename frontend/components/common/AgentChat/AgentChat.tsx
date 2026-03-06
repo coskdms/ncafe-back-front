@@ -316,7 +316,11 @@ export default function AgentChat() {
                         placeholder="파덕이에게 물어보세요..."
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') handleSend(inputValue); }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                                handleSend(inputValue);
+                            }
+                        }}
                     />
                     <button className={styles.sendBtn} onClick={() => handleSend(inputValue)}>전송</button>
                 </div>
