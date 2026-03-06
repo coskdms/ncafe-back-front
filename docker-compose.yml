@@ -14,7 +14,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - DB_PASSWORD=${DB_PASSWORD}
     volumes:
-      - /home/${USER_ID:-newnaeun}/dist/ncafe/upload:/app/upload
+      - ${UPLOAD_HOST_PATH:-/home/newnaeun/dist/ncafe/upload}:/app/upload
     restart: unless-stopped
     depends_on:
       - db
@@ -52,6 +52,19 @@ services:
     # 로컬에서 포트 노출이 필요하면 docker-compose.override.yml을 사용하세요.
     volumes:
       - ncafe-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # ── AI Agent 서버 (FastAPI) ──
+  beomini:
+    image: ${BEOMINI_IMAGE:-ncafe-beomini:latest}
+    build:
+      context: ./beomini-server
+      dockerfile: Dockerfile
+    container_name: ${USER_ID:-newnaeun}-beomini-server
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./beomini-server/.env
     restart: unless-stopped
 
 volumes:
