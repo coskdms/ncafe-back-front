@@ -63,8 +63,8 @@ services:
     container_name: ${USER_ID:-newnaeun}-beomini-server
     ports:
       - "8000:8000"
-    env_file:
-      - ./beomini-server/.env
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     restart: unless-stopped
 
 volumes:
