@@ -1,8 +1,8 @@
-package com.newlecture.backend.admin.menu.application.port.in;
+package com.newlecture.backend.admin.category.application.port.in;
 
 import java.util.List;
 
-import com.newlecture.backend.admin.menu.domain.Category;
+import com.newlecture.backend.admin.category.domain.Category;
 
 /**
  * 어드민 인바운드 포트: 카테고리 관리 유스케이스

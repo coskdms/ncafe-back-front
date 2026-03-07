@@ -1,4 +1,4 @@
-package com.newlecture.backend.admin.menu.adapter.in.web;
+package com.newlecture.backend.admin.category.adapter.in.web;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.newlecture.backend.admin.menu.domain.Category;
-import com.newlecture.backend.admin.menu.application.port.in.AdminCategoryUseCase;
+import com.newlecture.backend.admin.category.domain.Category;
+import com.newlecture.backend.admin.category.application.port.in.AdminCategoryUseCase;
 
 /**
  * 어드민 인바운드 어댑터: 카테고리 관리 REST 컨트롤러

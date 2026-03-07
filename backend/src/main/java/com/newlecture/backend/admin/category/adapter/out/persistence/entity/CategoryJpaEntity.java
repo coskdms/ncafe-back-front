@@ -1,4 +1,4 @@
-package com.newlecture.backend.admin.menu.adapter.out.persistence.entity;
+package com.newlecture.backend.admin.category.adapter.out.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.newlecture.backend.admin.menu.domain.Category;
+import com.newlecture.backend.admin.category.domain.Category;
 
 /**
  * JPA 엔티티: categories 테이블 매핑

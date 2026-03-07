@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.newlecture.backend.admin.menu.domain.Category;
+import com.newlecture.backend.admin.category.domain.Category;
 import com.newlecture.backend.admin.menu.domain.Menu;
 import com.newlecture.backend.admin.menu.domain.MenuImage;
 import com.newlecture.backend.admin.menu.application.port.in.GetAdminMenuDetailUseCase;
@@ -14,7 +14,7 @@ import com.newlecture.backend.admin.menu.application.port.in.command.GetMenuList
 import com.newlecture.backend.admin.menu.application.port.in.result.MenuDetailResult;
 import com.newlecture.backend.admin.menu.application.port.in.result.MenuItemResult;
 import com.newlecture.backend.admin.menu.application.port.in.result.MenuListResult;
-import com.newlecture.backend.admin.menu.application.port.out.CategoryRepository;
+import com.newlecture.backend.admin.category.application.port.out.CategoryRepository;
 import com.newlecture.backend.admin.menu.application.port.out.MenuImageRepository;
 import com.newlecture.backend.admin.menu.application.port.out.MenuRepository;
 

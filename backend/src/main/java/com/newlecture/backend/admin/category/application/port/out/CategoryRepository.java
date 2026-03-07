@@ -1,8 +1,8 @@
-package com.newlecture.backend.admin.menu.application.port.out;
+package com.newlecture.backend.admin.category.application.port.out;
 
 import java.util.List;
 
-import com.newlecture.backend.admin.menu.domain.Category;
+import com.newlecture.backend.admin.category.domain.Category;
 
 /**
  * 아웃바운드 포트: 카테고리 영속성

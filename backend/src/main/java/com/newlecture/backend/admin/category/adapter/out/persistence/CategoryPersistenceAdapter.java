@@ -1,14 +1,14 @@
-package com.newlecture.backend.admin.menu.adapter.out.persistence;
+package com.newlecture.backend.admin.category.adapter.out.persistence;
 
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import com.newlecture.backend.admin.menu.adapter.out.persistence.entity.CategoryJpaEntity;
-import com.newlecture.backend.admin.menu.adapter.out.persistence.repository.AdminCategoryJpaRepository;
-import com.newlecture.backend.admin.menu.application.port.out.CategoryRepository;
-import com.newlecture.backend.admin.menu.domain.Category;
+import com.newlecture.backend.admin.category.adapter.out.persistence.entity.CategoryJpaEntity;
+import com.newlecture.backend.admin.category.adapter.out.persistence.repository.AdminCategoryJpaRepository;
+import com.newlecture.backend.admin.category.application.port.out.CategoryRepository;
+import com.newlecture.backend.admin.category.domain.Category;
 
 /**
  * 아웃바운드 어댑터: 카테고리 영속성

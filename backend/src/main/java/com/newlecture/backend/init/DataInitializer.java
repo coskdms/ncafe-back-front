@@ -1,9 +1,9 @@
 package com.newlecture.backend.init;
 
-import com.newlecture.backend.admin.menu.adapter.out.persistence.entity.CategoryJpaEntity;
+import com.newlecture.backend.admin.category.adapter.out.persistence.entity.CategoryJpaEntity;
 import com.newlecture.backend.admin.menu.adapter.out.persistence.entity.MenuImageJpaEntity;
 import com.newlecture.backend.admin.menu.adapter.out.persistence.entity.MenuJpaEntity;
-import com.newlecture.backend.admin.menu.adapter.out.persistence.repository.AdminCategoryJpaRepository;
+import com.newlecture.backend.admin.category.adapter.out.persistence.repository.AdminCategoryJpaRepository;
 import com.newlecture.backend.admin.menu.adapter.out.persistence.repository.AdminMenuImageJpaRepository;
 import com.newlecture.backend.admin.menu.adapter.out.persistence.repository.AdminMenuJpaRepository;
 import lombok.RequiredArgsConstructor;

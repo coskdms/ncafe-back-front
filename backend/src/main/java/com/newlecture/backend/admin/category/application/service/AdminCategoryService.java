@@ -1,13 +1,13 @@
-package com.newlecture.backend.admin.menu.application.service;
+package com.newlecture.backend.admin.category.application.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.newlecture.backend.admin.menu.domain.Category;
-import com.newlecture.backend.admin.menu.application.port.in.AdminCategoryUseCase;
-import com.newlecture.backend.admin.menu.application.port.out.CategoryRepository;
+import com.newlecture.backend.admin.category.domain.Category;
+import com.newlecture.backend.admin.category.application.port.in.AdminCategoryUseCase;
+import com.newlecture.backend.admin.category.application.port.out.CategoryRepository;
 
 /**
  * 어드민 카테고리 서비스

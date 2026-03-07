@@ -1,4 +1,4 @@
-package com.newlecture.backend.admin.menu.domain;
+package com.newlecture.backend.admin.category.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

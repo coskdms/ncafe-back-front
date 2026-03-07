@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, UtensilsCrossed, ShoppingCart, Settings, Menu, X } from 'lucide-react';
+import { LayoutDashboard, UtensilsCrossed, ShoppingCart, Settings, Menu, X, FolderTree } from 'lucide-react';
 import styles from './AdminSidebar.module.css';
 import { useState, useEffect } from 'react';
 
 const menuItems = [
     { href: '/admin', icon: LayoutDashboard, label: '대시보드' },
     { href: '/admin/menus', icon: UtensilsCrossed, label: '메뉴 관리' },
+    { href: '/admin/categories', icon: FolderTree, label: '카테고리 관리' },
     { href: '/admin/orders', icon: ShoppingCart, label: '주문 관리' },
     { href: '/admin/settings', icon: Settings, label: '설정' },
 ];

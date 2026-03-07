@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import MenuList from './_components/MenuList/MenuList';
 import MenuActionBar from './_components/MenuActionBar/MenuActionBar';
-import CategoryTabs from './_components/CategoryTabs/CategoryTabs';
+import CategoryTabs from '../_components/category/CategoryTabs/CategoryTabs';
 import styles from './page.module.css';
 import { Menu } from '@/types/menu';
 

@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import Button from '@/components/common/Button';
-import { useCategories } from '@/app/admin/menus/_components/CategoryTabs/useCategories';
+import { useCategories } from '@/app/admin/_components/category/CategoryTabs/useCategories';
 import ImageUpload, { ImageFile } from '@/components/common/ImageUpload/ImageUpload';
 import OptionManager from '@/app/admin/menus/_components/OptionManager/OptionManager';
 import { MenuFormData as BaseMenuFormData } from '@/types/menu';

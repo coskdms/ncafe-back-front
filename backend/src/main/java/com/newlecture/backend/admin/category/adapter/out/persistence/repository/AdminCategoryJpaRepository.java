@@ -1,8 +1,8 @@
-package com.newlecture.backend.admin.menu.adapter.out.persistence.repository;
+package com.newlecture.backend.admin.category.adapter.out.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.newlecture.backend.admin.menu.adapter.out.persistence.entity.CategoryJpaEntity;
+import com.newlecture.backend.admin.category.adapter.out.persistence.entity.CategoryJpaEntity;
 
 /**
  * Spring Data JPA Repository: categories 테이블
