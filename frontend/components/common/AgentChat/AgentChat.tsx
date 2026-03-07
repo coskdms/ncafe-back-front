@@ -325,7 +325,10 @@ export default function AgentChat() {
                         <div className={styles.modalActions}>
                             <button
                                 className={styles.modalBtnPrimary}
-                                onClick={() => router.push('/cart')}
+                                onClick={() => {
+                                    setIsModalOpen(false);
+                                    router.push('/cart');
+                                }}
                             >
                                 장바구니로 바로 이동
                             </button>
