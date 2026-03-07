@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import Button from '@/components/common/Button';
-import { MOCK_CATEGORIES } from '@/mocks/menuData';
+import { useCategories } from '@/app/admin/menus/_components/CategoryTabs/useCategories';
 import ImageUpload, { ImageFile } from '@/components/common/ImageUpload/ImageUpload';
 import OptionManager from '@/app/admin/menus/_components/OptionManager/OptionManager';
 import { MenuFormData as BaseMenuFormData } from '@/types/menu';
@@ -21,6 +21,7 @@ interface MenuFormProps {
 }
 
 export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }: MenuFormProps) {
+    const { categories } = useCategories();
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<MenuFormData>({
         defaultValues: {
             isAvailable: true,
@@ -80,8 +81,8 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
                                 className={`${styles.input} ${styles.select}`}
                             >
                                 <option value="">선택해주세요</option>
-                                {MOCK_CATEGORIES.map(cat => (
-                                    <option key={cat.id} value={cat.id}>{cat.korName}</option>
+                                {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
                                 ))}
                             </select>
                             {errors.categoryId && <span className={styles.errorMsg}>{errors.categoryId.message}</span>}

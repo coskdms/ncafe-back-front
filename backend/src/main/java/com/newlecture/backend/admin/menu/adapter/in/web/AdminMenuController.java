@@ -126,8 +126,21 @@ public class AdminMenuController {
 
     // 메뉴 생성
     @PostMapping
-    public String createMenu() {
-        return "createMenu";
+    public MenuSaveResult createMenu(@RequestBody com.newlecture.backend.admin.menu.adapter.in.web.dto.MenuCreateRequest request) {
+        com.newlecture.backend.admin.menu.application.port.in.command.CreateMenuCommand command = 
+            com.newlecture.backend.admin.menu.application.port.in.command.CreateMenuCommand.builder()
+                .korName(request.getKorName())
+                .engName(request.getEngName())
+                .description(request.getDescription())
+                .price((request.getPrice() != null && !request.getPrice().isEmpty()) 
+                        ? Integer.parseInt(request.getPrice()) 
+                        : 0)
+                .categoryId(request.getCategoryId())
+                .imageSrc(request.getImageSrc())
+                .isAvailable(request.getIsAvailable())
+                .sortOrder(request.getSortOrder())
+                .build();
+        return createMenuUseCase.createMenu(command);
     }
 
     // 메뉴 수정

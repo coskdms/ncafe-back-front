@@ -43,9 +43,28 @@ public class AdminMenuCommandService
     }
 
     @Override
+    @Transactional
     public MenuSaveResult createMenu(CreateMenuCommand command) {
-        // TODO: 구현
-        throw new UnsupportedOperationException("Unimplemented method 'createMenu'");
+        Menu menu = Menu.builder()
+                .korName(command.getKorName())
+                .engName(command.getEngName())
+                .description(command.getDescription())
+                .price(command.getPrice() != null ? command.getPrice() : 0)
+                .categoryId(command.getCategoryId())
+                .imageSrc(command.getImageSrc() != null ? command.getImageSrc() : "")
+                .isAvailable(command.getIsAvailable() != null ? command.getIsAvailable() : true)
+                .sortOrder(command.getSortOrder() != null ? command.getSortOrder() : 99)
+                .createdAt(java.time.LocalDateTime.now())
+                .updatedAt(java.time.LocalDateTime.now())
+                .build();
+
+        Menu savedMenu = menuRepository.save(menu);
+
+        return MenuSaveResult.builder()
+                .id(savedMenu.getId())
+                .success(true)
+                .message("메뉴가 성공적으로 생성되었습니다.")
+                .build();
     }
 
     @Override
