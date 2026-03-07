@@ -51,9 +51,7 @@ public class AdminMenuCommandService
                 .description(command.getDescription())
                 .price(command.getPrice() != null ? command.getPrice() : 0)
                 .categoryId(command.getCategoryId())
-                .imageSrc(command.getImageSrc() != null ? command.getImageSrc() : "")
                 .isAvailable(command.getIsAvailable() != null ? command.getIsAvailable() : true)
-                .sortOrder(command.getSortOrder() != null ? command.getSortOrder() : 99)
                 .createdAt(java.time.LocalDateTime.now())
                 .updatedAt(java.time.LocalDateTime.now())
                 .build();
