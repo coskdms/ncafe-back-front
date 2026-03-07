@@ -31,12 +31,15 @@ services:
     environment:
       # 프론트엔드 BFF 프록시가 백엔드에 접속할 때 사용하는 환경변수 (Docker 내부 네트워크)
       - API_BASE_URL=http://backend:8032
+      # AI 에이전트 서버 접속 URL (Docker 내부 네트워크)
+      - AGENT_API_URL=http://beomini:8000
       # iron-session 암호화 키 (32자 이상, GitHub Secrets에서 주입)
       - SESSION_SECRET=${SESSION_SECRET}
       # 앱 내부 포트 명시
       - PORT=3032
     depends_on:
       - backend
+      - beomini
     restart: unless-stopped
 
   # ── 데이터베이스 (PostgreSQL) ──
@@ -61,10 +64,11 @@ services:
       context: ./beomini-server
       dockerfile: Dockerfile
     container_name: ${USER_ID:-newnaeun}-beomini-server
-    ports:
-      - "8000:8000"
+    # AI 에이전트 서버는 외부 공개 불필요 (프론트엔드가 내부 네트워크로 접근)
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - backend
     restart: unless-stopped
 
 volumes:

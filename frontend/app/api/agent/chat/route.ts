@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const AGENT_BASE = process.env.NODE_ENV === 'production' ? 'http://newnaeun-beomini-server:8000' : 'http://localhost:8000';
+const AGENT_BASE = process.env.AGENT_API_URL || 'http://localhost:8000';
 
 export async function POST(req: NextRequest) {
     try {
