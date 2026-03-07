@@ -115,6 +115,49 @@
     color: #451a03;
 }
 
+/* ── 장바구니 아이콘 ── */
+.cartIcon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #451a03;
+    text-decoration: none;
+    transition: transform 0.2s, color 0.3s;
+}
+
+.scrolled .cartIcon {
+    color: #fef08a;
+}
+
+.cartIcon:hover {
+    transform: scale(1.1);
+}
+
+.cartBadge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 800;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.scrolled .cartBadge {
+    border-color: #451a03;
+}
+
 .hamburger {
     display: none;
     font-size: 1.5rem;

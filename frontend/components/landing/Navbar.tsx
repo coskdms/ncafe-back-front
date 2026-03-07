@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
+import { useCartStore } from '@/stores/cartStore';
+import { ShoppingCart } from 'lucide-react';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
@@ -11,23 +13,15 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
-    // Zustand 스토어에서 인증 상태를 가져옵니다.
+    // Zustand 스토어에서 인증 상태와 카트 상태를 가져옵니다.
     const { user, isAuthenticated, isLoading, checkAuth, logout } = useAuthStore();
+    const [isMounted, setIsMounted] = useState(false);
+    const cartItemsCount = useCartStore((state) => state.getTotalItems());
 
-    // 컴포넌트가 처음 로드될 때 서버에 세션 유효 여부를 확인합니다.
-    // (페이지 새로고침 후에도 로그인 상태를 복구하기 위함)
+    // 컴포넌트 처음 로드될 때 서버 세션 확인 및 마운트 상태 설정
     useEffect(() => {
+        setIsMounted(true);
         checkAuth();
-
-        // BFF: 다른 컴포넌트에서 login/logout 이벤트 발생 시 상태 갱신
-        const onLogin = () => checkAuth();
-        const onLogout = () => checkAuth();
-        window.addEventListener('login', onLogin);
-        window.addEventListener('logout', onLogout);
-        return () => {
-            window.removeEventListener('login', onLogin);
-            window.removeEventListener('logout', onLogout);
-        };
     }, [checkAuth]);
 
     useEffect(() => {
@@ -56,6 +50,15 @@ export default function Navbar() {
                         <Link href="/#about">카페 소개</Link>
                         <Link href="/menus">특별 메뉴</Link>
                         <Link href="/#location">매장 안내</Link>
+                        
+                        {/* 장바구니 아이콘 추가 */}
+                        <Link href="/cart" className={styles.cartIcon} title="장바구니">
+                            <ShoppingCart size={22} />
+                            {isMounted && cartItemsCount > 0 && (
+                                <span className={styles.cartBadge}>{cartItemsCount}</span>
+                            )}
+                        </Link>
+
                         {!isLoading && (
                             isAuthenticated ? (
                                 <>
@@ -83,6 +86,23 @@ export default function Navbar() {
                     <Link href="/#about" onClick={() => setIsOpen(false)}>카페 소개</Link>
                     <Link href="/menus" onClick={() => setIsOpen(false)}>특별 메뉴</Link>
                     <Link href="/#location" onClick={() => setIsOpen(false)}>매장 안내</Link>
+                    
+                    {/* 모바일 장바구니 링크 */}
+                    <Link href="/cart" onClick={() => setIsOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        장바구니
+                        {isMounted && cartItemsCount > 0 && (
+                            <span style={{ 
+                                background: '#ef4444', 
+                                color: 'white', 
+                                borderRadius: '12px', 
+                                padding: '2px 10px', 
+                                fontSize: '0.9rem' 
+                            }}>
+                                {cartItemsCount}
+                            </span>
+                        )}
+                    </Link>
+
                     {!isLoading && (
                         isAuthenticated ? (
                             <>

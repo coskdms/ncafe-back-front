@@ -62,8 +62,8 @@
     position: fixed;
     bottom: 104px;
     right: 28px;
-    width: 380px;
-    height: 540px;
+    width: 420px;
+    height: 580px;
     background: var(--agent-white);
     border-radius: 16px;
     box-shadow: var(--agent-shadow-lg);
@@ -362,7 +362,150 @@
     transform: scale(0.97);
 }
 
-/* ===== 모바일 반응형 ===== */
+/* ===== Menu Card in Chat ===== */
+.menuCard {
+    background: var(--agent-white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--agent-shadow-md);
+    margin-top: 10px;
+    border: 1px solid var(--agent-gray-light);
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    animation: msgAppear 0.4s ease-out;
+}
+
+.menuCardImage {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    background-color: var(--agent-gray-light);
+}
+
+.menuCardContent {
+    padding: 12px;
+}
+
+.menuCardName {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--agent-accent);
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    white-space: normal;
+    overflow: hidden;
+    line-height: 1.3;
+    max-height: 2.6em;
+}
+
+.menuCardPrice {
+    font-size: 0.85rem;
+    color: #e53e3e;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0px;
+}
+
+.menuCardActions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.menuCardBtn {
+    flex: 1;
+    background: var(--agent-accent);
+    color: var(--agent-white);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    min-width: 80px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.menuCardBtn:hover {
+    background: var(--agent-accent-light);
+}
+
+.menuCardCartBtn {
+    background: var(--agent-main);
+    color: var(--agent-accent);
+    border: 1px solid var(--agent-main-dark);
+    border-radius: 6px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menuCardCartBtn:hover {
+    background: var(--agent-main-dark);
+    transform: scale(1.05);
+}
+
+.menuCardNoImage {
+    width: 100%;
+    max-width: 340px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.menuCardNoImage .menuInfoText {
+    flex: 1;
+    min-width: 0;
+    margin-right: 12px;
+}
+
+.menuCardNoImage .menuCardContent {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+}
+
+.menuCardNoImage .menuCardName {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.menuCardNoImage .menuCardPrice {
+    margin-bottom: 0;
+    margin-right: 12px;
+    font-size: 0.8rem;
+}
+
+.menuCardNoImage .menuCardActions {
+    margin-top: 0;
+}
+
+.menuCardNoImage .menuCardBtn {
+    width: auto;
+    padding: 6px 10px;
+}
+
+.menuCardNoImage .menuCardCartBtn {
+    padding: 4px 6px;
+    font-size: 0.9rem;
+}
+
+/* 모바일 반응형 */
 @media (max-width: 480px) {
     .panel {
         width: calc(100vw - 24px);
@@ -376,4 +519,94 @@
         bottom: 16px;
         right: 16px;
     }
+
+    .menuCard {
+        width: 180px;
+    }
+}
+
+/* ===== Modal Styles ===== */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    padding: 20px;
+}
+
+.modal {
+    background: white;
+    padding: 32px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.modalIcon {
+    font-size: 50px;
+    margin-bottom: 16px;
+}
+
+.modalTitle {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--agent-accent);
+    margin-bottom: 8px;
+}
+
+.modalMessage {
+    font-size: 1rem;
+    color: var(--agent-accent-light);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.modalActions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modalBtnPrimary {
+    background: var(--agent-accent) !important;
+    color: white !important;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.modalBtnPrimary:hover {
+    background: var(--agent-accent-light) !important;
+    transform: translateY(-1px);
+}
+
+.modalBtnSecondary {
+    background: var(--agent-main) !important;
+    color: var(--agent-accent) !important;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.modalBtnSecondary:hover {
+    background: var(--agent-main-dark) !important;
 }

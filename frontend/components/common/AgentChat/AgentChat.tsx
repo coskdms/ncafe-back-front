@@ -2,6 +2,10 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useCartStore } from '@/stores/cartStore';
+import { useAuthStore } from '@/stores/authStore';
 import styles from './AgentChat.module.css';
 
 // 고라파덕 아이콘 경로
@@ -14,6 +18,12 @@ interface ChatMessage {
     sender: 'bot' | 'user';
 }
 
+// ===== 3. 유틸리티 함수 =====
+const formatPrice = (price?: number) => {
+    if (price === undefined || price === null) return '';
+    return price.toLocaleString('ko-KR') + '원';
+};
+
 
 // ===== 4. React 컴포넌트 =====
 export default function AgentChat() {
@@ -23,10 +33,88 @@ export default function AgentChat() {
     const [isTyping, setIsTyping] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [isFirstOpen, setIsFirstOpen] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [lastAddedMenu, setLastAddedMenu] = useState<any>(null);
+
+    const addItem = useCartStore((state) => state.addItem);
+    const { isAuthenticated } = useAuthStore();
+    const router = useRouter();
 
     const bodyRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     let msgIdCounter = useRef(0);
+
+    /**
+     * 메시지 텍스트 내의 특수 마커(::menu{...}::)를 찾아 
+     * 텍스트와 메뉴 카드를 분리하여 렌더링합니다.
+     */
+    const renderMessageContent = (text: string) => {
+        const parts = text.split(/(::menu\{.*?\}::)/g);
+
+        return parts.map((part, index) => {
+            if (part.startsWith('::menu{') && part.endsWith('}::')) {
+                try {
+                    const jsonStr = part.slice(6, -2);
+                    const menu = JSON.parse(jsonStr);
+
+                    // 이미지 노출 여부 확인 (전체 메뉴 목록 등에서는 이미지를 숨김)
+                    const showImage = !menu.noImage;
+                    const firstImage = menu.imagesSrc
+                        ? menu.imagesSrc.split(',')[0].trim()
+                        : (menu.image || 'blank.png');
+
+                    const handleCartClick = async (e: React.MouseEvent) => {
+                        e.preventDefault();
+                        await addItem({
+                            id: menu.id,
+                            korName: menu.korName || menu.name,
+                            price: menu.price,
+                            imageSrc: firstImage
+                        });
+                        setLastAddedMenu(menu);
+                        setIsModalOpen(true);
+                    };
+
+                    return (
+                        <div key={index} className={`${styles.menuCard} ${showImage ? '' : styles.menuCardNoImage}`}>
+                            {showImage && (
+                                <img
+                                    src={`/images/${firstImage}`}
+                                    alt={menu.korName || menu.name}
+                                    className={styles.menuCardImage}
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src = '/images/blank.png';
+                                    }}
+                                />
+                            )}
+                            <div className={styles.menuCardContent}>
+                                <div className={styles.menuInfoText}>
+                                    <span className={styles.menuCardName}>{menu.korName || menu.name}</span>
+                                    <span className={styles.menuCardPrice}>{formatPrice(menu.price)}</span>
+                                </div>
+                                <div className={styles.menuCardActions}>
+                                    <Link href={`/menus/${menu.id}`} className={styles.menuCardBtn}>
+                                        상세보기
+                                    </Link>
+                                    <button
+                                        onClick={handleCartClick}
+                                        className={styles.menuCardCartBtn}
+                                        title="장바구니 담기"
+                                    >
+                                        🛒
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                } catch (e) {
+                    console.error('Menu JSON parse error:', e);
+                    return <span key={index}>{part}</span>;
+                }
+            }
+            return <span key={index}>{part}</span>;
+        });
+    };
 
     // 스크롤 하단 고정
     const scrollToBottom = useCallback(() => {
@@ -101,6 +189,18 @@ export default function AgentChat() {
                         const replyText = data.content || "앗... 서버에서 응답을 가져올 수 없었다덕! 💦";
 
                         setMessages(prev => [...prev, { id: botId, text: replyText, sender: 'bot' }]);
+
+                        // 봇 응답 내용에 따라 센스 있는 퀵 리플라이(버튼) 제시
+                        if (replyText.includes('개인정보') || replyText.includes('맛있는 메뉴를 소개해주는 건')) {
+                            setTimeout(() => {
+                                setQuickReplies(['그래, 메뉴 추천해줘!', '아니 괜찮아']);
+                            }, 500);
+                        } else if (replyText.includes('추천')) {
+                            // 추천 후에는 바로 장바구니로 유도하거나 다른 메뉴 보기
+                            setTimeout(() => {
+                                setQuickReplies(['다른 메뉴 추천해줘', '장바구니 볼래']);
+                            }, 500);
+                        }
                     })
                     .catch(err => {
                         console.error('Chat error:', err);
@@ -149,7 +249,7 @@ export default function AgentChat() {
                                     : '🧑'}
                             </div>
                             <div className={`${styles.msgBubble} ${msg.sender === 'bot' ? styles.botBubble : styles.userBubble}`}>
-                                {msg.text}
+                                {renderMessageContent(msg.text)}
                             </div>
                         </div>
                     ))}
@@ -163,7 +263,11 @@ export default function AgentChat() {
                                     className={styles.quickChip}
                                     onClick={() => {
                                         setQuickReplies([]);
-                                        handleSend(chip);
+                                        if (chip === '장바구니 볼래') {
+                                            router.push('/cart');
+                                        } else {
+                                            handleSend(chip);
+                                        }
                                     }}
                                 >
                                     {chip}
@@ -207,6 +311,37 @@ export default function AgentChat() {
             <div className={styles.fab} onClick={toggleChat}>
                 <Image src={DUCK_ICON} alt="고라파덕 에이전트" width={42} height={42} className={styles.fabImg} />
             </div>
+
+            {/* 장바구니 담기 성공 모달 (챗봇 전용) */}
+            {isModalOpen && (
+                <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
+                    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.modalIcon}>🐤</div>
+                        <h2 className={styles.modalTitle}>카트에 담겼다덕!</h2>
+                        <p className={styles.modalMessage}>
+                            {!isAuthenticated ? '[비회원]' : '[파덕이의 팬]'} <br />
+                            <strong>{lastAddedMenu?.korName || lastAddedMenu?.name}</strong> 상품을 장바구니에 담았다덕!
+                        </p>
+                        <div className={styles.modalActions}>
+                            <button
+                                className={styles.modalBtnPrimary}
+                                onClick={() => router.push('/cart')}
+                            >
+                                장바구니로 바로 이동
+                            </button>
+                            <button
+                                className={styles.modalBtnSecondary}
+                                onClick={() => {
+                                    setIsModalOpen(false);
+                                    router.push('/menus');
+                                }}
+                            >
+                                쇼핑 계속하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

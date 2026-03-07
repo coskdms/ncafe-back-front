@@ -4,6 +4,7 @@ import { use, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
+import { useCartStore } from '@/stores/cartStore';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import { ChevronLeft, ShoppingCart, CreditCard } from 'lucide-react';
@@ -18,6 +19,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
     const { id } = use(params);
     const { menu, loading, error } = useMenuDetail(id);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
@@ -26,13 +28,21 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
         return price.toLocaleString('ko-KR') + '원';
     };
 
-    const handleAddToCart = () => {
-        if (!isAuthenticated) {
-            alert('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
-            router.push('/login');
-            return;
-        }
-        alert(`'${menu?.korName}' 카트에 귀엽게 담았습니다! 🐤`);
+    const addItem = useCartStore((state) => state.addItem);
+
+    const handleAddToCart = async () => {
+        if (!menu) return;
+
+        // 카트에 아이템 추가
+        await addItem({
+            id: menu.id,
+            korName: menu.korName,
+            price: menu.price,
+            imageSrc: menu.imagesSrc?.split(',')[0]?.trim() || 'blank.png'
+        });
+
+        // 팝업 열기
+        setIsModalOpen(true);
     };
 
     const handleOrderNow = () => {
@@ -155,6 +165,37 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                     </div>
                 </div>
             </div>
+
+            {/* 장바구니 담기 성공 모달 */}
+            {isModalOpen && (
+                <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
+                    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.modalIcon}>🐤</div>
+                        <h2 className={styles.modalTitle}>카트에 담겼습니다!</h2>
+                        <p className={styles.modalMessage}>
+                            {!isAuthenticated ? '[비회원]' : '[파덕이의 팬]'} <br/>
+                            <strong>{menu.korName}</strong> 메뉴를 장바구니에 귀엽게 담았습니다.
+                        </p>
+                        <div className={styles.modalActions}>
+                            <button 
+                                className={styles.modalBtnPrimary} 
+                                onClick={() => router.push('/cart')}
+                            >
+                                장바구니로 바로 이동
+                            </button>
+                            <button 
+                                className={styles.modalBtnSecondary} 
+                                onClick={() => {
+                                    setIsModalOpen(false);
+                                    router.push('/menus');
+                                }}
+                            >
+                                쇼핑 계속하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <Footer />
         </main>
