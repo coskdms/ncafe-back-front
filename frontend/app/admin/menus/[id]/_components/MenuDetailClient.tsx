@@ -36,7 +36,7 @@ export default function MenuDetailClient({ params }: { params: Promise<{ id: num
 
                 {/* 오른쪽 컬럼: 옵션 정보 */}
                 <div className={styles.rightColumn}>
-                    <OptionsInfo />
+                    <OptionsInfo id={id} />
                 </div>
             </div>
 

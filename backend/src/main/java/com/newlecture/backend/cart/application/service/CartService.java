@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class CartService {
 
     private final CartItemJpaRepository cartItemRepository;
     private final MemberRepository memberRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * 현재 로그인한 사용자의 UUID를 가져옵니다.
@@ -59,8 +62,8 @@ public class CartService {
         return cartItemRepository.findByMemberId(getCurrentMemberId());
     }
 
-    public void addItem(Long menuId, Integer quantity) {
-        addItems(List.of(new CartItemAddRequest(menuId, quantity)));
+    public void addItem(Long menuId, Integer quantity, Map<String, String> options) {
+        addItems(List.of(new CartItemAddRequest(menuId, quantity, options)));
     }
 
     public void addItems(List<CartItemAddRequest> requests) {
@@ -68,8 +71,18 @@ public class CartService {
         for (var request : requests) {
             Long menuId = request.getMenuId();
             Integer quantity = request.getQuantity();
-            
-            Optional<CartItemJpaEntity> existing = cartItemRepository.findByMemberIdAndMenuId(memberId, menuId);
+            Map<String, String> optionsMap = request.getOptions();
+            String optionsJson = "{}";
+
+            try {
+                if (optionsMap != null && !optionsMap.isEmpty()) {
+                    optionsJson = objectMapper.writeValueAsString(optionsMap);
+                }
+            } catch (Exception e) {
+                System.err.println("[CartService] Failed to serialize options: " + e.getMessage());
+            }
+
+            Optional<CartItemJpaEntity> existing = cartItemRepository.findByMemberIdAndMenuIdAndOptions(memberId, menuId, optionsJson);
             if (existing.isPresent()) {
                 CartItemJpaEntity item = existing.get();
                 item.setQuantity(item.getQuantity() + quantity);
@@ -78,6 +91,7 @@ public class CartService {
                 CartItemJpaEntity newItem = CartItemJpaEntity.builder()
                         .memberId(memberId)
                         .menuId(menuId)
+                        .options(optionsJson)
                         .quantity(quantity)
                         .build();
                 cartItemRepository.save(newItem);
@@ -85,9 +99,10 @@ public class CartService {
         }
     }
 
-    public void updateQuantity(Long menuId, Integer quantity) {
+    public void updateQuantity(Long cartItemId, Integer quantity) {
         UUID memberId = getCurrentMemberId();
-        cartItemRepository.findByMemberIdAndMenuId(memberId, menuId)
+        cartItemRepository.findById(cartItemId)
+                .filter(item -> item.getMemberId().equals(memberId))
                 .ifPresent(item -> {
                     if (quantity <= 0) {
                         cartItemRepository.delete(item);
@@ -98,9 +113,10 @@ public class CartService {
                 });
     }
 
-    public void removeItem(Long menuId) {
+    public void removeItem(Long cartItemId) {
         UUID memberId = getCurrentMemberId();
-        cartItemRepository.findByMemberIdAndMenuId(memberId, menuId)
+        cartItemRepository.findById(cartItemId)
+                .filter(item -> item.getMemberId().equals(memberId))
                 .ifPresent(cartItemRepository::delete);
     }
 

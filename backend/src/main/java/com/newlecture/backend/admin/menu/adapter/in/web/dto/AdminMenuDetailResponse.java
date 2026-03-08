@@ -20,6 +20,7 @@ public class AdminMenuDetailResponse {
     private String categoryId;
     private String categoryName;
     private Boolean isAvailable;
+    private java.util.List<com.newlecture.backend.admin.menu.application.port.in.result.MenuOptionGroupResult> optionGroups;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

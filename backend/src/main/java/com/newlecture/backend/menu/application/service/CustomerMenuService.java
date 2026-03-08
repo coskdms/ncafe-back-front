@@ -17,6 +17,10 @@ import com.newlecture.backend.menu.application.port.in.result.CustomerMenuListRe
 import com.newlecture.backend.menu.application.port.out.CategoryRepository;
 import com.newlecture.backend.menu.application.port.out.MenuImageRepository;
 import com.newlecture.backend.menu.application.port.out.MenuRepository;
+import com.newlecture.backend.admin.menu.application.port.out.MenuOptionRepository;
+import com.newlecture.backend.admin.menu.application.port.in.result.MenuOptionGroupResult;
+import com.newlecture.backend.admin.menu.application.port.in.result.MenuOptionDetailResult;
+import com.newlecture.backend.admin.menu.domain.MenuOptionGroup;
 
 /**
  * 일반 사용자 메뉴 서비스
@@ -30,14 +34,17 @@ public class CustomerMenuService implements GetCustomerMenuListUseCase,
     private final MenuRepository menuRepository;
     private final MenuImageRepository menuImageRepository;
     private final CategoryRepository categoryRepository;
+    private final MenuOptionRepository menuOptionRepository;
 
     public CustomerMenuService(
             @Qualifier("customerMenuPersistenceAdapter") MenuRepository menuRepository,
             @Qualifier("customerMenuImagePersistenceAdapter") MenuImageRepository menuImageRepository,
-            @Qualifier("customerCategoryPersistenceAdapter") CategoryRepository categoryRepository) {
+            @Qualifier("customerCategoryPersistenceAdapter") CategoryRepository categoryRepository,
+            @Qualifier("adminMenuOptionPersistenceAdapter") MenuOptionRepository menuOptionRepository) {
         this.menuRepository = menuRepository;
         this.menuImageRepository = menuImageRepository;
         this.categoryRepository = categoryRepository;
+        this.menuOptionRepository = menuOptionRepository;
     }
 
     @Override
@@ -88,6 +95,29 @@ public class CustomerMenuService implements GetCustomerMenuListUseCase,
         String categoryName = getCategoryName(menu.getCategoryId());
         String imagesSrc = getAllImageSrcs(menu.getId());
 
+        List<MenuOptionGroup> optionGroupsDomain = menuOptionRepository.findByMenuId(menu.getId());
+        List<MenuOptionGroupResult> optionGroups = optionGroupsDomain.stream().map(g -> {
+            List<MenuOptionDetailResult> details = new java.util.ArrayList<>();
+            if (g.getOptionDetails() != null) {
+                details = g.getOptionDetails().stream()
+                        .map(d -> MenuOptionDetailResult.builder()
+                                .id(d.getId())
+                                .name(d.getName())
+                                .additionalPrice(d.getAdditionalPrice())
+                                .sortOrder(d.getSortOrder())
+                                .build())
+                        .toList();
+            }
+            return MenuOptionGroupResult.builder()
+                    .id(g.getId())
+                    .name(g.getName())
+                    .isRequired(g.getIsRequired())
+                    .isMultiple(g.getIsMultiple())
+                    .sortOrder(g.getSortOrder())
+                    .optionDetails(details)
+                    .build();
+        }).toList();
+
         return CustomerMenuDetailResult.builder()
                 .id(menu.getId())
                 .korName(menu.getKorName())
@@ -96,6 +126,7 @@ public class CustomerMenuService implements GetCustomerMenuListUseCase,
                 .price(menu.getPrice())
                 .categoryName(categoryName)
                 .imagesSrc(imagesSrc)
+                .optionGroups(optionGroups)
                 .build();
     }
 

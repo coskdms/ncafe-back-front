@@ -1,5 +1,7 @@
 package com.newlecture.backend.menu.application.port.in.result;
 
+import java.util.List;
+import com.newlecture.backend.admin.menu.application.port.in.result.MenuOptionGroupResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,4 +22,5 @@ public class CustomerMenuDetailResult {
     private Integer price;
     private String categoryName;
     private String imagesSrc;
+    private List<MenuOptionGroupResult> optionGroups;
 }

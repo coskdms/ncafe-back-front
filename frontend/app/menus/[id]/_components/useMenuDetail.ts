@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react';
 
+import { MenuOptionGroup } from '@/types/menu';
+
 export interface CustomerMenuDetail {
     id: number;
     korName: string;
@@ -10,6 +12,7 @@ export interface CustomerMenuDetail {
     price: number;
     categoryName: string;
     imagesSrc: string;
+    optionGroups: MenuOptionGroup[];
 }
 
 interface MenuDetailResponseDto {

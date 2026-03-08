@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * 메뉴 수정 커맨드
  */
@@ -22,4 +24,5 @@ public class UpdateMenuCommand {
     private String imageSrc;
     private Boolean isAvailable;
     private Integer sortOrder;
+    private List<MenuOptionGroupCommand> optionGroups;
 }

@@ -80,6 +80,7 @@ public class CustomerMenuController {
                 .price(result.getPrice())
                 .categoryName(result.getCategoryName())
                 .imagesSrc(result.getImagesSrc())
+                .optionGroups(result.getOptionGroups())
                 .build();
     }
 }

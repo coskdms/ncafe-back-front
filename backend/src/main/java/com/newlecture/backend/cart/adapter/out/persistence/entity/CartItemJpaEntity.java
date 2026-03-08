@@ -27,6 +27,9 @@ public class CartItemJpaEntity {
     @Column(name = "menu_id", nullable = false)
     private Long menuId;
 
+    @Column(name = "options", length = 1000)
+    private String options;
+
     @Column(nullable = false)
     private Integer quantity;
 

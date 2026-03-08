@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface CartItemJpaRepository extends JpaRepository<CartItemJpaEntity, Long> {
     List<CartItemJpaEntity> findByMemberId(UUID memberId);
-    Optional<CartItemJpaEntity> findByMemberIdAndMenuId(UUID memberId, Long menuId);
+    Optional<CartItemJpaEntity> findByMemberIdAndMenuIdAndOptions(UUID memberId, Long menuId, String options);
 
     @Modifying
     @Transactional

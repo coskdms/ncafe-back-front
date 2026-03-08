@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
-import { ChevronLeft, ShoppingCart, CreditCard } from 'lucide-react';
+import { ChevronLeft, ShoppingCart, CreditCard, X } from 'lucide-react';
 import styles from '../MenuDetail.module.css';
 import { useMenuDetail } from './useMenuDetail';
 
@@ -19,7 +19,9 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
     const { id } = use(params);
     const { menu, loading, error } = useMenuDetail(id);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+    const [isOptionModalOpen, setIsOptionModalOpen] = useState(false);
+    const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
     const router = useRouter();
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
@@ -30,23 +32,87 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
 
     const addItem = useCartStore((state) => state.addItem);
 
+    const handleOptionChange = (groupName: string, optionName: string) => {
+        setSelectedOptions(prev => ({
+            ...prev,
+            [groupName]: optionName
+        }));
+    };
+
+    const calculateTotalPrice = () => {
+        if (!menu) return 0;
+        let total = menu.price;
+
+        // 선택된 옵션들의 추가 비용 합산
+        if (menu.optionGroups) {
+            menu.optionGroups.forEach(group => {
+                const selectedOptionName = selectedOptions[group.name];
+                if (selectedOptionName) {
+                    const option = group.optionDetails.find(d => d.name === selectedOptionName);
+                    if (option) {
+                        total += option.additionalPrice || 0;
+                    }
+                }
+            });
+        }
+        return total;
+    };
+
     const handleAddToCart = async () => {
         if (!menu) return;
 
+        // 필수 옵션 체크
+        const missingRequired = menu.optionGroups?.filter(g => g.isRequired && !selectedOptions[g.name]);
+        if (missingRequired && missingRequired.length > 0) {
+            // 모달이 안 열려있었다면 열어줌
+            if (!isOptionModalOpen) {
+                setIsOptionModalOpen(true);
+                return;
+            }
+            alert(`필수 옵션을 선택해주세요: ${missingRequired.map(g => g.name).join(', ')}`);
+            return;
+        }
+
         // 카트에 아이템 추가
         await addItem({
-            id: menu.id,
+            menuId: menu.id,
             korName: menu.korName,
-            price: menu.price,
-            imageSrc: menu.imagesSrc?.split(',')[0]?.trim() || 'blank.png'
+            price: calculateTotalPrice(),
+            imageSrc: menu.imagesSrc?.split(',')[0]?.trim() || 'blank.png',
+            options: selectedOptions
         });
 
-        // 팝업 열기
-        setIsModalOpen(true);
+        setIsOptionModalOpen(false);
+        setIsSuccessModalOpen(true);
     };
 
     const handleOrderNow = () => {
-        alert(`'${menu?.korName}' 주문 화면으로 이동합니다! 🚀`);
+        if (!menu) return;
+
+        // 필수 옵션 체크
+        const missingRequired = menu.optionGroups?.filter(g => g.isRequired && !selectedOptions[g.name]);
+        if (missingRequired && missingRequired.length > 0) {
+            if (!isOptionModalOpen) {
+                setIsOptionModalOpen(true);
+                return;
+            }
+            alert(`필수 옵션을 선택해주세요: ${missingRequired.map(g => g.name).join(', ')}`);
+            return;
+        }
+
+        // 바로 주문을 위한 체크아웃 아이템 설정
+        const buyNowItem = {
+            menuId: menu.id,
+            korName: menu.korName,
+            price: calculateTotalPrice(),
+            imageSrc: menu.imagesSrc?.split(',')[0]?.trim() || 'blank.png',
+            options: selectedOptions,
+            id: Date.now(), // 임시 ID
+            quantity: 1
+        };
+
+        useCartStore.getState().setCheckoutItems([buyNowItem]);
+        router.push('/checkout');
     };
 
     if (loading) {
@@ -151,12 +217,19 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                             {formatPrice(menu.price)}
                         </div>
 
-                        {/* 주문 액션 버튼들 (사용자 페이지) */}
+                        {/* 주문 액션 버튼들 */}
                         <div className={styles.actionGroup}>
-                            <button className={styles.secondaryButton} onClick={handleAddToCart}>
-                                <ShoppingCart size={20} />
-                                장바구니 담기
-                            </button>
+                            {menu.optionGroups && menu.optionGroups.length > 0 ? (
+                                <button className={styles.secondaryButton} onClick={() => setIsOptionModalOpen(true)}>
+                                    <ShoppingCart size={20} />
+                                    옵션 선택하기
+                                </button>
+                            ) : (
+                                <button className={styles.secondaryButton} onClick={handleAddToCart}>
+                                    <ShoppingCart size={20} />
+                                    장바구니 담기
+                                </button>
+                            )}
                             <button className={styles.primaryButton} onClick={handleOrderNow}>
                                 <CreditCard size={20} />
                                 바로 주문하기
@@ -166,9 +239,81 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                 </div>
             </div>
 
+            {/* 모바일 하단 고정 바 */}
+            <div className={styles.mobileStickyBar}>
+                {menu.optionGroups && menu.optionGroups.length > 0 ? (
+                    <button className={styles.secondaryButton} onClick={() => setIsOptionModalOpen(true)}>
+                        옵션 선택
+                    </button>
+                ) : (
+                    <button className={styles.secondaryButton} onClick={handleAddToCart}>
+                        장바구니
+                    </button>
+                )}
+                <button className={styles.primaryButton} onClick={handleOrderNow}>
+                    바로 주문
+                </button>
+            </div>
+
+            {/* 옵션 선택 모달 (Glassmorphism) */}
+            {isOptionModalOpen && (
+                <div className={styles.modalOverlay} onClick={() => setIsOptionModalOpen(false)}>
+                    <div className={styles.optionModalContainer} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.optionModalHeader}>
+                            <h2 className={styles.optionModalTitle}>옵션 선택</h2>
+                            <button className={styles.closeButton} onClick={() => setIsOptionModalOpen(false)}>
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className={styles.optionModalBody}>
+                            {menu.optionGroups?.map((group) => (
+                                <div key={group.id} className={styles.optionGroup}>
+                                    <div className={styles.optionGroupName}>
+                                        {group.name}
+                                        {group.isRequired && <span className={styles.requiredBadge}>필수</span>}
+                                    </div>
+                                    <div className={styles.optionList}>
+                                        {group.optionDetails.map((option) => (
+                                            <div key={option.id} className={styles.optionItem}>
+                                                <input
+                                                    type="radio"
+                                                    id={`modal-option-${option.id}`}
+                                                    name={`modal-group-${group.id}`}
+                                                    className={styles.optionInput}
+                                                    checked={selectedOptions[group.name] === option.name}
+                                                    onChange={() => handleOptionChange(group.name, option.name)}
+                                                />
+                                                <label htmlFor={`modal-option-${option.id}`} className={styles.optionLabel}>
+                                                    <span>{option.name}</span>
+                                                    {option.additionalPrice > 0 && (
+                                                        <span className={styles.optionPrice}>+{formatPrice(option.additionalPrice)}</span>
+                                                    )}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className={styles.optionModalFooter}>
+                            <div className={styles.modalTotalPriceRow}>
+                                <span className={styles.modalTotalLabel}>총 주문 금액</span>
+                                <span className={styles.modalTotalValue}>{formatPrice(calculateTotalPrice())}</span>
+                            </div>
+                            <button className={styles.primaryButton} onClick={handleAddToCart} style={{ width: '100%' }}>
+                                <ShoppingCart size={20} />
+                                장바구니 담기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* 장바구니 담기 성공 모달 */}
-            {isModalOpen && (
-                <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
+            {isSuccessModalOpen && (
+                <div className={styles.modalOverlay} onClick={() => setIsSuccessModalOpen(false)}>
                     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                         <div className={styles.modalIcon}>🐤</div>
                         <h2 className={styles.modalTitle}>카트에 담겼습니다!</h2>
@@ -186,7 +331,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                             <button 
                                 className={styles.modalBtnSecondary} 
                                 onClick={() => {
-                                    setIsModalOpen(false);
+                                    setIsSuccessModalOpen(false);
                                     router.push('/menus');
                                 }}
                             >
@@ -201,3 +346,4 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
         </main>
     );
 }
+

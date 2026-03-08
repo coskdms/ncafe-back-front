@@ -12,4 +12,5 @@ import lombok.Setter;
 public class CartItemAddRequest {
     private Long menuId;
     private Integer quantity;
+    private java.util.Map<String, String> options;
 }

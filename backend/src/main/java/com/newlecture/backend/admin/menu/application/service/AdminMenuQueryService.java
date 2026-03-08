@@ -25,14 +25,17 @@ public class AdminMenuQueryService
     private final MenuRepository menuRepository;
     private final MenuImageRepository menuImageRepository;
     private final CategoryRepository categoryRepository;
+    private final com.newlecture.backend.admin.menu.application.port.out.MenuOptionRepository menuOptionRepository;
 
     public AdminMenuQueryService(
             @Qualifier("adminMenuPersistenceAdapter") MenuRepository menuRepository,
             @Qualifier("adminMenuImagePersistenceAdapter") MenuImageRepository menuImageRepository,
-            @Qualifier("adminCategoryPersistenceAdapter") CategoryRepository categoryRepository) {
+            @Qualifier("adminCategoryPersistenceAdapter") CategoryRepository categoryRepository,
+            @Qualifier("adminMenuOptionPersistenceAdapter") com.newlecture.backend.admin.menu.application.port.out.MenuOptionRepository menuOptionRepository) {
         this.menuRepository = menuRepository;
         this.menuImageRepository = menuImageRepository;
         this.categoryRepository = categoryRepository;
+        this.menuOptionRepository = menuOptionRepository;
     }
 
     @Override
@@ -80,6 +83,27 @@ public class AdminMenuQueryService
 
         String categoryName = getCategoryName(menu.getCategoryId());
 
+        List<com.newlecture.backend.admin.menu.domain.MenuOptionGroup> optionGroupsDomain = menuOptionRepository.findByMenuId(menu.getId());
+        List<com.newlecture.backend.admin.menu.application.port.in.result.MenuOptionGroupResult> optionGroupResults = optionGroupsDomain.stream().map(g -> {
+            List<com.newlecture.backend.admin.menu.application.port.in.result.MenuOptionDetailResult> detailResults = new java.util.ArrayList<>();
+            if (g.getOptionDetails() != null) {
+                detailResults = g.getOptionDetails().stream().map(d -> com.newlecture.backend.admin.menu.application.port.in.result.MenuOptionDetailResult.builder()
+                        .id(d.getId())
+                        .name(d.getName())
+                        .additionalPrice(d.getAdditionalPrice())
+                        .sortOrder(d.getSortOrder())
+                        .build()).toList();
+            }
+            return com.newlecture.backend.admin.menu.application.port.in.result.MenuOptionGroupResult.builder()
+                    .id(g.getId())
+                    .name(g.getName())
+                    .isRequired(g.getIsRequired())
+                    .isMultiple(g.getIsMultiple())
+                    .sortOrder(g.getSortOrder())
+                    .optionDetails(detailResults)
+                    .build();
+        }).toList();
+
         return MenuDetailResult.builder()
                 .id(menu.getId())
                 .korName(menu.getKorName())
@@ -89,6 +113,7 @@ public class AdminMenuQueryService
                 .categoryId(menu.getCategoryId())
                 .categoryName(categoryName)
                 .isAvailable(menu.getIsAvailable())
+                .optionGroups(optionGroupResults)
                 .createdAt(menu.getCreatedAt())
                 .updatedAt(menu.getUpdatedAt())
                 .build();

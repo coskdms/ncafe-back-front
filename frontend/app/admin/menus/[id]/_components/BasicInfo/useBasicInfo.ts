@@ -12,6 +12,7 @@ export interface MenuDetailResponse {
     categoryId: string | null;
     categoryName: string | null;
     isAvailable: boolean;
+    optionGroups: import('@/types/menu').MenuOptionGroup[];
     createdAt: string;
     updatedAt: string;
 }

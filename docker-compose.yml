@@ -13,6 +13,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:-ncafe}
       - JWT_SECRET=${JWT_SECRET}
       - DB_PASSWORD=${DB_PASSWORD}
+      - PORTONE_API_SECRET=${PORTONE_API_SECRET}
+      - PORTONE_WEBHOOK_SECRET=${PORTONE_WEBHOOK_SECRET}
     volumes:
       - ${UPLOAD_HOST_PATH:-/home/newnaeun/dist/ncafe/upload}:/app/upload
     restart: unless-stopped
@@ -35,6 +37,8 @@ services:
       - AGENT_API_URL=http://beomini:8000
       # iron-session 암호화 키 (32자 이상, GitHub Secrets에서 주입)
       - SESSION_SECRET=${SESSION_SECRET}
+      - NEXT_PUBLIC_PORTONE_STORE_ID=${NEXT_PUBLIC_PORTONE_STORE_ID}
+      - NEXT_PUBLIC_PORTONE_CHANNEL_KEY=${NEXT_PUBLIC_PORTONE_CHANNEL_KEY}
       # 앱 내부 포트 명시
       - PORT=3032
     depends_on:

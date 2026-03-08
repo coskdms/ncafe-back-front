@@ -119,6 +119,7 @@ public class AdminMenuController {
                 .categoryId(result.getCategoryId())
                 .categoryName(result.getCategoryName())
                 .isAvailable(result.getIsAvailable())
+                .optionGroups(result.getOptionGroups())
                 .createdAt(result.getCreatedAt())
                 .updatedAt(result.getUpdatedAt())
                 .build();
@@ -139,6 +140,7 @@ public class AdminMenuController {
                 .imageSrc(request.getImageSrc())
                 .isAvailable(request.getIsAvailable())
                 .sortOrder(request.getSortOrder())
+                .optionGroups(request.getOptionGroups())
                 .build();
         return createMenuUseCase.createMenu(command);
     }
@@ -158,6 +160,7 @@ public class AdminMenuController {
                 .imageSrc(request.getImageSrc())
                 .isAvailable(request.getIsAvailable())
                 .sortOrder(request.getSortOrder())
+                .optionGroups(request.getOptionGroups())
                 .build();
         return updateMenuUseCase.updateMenu(command);
     }

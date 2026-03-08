@@ -91,7 +91,26 @@
     font-weight: 700;
     color: #ca8a04;
     font-size: 1.1rem;
+    margin-bottom: var(--space-2);
 }
+
+.itemOptions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.optionBadge {
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+}
+
 
 /* 수량 조절 */
 .quantityControl {

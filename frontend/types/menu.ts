@@ -11,7 +11,7 @@ export interface Menu {
   isAvailable: boolean;
   isSoldOut: boolean;
   sortOrder: number;
-  options: MenuOption[];
+  optionGroups: MenuOptionGroup[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,18 +23,20 @@ export interface MenuImage {
   sortOrder: number;
 }
 
-export interface MenuOption {
-  id: string;
+export interface MenuOptionDetail {
+  id?: number;
   name: string;
-  type: 'radio' | 'checkbox';
-  required: boolean;
-  items: OptionItem[];
+  additionalPrice: number;
+  sortOrder: number;
 }
 
-export interface OptionItem {
-  id: string;
+export interface MenuOptionGroup {
+  id?: number;
   name: string;
-  priceDelta: number;
+  isRequired: boolean;
+  isMultiple: boolean;
+  sortOrder: number;
+  optionDetails: MenuOptionDetail[];
 }
 
 export interface MenuCategory {
@@ -54,5 +56,5 @@ export interface MenuFormData {
   categoryId: string;
   images: File[];
   isAvailable: boolean;
-  options: MenuOption[];
+  optionGroups: MenuOptionGroup[];
 }

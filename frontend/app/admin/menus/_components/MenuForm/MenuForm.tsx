@@ -28,13 +28,13 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
             description: '',
             engName: '',
             images: [],
-            options: [],
+            optionGroups: [],
             ...initialData
         }
     });
 
     const images = watch('images') || [];
-    const options = watch('options') || [];
+    const optionGroups = watch('optionGroups') || [];
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
@@ -132,8 +132,8 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
                     </p>
                 </div>
                 <OptionManager
-                    options={options}
-                    onChange={(newOptions) => setValue('options', newOptions)}
+                    options={optionGroups}
+                    onChange={(newOptions) => setValue('optionGroups', newOptions)}
                 />
             </section>
 

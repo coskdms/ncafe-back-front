@@ -1,6 +1,7 @@
 package com.newlecture.backend.admin.menu.application.port.in.result;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class MenuDetailResult {
     private String categoryId;
     private String categoryName;
     private Boolean isAvailable;
+    private List<MenuOptionGroupResult> optionGroups;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -21,7 +21,8 @@ export default function NewMenuPage() {
                     categoryId: data.categoryId,
                     isAvailable: data.isAvailable,
                     sortOrder: 99,
-                    imageSrc: ''
+                    imageSrc: '',
+                    optionGroups: data.optionGroups
                 })
             });
 

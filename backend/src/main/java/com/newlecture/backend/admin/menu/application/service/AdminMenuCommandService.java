@@ -34,12 +34,15 @@ public class AdminMenuCommandService
 
     private final MenuRepository menuRepository;
     private final MenuImageRepository menuImageRepository;
+    private final com.newlecture.backend.admin.menu.application.port.out.MenuOptionRepository menuOptionRepository;
 
     public AdminMenuCommandService(
             @Qualifier("adminMenuPersistenceAdapter") MenuRepository menuRepository,
-            @Qualifier("adminMenuImagePersistenceAdapter") MenuImageRepository menuImageRepository) {
+            @Qualifier("adminMenuImagePersistenceAdapter") MenuImageRepository menuImageRepository,
+            @Qualifier("adminMenuOptionPersistenceAdapter") com.newlecture.backend.admin.menu.application.port.out.MenuOptionRepository menuOptionRepository) {
         this.menuRepository = menuRepository;
         this.menuImageRepository = menuImageRepository;
+        this.menuOptionRepository = menuOptionRepository;
     }
 
     @Override
@@ -57,6 +60,8 @@ public class AdminMenuCommandService
                 .build();
 
         Menu savedMenu = menuRepository.save(menu);
+
+        saveMenuOptions(savedMenu.getId(), command.getOptionGroups());
 
         return MenuSaveResult.builder()
                 .id(savedMenu.getId())
@@ -83,11 +88,46 @@ public class AdminMenuCommandService
 
         Menu updatedMenu = menuRepository.save(menu);
 
+        // Delete existing options and insert new ones
+        menuOptionRepository.deleteByMenuId(updatedMenu.getId());
+        saveMenuOptions(updatedMenu.getId(), command.getOptionGroups());
+
         return MenuSaveResult.builder()
                 .id(updatedMenu.getId())
                 .success(true)
                 .message("수정 성공")
                 .build();
+    }
+
+    private void saveMenuOptions(Long menuId, List<com.newlecture.backend.admin.menu.application.port.in.command.MenuOptionGroupCommand> optionGroups) {
+        if (optionGroups == null || optionGroups.isEmpty()) {
+            return;
+        }
+        for (var groupCmd : optionGroups) {
+            List<com.newlecture.backend.admin.menu.domain.MenuOptionDetail> details = new ArrayList<>();
+            if (groupCmd.getOptionDetails() != null) {
+                for (var detailCmd : groupCmd.getOptionDetails()) {
+                    details.add(com.newlecture.backend.admin.menu.domain.MenuOptionDetail.builder()
+                            .name(detailCmd.getName())
+                            .additionalPrice(detailCmd.getAdditionalPrice() != null ? detailCmd.getAdditionalPrice() : 0)
+                            .sortOrder(detailCmd.getSortOrder() != null ? detailCmd.getSortOrder() : 1)
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .build());
+                }
+            }
+            com.newlecture.backend.admin.menu.domain.MenuOptionGroup group = com.newlecture.backend.admin.menu.domain.MenuOptionGroup.builder()
+                    .menuId(menuId)
+                    .name(groupCmd.getName())
+                    .isRequired(groupCmd.getIsRequired() != null ? groupCmd.getIsRequired() : false)
+                    .isMultiple(groupCmd.getIsMultiple() != null ? groupCmd.getIsMultiple() : false)
+                    .sortOrder(groupCmd.getSortOrder() != null ? groupCmd.getSortOrder() : 1)
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .optionDetails(details)
+                    .build();
+            menuOptionRepository.save(group);
+        }
     }
 
     @Override

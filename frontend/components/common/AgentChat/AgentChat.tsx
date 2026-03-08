@@ -66,7 +66,7 @@ export default function AgentChat() {
                     const handleCartClick = async (e: React.MouseEvent) => {
                         e.preventDefault();
                         await addItem({
-                            id: menu.id,
+                            menuId: menu.id,
                             korName: menu.korName || menu.name,
                             price: menu.price,
                             imageSrc: firstImage

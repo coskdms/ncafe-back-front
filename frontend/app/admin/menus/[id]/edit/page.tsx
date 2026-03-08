@@ -36,7 +36,7 @@ export default function EditMenuPage() {
                         description: data.description || '',
                         isAvailable: data.isAvailable,
                         images: formattedImages,
-                        options: [] // 옵션 수정도 추후 구현 필요
+                        optionGroups: data.optionGroups || []
                     };
                     setMenuData(formData);
                 } else {
@@ -67,7 +67,8 @@ export default function EditMenuPage() {
                     categoryId: data.categoryId,
                     isAvailable: data.isAvailable,
                     sortOrder: 1, // 기존 유지 또는 새로 세팅 로직
-                    imageSrc: '' // 메인 이미지는 서버에서 처리
+                    imageSrc: '', // 메인 이미지는 서버에서 처리
+                    optionGroups: data.optionGroups
                 })
             });
 

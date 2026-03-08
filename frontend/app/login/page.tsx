@@ -25,8 +25,10 @@ function LoginContent() {
             await login(nickname, password);
 
             // 리다이렉트 (middleware에서 보낸 redirect 파라미터 확인)
+            // ★ 중요: router.push 대신 window.location.href를 사용하여 
+            // 세션 쿠키가 브라우저에 완전히 반영된 후 페이지가 로드되도록 함 (race condition 방지)
             const redirect = searchParams.get('redirect') || '/';
-            router.push(redirect);
+            window.location.href = redirect;
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : '로그인에 실패했습니다.');
         } finally {

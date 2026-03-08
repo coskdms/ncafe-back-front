@@ -19,4 +19,5 @@ public class MenuUpdateRequest {
     private String imageSrc;
     private Boolean isAvailable;
     private int sortOrder;
+    private java.util.List<com.newlecture.backend.admin.menu.application.port.in.command.MenuOptionGroupCommand> optionGroups;
 }

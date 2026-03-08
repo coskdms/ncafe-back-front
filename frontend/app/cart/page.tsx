@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useCartStore } from '@/stores/cartStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useRouter } from 'next/navigation';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,6 +11,7 @@ import styles from './Cart.module.css';
 import Navbar from '@/components/landing/Navbar';
 
 export default function CartPage() {
+    const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
     useEffect(() => {
         setIsMounted(true);
@@ -79,6 +81,16 @@ export default function CartPage() {
                                 <div className={styles.itemInfo}>
                                     <h3 className={styles.itemName}>{item.korName}</h3>
                                     <p className={styles.itemPrice}>{item.price.toLocaleString()}원</p>
+                                    
+                                    {item.options && Object.keys(item.options).length > 0 && (
+                                        <div className={styles.itemOptions}>
+                                            {Object.entries(item.options).map(([group, val]) => (
+                                                <span key={group} className={styles.optionBadge}>
+                                                    {group}: {val}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                                 
                                 <div className={styles.quantityControl}>
@@ -156,7 +168,13 @@ export default function CartPage() {
                             </span>
                         </div>
 
-                        <button className={styles.orderBtn}>
+                        <button 
+                            className={styles.orderBtn}
+                            onClick={() => {
+                                useCartStore.getState().setCheckoutItems(items);
+                                router.push('/checkout');
+                            }}
+                        >
                             주문하기
                         </button>
                         
