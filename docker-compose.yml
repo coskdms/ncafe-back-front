@@ -27,6 +27,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_PORTONE_STORE_ID=${NEXT_PUBLIC_PORTONE_STORE_ID}
+        - NEXT_PUBLIC_PORTONE_CHANNEL_KEY=${NEXT_PUBLIC_PORTONE_CHANNEL_KEY}
     container_name: ${USER_ID:-newnaeun}-ncafe-frontend
     ports:
       - "${FRONTEND_PORT:-3032}:3032"
