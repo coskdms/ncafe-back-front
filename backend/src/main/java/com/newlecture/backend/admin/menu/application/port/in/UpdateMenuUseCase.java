@@ -1,5 +1,7 @@
 package com.newlecture.backend.admin.menu.application.port.in;
 
+import java.util.List;
+
 import com.newlecture.backend.admin.menu.application.port.in.command.UpdateMenuCommand;
 import com.newlecture.backend.admin.menu.application.port.in.result.MenuSaveResult;
 
@@ -8,4 +10,6 @@ import com.newlecture.backend.admin.menu.application.port.in.result.MenuSaveResu
  */
 public interface UpdateMenuUseCase {
     MenuSaveResult updateMenu(UpdateMenuCommand command);
+    void updateAvailability(Long id, boolean isAvailable);
+    void updateSortOrder(List<Long> menuIds);
 }

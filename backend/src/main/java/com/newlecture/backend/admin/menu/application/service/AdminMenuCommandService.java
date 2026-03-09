@@ -99,6 +99,31 @@ public class AdminMenuCommandService
                 .build();
     }
 
+    @Override
+    @Transactional
+    public void updateAvailability(Long id, boolean isAvailable) {
+        Menu menu = menuRepository.findById(id);
+        if (menu != null) {
+            menu.setIsAvailable(isAvailable);
+            menu.setUpdatedAt(LocalDateTime.now());
+            menuRepository.save(menu);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateSortOrder(List<Long> menuIds) {
+        for (int i = 0; i < menuIds.size(); i++) {
+            Long id = menuIds.get(i);
+            Menu menu = menuRepository.findById(id);
+            if (menu != null) {
+                menu.setSortOrder(i + 1);
+                menu.setUpdatedAt(LocalDateTime.now());
+                menuRepository.save(menu);
+            }
+        }
+    }
+
     private void saveMenuOptions(Long menuId, List<com.newlecture.backend.admin.menu.application.port.in.command.MenuOptionGroupCommand> optionGroups) {
         if (optionGroups == null || optionGroups.isEmpty()) {
             return;

@@ -60,7 +60,7 @@ public class AdminMenuQueryService
                             .imagesSrc(imagesSrc)
                             .isAvailable(menu.getIsAvailable())
                             .isSoldOut(false)
-                            .sortOrder(1)
+                            .sortOrder(menu.getSortOrder() != null ? menu.getSortOrder() : 1)
                             .createdAt(menu.getCreatedAt())
                             .updatedAt(menu.getUpdatedAt())
                             .build();

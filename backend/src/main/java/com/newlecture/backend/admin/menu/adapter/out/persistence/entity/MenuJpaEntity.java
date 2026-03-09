@@ -48,6 +48,9 @@ public class MenuJpaEntity {
     @Column(name = "is_available")
     private Boolean isAvailable;
 
+    @Column(name = "sort_order")
+    private Integer sortOrder;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -68,6 +71,7 @@ public class MenuJpaEntity {
                 .price(this.price)
                 .description(this.description)
                 .isAvailable(this.isAvailable)
+                .sortOrder(this.sortOrder)
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
                 .build();
@@ -85,6 +89,7 @@ public class MenuJpaEntity {
                 .price(menu.getPrice())
                 .description(menu.getDescription())
                 .isAvailable(menu.getIsAvailable())
+                .sortOrder(menu.getSortOrder())
                 .createdAt(menu.getCreatedAt())
                 .updatedAt(menu.getUpdatedAt())
                 .build();

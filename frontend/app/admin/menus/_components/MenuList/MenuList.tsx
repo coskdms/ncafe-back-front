@@ -6,35 +6,56 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Button from '@/components/common/Button';
 import MenuCard from '../MenuCard';
 import styles from './MenuList.module.css';
-import { useMenus, MenuListParams } from './useMenus';
+import { useMenus, MenuListParams, MenuResponse } from './useMenus';
 import { fetchAPI } from '@/app/lib/api';
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from '@dnd-kit/core';
+import {
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+    arrayMove,
+} from '@dnd-kit/sortable';
 
-const ITEMS_PER_PAGE = 8; // 페이지당 메뉴 개수
-
+const ITEMS_PER_PAGE = 8;
 
 export default function MenuList({ selectedCategory, searchQuery }: { selectedCategory: number | null, searchQuery: string }) {
     const [currentPage, setCurrentPage] = useState(1);
 
-    // params 객체로 전달 (선택되지 않은 경우 null)
     const menuListParams: MenuListParams = {
-        categoryId: selectedCategory,  // 이미 null | number 타입
+        categoryId: selectedCategory,
         searchQuery: searchQuery || null,
     };
 
-    // 커스텀 훅으로 메뉴 데이터 관리
     const { menus, setMenus, totalCount, loading, error, refetch } = useMenus(menuListParams);
 
-    // selectedCategory가 변경될 때 페이지 초기화
+    // DnD 센서 설정
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
     useEffect(() => {
         setCurrentPage(1);
     }, [selectedCategory]);
 
-    // 검색어 변경 시 페이지 초기화
     useEffect(() => {
         setCurrentPage(1);
     }, [searchQuery]);
 
-    // 페이지네이션 계산
     const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
     const paginatedMenus = (() => {
@@ -43,7 +64,6 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
         return menus.slice(startIndex, endIndex);
     })();
 
-    // 페이지 번호 배열 생성 (최대 5개 표시)
     const getPageNumbers = () => {
         const pages: (number | 'ellipsis')[] = [];
         const maxVisiblePages = 5;
@@ -54,39 +74,76 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
             }
         } else {
             if (currentPage <= 3) {
-                for (let i = 1; i <= 4; i++) {
-                    pages.push(i);
-                }
+                for (let i = 1; i <= 4; i++) pages.push(i);
                 pages.push('ellipsis');
                 pages.push(totalPages);
             } else if (currentPage >= totalPages - 2) {
                 pages.push(1);
                 pages.push('ellipsis');
-                for (let i = totalPages - 3; i <= totalPages; i++) {
-                    pages.push(i);
-                }
+                for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
             } else {
                 pages.push(1);
                 pages.push('ellipsis');
-                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                    pages.push(i);
-                }
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
                 pages.push('ellipsis');
                 pages.push(totalPages);
             }
         }
-
         return pages;
     };
 
-    // 품절 토글 (isAvailable 사용)
+    // 품절 토글 — 서버에 저장
     const handleToggleSoldOut = async (id: number) => {
         const menu = menus.find(m => m.id === id);
-        if (menu) {
-            // TODO: 백엔드 API 호출하여 품절 상태 업데이트
+        if (!menu) return;
+
+        const newAvailability = !menu.isAvailable;
+
+        // 낙관적 업데이트
+        setMenus(prev => prev.map(m =>
+            m.id === id ? { ...m, isAvailable: newAvailability } : m
+        ));
+
+        try {
+            await fetchAPI(`/admin/menus/${id}/availability`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newAvailability),
+            });
+        } catch (err) {
+            console.error('품절 상태 변경 실패:', err);
+            // 실패 시 원복
             setMenus(prev => prev.map(m =>
-                m.id === id ? { ...m, isAvailable: !m.isAvailable } : m
+                m.id === id ? { ...m, isAvailable: menu.isAvailable } : m
             ));
+            alert('품절 상태를 변경하는 중 오류가 발생했습니다.');
+        }
+    };
+
+    // 드래그 앤 드롭 종료 핸들러
+    const handleDragEnd = async (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
+
+        const oldIndex = menus.findIndex(m => m.id === active.id);
+        const newIndex = menus.findIndex(m => m.id === over.id);
+
+        if (oldIndex === -1 || newIndex === -1) return;
+
+        const reorderedMenus = arrayMove(menus, oldIndex, newIndex);
+        setMenus(reorderedMenus);
+
+        try {
+            const menuIds = reorderedMenus.map(m => m.id);
+            await fetchAPI('/admin/menus/reorder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(menuIds),
+            });
+        } catch (err) {
+            console.error('순서 변경 실패:', err);
+            refetch();
+            alert('메뉴 순서를 변경하는 중 오류가 발생했습니다.');
         }
     };
 
@@ -103,8 +160,6 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
             }
         }
     };
-
-
 
     if (loading) {
         return (
@@ -134,22 +189,30 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
         );
     }
 
-
-
     return (
         <>
-            <div className={styles.menuList}>
-                {paginatedMenus.map((menu) => (
-                    <MenuCard
-                        key={menu.id}
-                        menu={menu}
-                        onToggleSoldOut={handleToggleSoldOut}
-                        onDelete={handleDelete}
-                    />
-                ))}
-            </div>
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+            >
+                <SortableContext
+                    items={paginatedMenus.map(m => m.id)}
+                    strategy={verticalListSortingStrategy}
+                >
+                    <div className={styles.menuList}>
+                        {paginatedMenus.map((menu) => (
+                            <MenuCard
+                                key={menu.id}
+                                menu={menu}
+                                onToggleSoldOut={handleToggleSoldOut}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </div>
+                </SortableContext>
+            </DndContext>
 
-            {/* 페이지네이션 */}
             {totalPages > 1 && (
                 <div className={styles.pagination}>
                     <button
@@ -190,4 +253,3 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
         </>
     );
 }
-

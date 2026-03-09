@@ -2,6 +2,7 @@ package com.newlecture.backend.admin.menu.adapter.in.web;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -169,6 +170,18 @@ public class AdminMenuController {
     @DeleteMapping("/{id}")
     public void deleteMenu(@PathVariable Long id) {
         deleteMenuUseCase.deleteMenu(id);
+    }
+
+    // 메뉴 가용성(품절 여부) 업데이트
+    @PatchMapping("/{id}/availability")
+    public void updateAvailability(@PathVariable Long id, @RequestBody Boolean isAvailable) {
+        updateMenuUseCase.updateAvailability(id, isAvailable);
+    }
+
+    // 메뉴 순서 변경
+    @PostMapping("/reorder")
+    public void reorder(@RequestBody List<Long> menuIds) {
+        updateMenuUseCase.updateSortOrder(menuIds);
     }
 
     // 메뉴 이미지 업로드/수정

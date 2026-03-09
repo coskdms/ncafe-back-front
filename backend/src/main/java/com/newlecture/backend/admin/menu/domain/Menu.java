@@ -24,6 +24,7 @@ public class Menu {
     private Integer price;
     private String description;
     private Boolean isAvailable;
+    private Integer sortOrder;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
