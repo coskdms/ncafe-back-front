@@ -14,6 +14,7 @@ public interface MemberRepository {
      * 닉네임으로 회원 조회
      */
     Optional<Member> findByNickname(String nickname);
+    Optional<Member> findById(String id);
 
     /**
      * 회원 저장 (가입)

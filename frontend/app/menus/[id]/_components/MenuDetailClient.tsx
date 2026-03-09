@@ -21,6 +21,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const [isOptionModalOpen, setIsOptionModalOpen] = useState(false);
+    const [modalMode, setModalMode] = useState<'cart' | 'order'>('cart');
     const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
     const router = useRouter();
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -66,6 +67,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
         if (missingRequired && missingRequired.length > 0) {
             // 모달이 안 열려있었다면 열어줌
             if (!isOptionModalOpen) {
+                setModalMode('cart');
                 setIsOptionModalOpen(true);
                 return;
             }
@@ -93,6 +95,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
         const missingRequired = menu.optionGroups?.filter(g => g.isRequired && !selectedOptions[g.name]);
         if (missingRequired && missingRequired.length > 0) {
             if (!isOptionModalOpen) {
+                setModalMode('order');
                 setIsOptionModalOpen(true);
                 return;
             }
@@ -112,6 +115,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
         };
 
         useCartStore.getState().setCheckoutItems([buyNowItem]);
+        setIsOptionModalOpen(false);
         router.push('/checkout');
     };
 
@@ -220,7 +224,10 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                         {/* 주문 액션 버튼들 */}
                         <div className={styles.actionGroup}>
                             {menu.optionGroups && menu.optionGroups.length > 0 ? (
-                                <button className={styles.secondaryButton} onClick={() => setIsOptionModalOpen(true)}>
+                                <button className={styles.secondaryButton} onClick={() => {
+                                    setModalMode('cart');
+                                    setIsOptionModalOpen(true);
+                                }}>
                                     <ShoppingCart size={20} />
                                     옵션 선택하기
                                 </button>
@@ -242,7 +249,10 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
             {/* 모바일 하단 고정 바 */}
             <div className={styles.mobileStickyBar}>
                 {menu.optionGroups && menu.optionGroups.length > 0 ? (
-                    <button className={styles.secondaryButton} onClick={() => setIsOptionModalOpen(true)}>
+                    <button className={styles.secondaryButton} onClick={() => {
+                        setModalMode('cart');
+                        setIsOptionModalOpen(true);
+                    }}>
                         옵션 선택
                     </button>
                 ) : (
@@ -302,9 +312,22 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                                 <span className={styles.modalTotalLabel}>총 주문 금액</span>
                                 <span className={styles.modalTotalValue}>{formatPrice(calculateTotalPrice())}</span>
                             </div>
-                            <button className={styles.primaryButton} onClick={handleAddToCart} style={{ width: '100%' }}>
-                                <ShoppingCart size={20} />
-                                장바구니 담기
+                            <button 
+                                className={styles.primaryButton} 
+                                onClick={modalMode === 'order' ? handleOrderNow : handleAddToCart} 
+                                style={{ width: '100%' }}
+                            >
+                                {modalMode === 'order' ? (
+                                    <>
+                                        <CreditCard size={20} />
+                                        바로 주문하기
+                                    </>
+                                ) : (
+                                    <>
+                                        <ShoppingCart size={20} />
+                                        장바구니 담기
+                                    </>
+                                )}
                             </button>
                         </div>
                     </div>

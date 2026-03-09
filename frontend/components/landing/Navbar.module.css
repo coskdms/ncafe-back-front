@@ -114,6 +114,34 @@
     background: #fcd34d;
     color: #451a03;
 }
+/* ── 마이페이지 버튼 ── */
+.desktopLinks .mypageBtn {
+    background: #fffbeb;
+    color: #d97706;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: 1px solid #fef3c7;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.scrolled .desktopLinks .mypageBtn {
+    background: transparent;
+    border: 1px solid #fcd34d;
+    color: #fcd34d;
+}
+
+.desktopLinks .mypageBtn:hover {
+    background: #fef3c7;
+    transform: translateY(-2px);
+}
+
+.scrolled .desktopLinks .mypageBtn:hover {
+    background: #fcd34d;
+    color: #451a03;
+}
 
 /* ── 장바구니 아이콘 ── */
 .cartIcon {
@@ -223,6 +251,16 @@
     background: transparent;
     border: 1.5px solid #fcd34d;
     color: #fcd34d;
+    padding: 10px 32px;
+    border-radius: 30px;
+    margin-top: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.mobileMenu .mobileMypageLink {
+    background: #fcd34d;
+    color: #451a03;
     padding: 10px 32px;
     border-radius: 30px;
     margin-top: 10px;

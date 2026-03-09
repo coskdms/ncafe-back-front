@@ -1,6 +1,7 @@
 package com.newlecture.backend.order.adapter.out.persistence.entity;
 
 import com.newlecture.backend.order.domain.OrderStatus;
+import com.newlecture.backend.order.domain.OrderType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -35,11 +36,15 @@ public class OrderJpaEntity {
     @Column(nullable = false)
     private OrderStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderType type;
+
     private String receiverName;
     private String receiverPhone;
     private String address;
     private String memo;
-
+    private Integer usedPoints;
     private String txId; // 결제 승인 후 저장할 거래 키
 
     @CreationTimestamp

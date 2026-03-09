@@ -61,13 +61,15 @@ export default function Navbar() {
 
                         {!isLoading && (
                             isAuthenticated ? (
-                                <>
-                                    {user?.role === 'ADMIN' && (
-                                        <Link href="/admin" className={styles.adminBtn}>관리자 메뉴</Link>
-                                    )}
-                                    <span className={styles.userName}>👋 {user?.nickname}님</span>
-                                    <button onClick={handleLogout} className={styles.logoutBtn}>로그아웃</button>
-                                </>
+                                    <>
+                                        <span className={styles.userName}>👋 {user?.nickname}님</span>
+                                        {user?.role === 'ADMIN' ? (
+                                            <Link href="/admin" className={styles.adminBtn}>관리자 메뉴</Link>
+                                        ) : (
+                                            <Link href="/mypage" className={styles.mypageBtn}>마이페이지</Link>
+                                        )}
+                                        <button onClick={handleLogout} className={styles.logoutBtn}>로그아웃</button>
+                                    </>
                             ) : (
                                 <Link href="/login" className={styles.loginBtn}>로그인</Link>
                             )
@@ -105,13 +107,15 @@ export default function Navbar() {
 
                     {!isLoading && (
                         isAuthenticated ? (
-                            <>
-                                {user?.role === 'ADMIN' && (
-                                    <Link href="/admin" className={styles.mobileAdminBtn} onClick={() => setIsOpen(false)}>관리자 메뉴</Link>
-                                )}
-                                <span className={styles.mobileUserName}>👋 {user?.nickname}님</span>
-                                <button onClick={handleLogout} className={styles.mobileLogoutBtn}>로그아웃</button>
-                            </>
+                                <>
+                                    <span className={styles.mobileUserName}>👋 {user?.nickname}님</span>
+                                    {user?.role === 'ADMIN' ? (
+                                        <Link href="/admin" className={styles.mobileAdminBtn} onClick={() => setIsOpen(false)}>관리자 메뉴</Link>
+                                    ) : (
+                                        <Link href="/mypage" className={styles.mobileMypageLink} onClick={() => setIsOpen(false)}>마이페이지</Link>
+                                    )}
+                                    <button onClick={handleLogout} className={styles.mobileLogoutBtn}>로그아웃</button>
+                                </>
                         ) : (
                             <Link href="/login" className={styles.mobileLoginBtn} onClick={() => setIsOpen(false)}>로그인</Link>
                         )

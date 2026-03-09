@@ -1,5 +1,6 @@
 package com.newlecture.backend.order.adapter.in.web.dto;
 
+import com.newlecture.backend.order.domain.OrderType;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
@@ -12,6 +13,8 @@ public class OrderCreateRequest {
     private String receiverPhone;
     private String address;
     private String memo;
+    private OrderType type;
+    private Integer usedPoints;
     private List<OrderItemRequest> items;
 
     @Getter

@@ -25,6 +25,7 @@ export default function CheckoutPage() {
     const [isProcessing, setIsProcessing] = useState(false);
 
     // 개인정보 폼 상태 (기본값 설정)
+    const [orderType, setOrderType] = useState<'DINE_IN' | 'PICK_UP' | 'DELIVERY'>('DELIVERY');
     const [formData, setFormData] = useState({
         receiver: '',
         phone: '',
@@ -32,14 +33,32 @@ export default function CheckoutPage() {
         memo: ''
     });
 
+    const [availablePoints, setAvailablePoints] = useState(0);
+    const [pointsToUse, setPointsToUse] = useState(0);
+
     useEffect(() => {
         setIsMounted(true);
-        // 로그인 정보가 있으면 자동 채우기
+        // 로그인 정보가 있으면 자동 채우기 및 포인트 조회
         if (user) {
             setFormData(prev => ({
                 ...prev,
                 receiver: user.nickname || '',
             }));
+            
+            // 보유 포인트 및 회원 정보(주소, 연락처) 조회
+            import('@/app/lib/api').then(({ memberAPI }) => {
+                memberAPI.getGrowthInfo().then(data => {
+                    if (data) {
+                        setAvailablePoints(data.currentPoints || 0);
+                        // 마이페이지에 저장된 기본 정보가 있다면 자동 세팅
+                        setFormData(prev => ({
+                            ...prev,
+                            address: data.address || prev.address,
+                            phone: data.phone || prev.phone
+                        }));
+                    }
+                });
+            });
         }
     }, [user]);
 
@@ -55,17 +74,40 @@ export default function CheckoutPage() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = parseInt(e.target.value) || 0;
+        const maxSpend = Math.min(val, availablePoints, totalPrice + deliveryFee);
+        setPointsToUse(Math.max(0, maxSpend));
+    };
+
+    const handleUseAllPoints = () => {
+        const maxSpend = Math.min(availablePoints, totalPrice + deliveryFee);
+        setPointsToUse(maxSpend);
+    };
+
     const totalPrice = getCheckoutTotalPrice();
-    const deliveryFee = isAuthenticated ? 0 : 3000;
-    const finalPrice = totalPrice + deliveryFee;
+    const deliveryFee = (orderType === 'DELIVERY') ? (isAuthenticated ? 0 : 3000) : 0;
+    const finalPrice = Math.max(0, totalPrice + deliveryFee - pointsToUse);
 
     const handlePayment = async () => {
         if (isProcessing) return;
 
         // 폼 유효성 검사
-        if (!formData.receiver || !formData.phone || !formData.address) {
-            alert('수령인 정보와 주소를 모두 입력해주세요! 🐤');
-            return;
+        if (orderType === 'DINE_IN') {
+            if (!formData.receiver) {
+                alert('닉네임(이름)을 입력해주세요! 🐤');
+                return;
+            }
+        } else if (orderType === 'PICK_UP') {
+            if (!formData.receiver || !formData.phone) {
+                alert('수령인 이름과 연락처를 모두 입력해주세요! 🐤');
+                return;
+            }
+        } else if (orderType === 'DELIVERY') {
+            if (!formData.receiver || !formData.phone || !formData.address) {
+                alert('수령인 정보와 주소를 모두 입력해주세요! 🐤');
+                return;
+            }
         }
 
         setIsProcessing(true);
@@ -76,9 +118,11 @@ export default function CheckoutPage() {
                 method: 'POST',
                 body: JSON.stringify({
                     receiverName: formData.receiver,
-                    receiverPhone: formData.phone,
-                    address: formData.address,
-                    memo: formData.memo,
+                    receiverPhone: orderType === 'DINE_IN' ? '' : formData.phone,
+                    address: orderType === 'DELIVERY' ? formData.address : (orderType === 'PICK_UP' ? '매장 픽업' : '매장 식사'),
+                    memo: orderType === 'DELIVERY' ? formData.memo : '',
+                    type: orderType,
+                    usedPoints: pointsToUse,
                     items: checkoutItems.map(item => ({
                         menuId: item.menuId,
                         korName: item.korName,
@@ -106,7 +150,7 @@ export default function CheckoutPage() {
                 payMethod: "EASY_PAY", // 카카오페이 등 간편결제
                 customer: {
                     fullName: formData.receiver,
-                    phoneNumber: formData.phone,
+                    ...(formData.phone ? { phoneNumber: formData.phone } : {}),
                 },
                 redirectUrl: `${window.location.origin}/checkout/success` // 모바일 환경 대응
             });
@@ -152,59 +196,144 @@ export default function CheckoutPage() {
                     <div className={styles.infoSection}>
                         <section className={styles.card}>
                             <h2 className={styles.cardTitle}>
-                                <User size={20} /> 주문자 / 수령인 정보
+                                <Ship size={20} /> 주문 유형 선택
                             </h2>
-                            <div className={styles.formGroup}>
-                                <label className={styles.label}>수령인 이름</label>
-                                <input
-                                    type="text"
-                                    name="receiver"
-                                    value={formData.receiver}
-                                    onChange={handleInputChange}
-                                    placeholder="이름을 입력해주세요"
-                                    className={styles.input}
-                                />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label className={styles.label}>연락처</label>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleInputChange}
-                                    placeholder="010-0000-0000"
-                                    className={styles.input}
-                                />
+                            <div className={styles.typeSelector}>
+                                <button
+                                    className={`${styles.typeBtn} ${orderType === 'DINE_IN' ? styles.active : ''}`}
+                                    onClick={() => setOrderType('DINE_IN')}
+                                >
+                                    매장 식사
+                                </button>
+                                <button
+                                    className={`${styles.typeBtn} ${orderType === 'PICK_UP' ? styles.active : ''}`}
+                                    onClick={() => setOrderType('PICK_UP')}
+                                >
+                                    포장 / 픽업
+                                </button>
+                                <button
+                                    className={`${styles.typeBtn} ${orderType === 'DELIVERY' ? styles.active : ''}`}
+                                    onClick={() => setOrderType('DELIVERY')}
+                                >
+                                    배송 주문
+                                </button>
                             </div>
                         </section>
 
                         <section className={styles.card}>
                             <h2 className={styles.cardTitle}>
-                                <MapPin size={20} /> 배송지 / 픽업 정보
+                                <User size={20} /> {orderType === 'DINE_IN' ? '닉네임 정보' : '주문자 / 수령인 정보'}
                             </h2>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>배송 주소 (또는 픽업 매장명)</label>
+                                <label className={styles.label}>{orderType === 'DINE_IN' ? '닉네임' : '수령인 이름'}</label>
                                 <input
                                     type="text"
-                                    name="address"
-                                    value={formData.address}
+                                    name="receiver"
+                                    value={formData.receiver}
                                     onChange={handleInputChange}
-                                    placeholder="정확한 주소 또는 매장명을 입력해주세요"
+                                    placeholder={orderType === 'DINE_IN' ? '닉네임을 입력해주세요' : '이름을 입력해주세요'}
                                     className={styles.input}
                                 />
                             </div>
-                            <div className={styles.formGroup}>
-                                <label className={styles.label}>요청 사항</label>
-                                <textarea
-                                    name="memo"
-                                    value={formData.memo}
-                                    onChange={handleInputChange}
-                                    placeholder="카페에 전달할 메시지를 적어주세요 (예: 얼음 많이 주세요!)"
-                                    className={styles.input}
-                                    style={{ height: '80px', resize: 'none' }}
-                                />
-                            </div>
+                            {(orderType === 'PICK_UP' || orderType === 'DELIVERY') && (
+                                <div className={styles.formGroup}>
+                                    <label className={styles.label}>연락처</label>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleInputChange}
+                                        placeholder="010-0000-0000"
+                                        className={styles.input}
+                                    />
+                                </div>
+                            )}
                         </section>
+
+                        {orderType === 'DELIVERY' && (
+                            <section className={styles.card}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+                                    <h2 className={styles.cardTitle} style={{ marginBottom: 0 }}>
+                                        <MapPin size={20} /> 배송지 정보
+                                    </h2>
+                                    {isAuthenticated && (
+                                        <button 
+                                            className={styles.useAllBtn}
+                                            style={{ fontSize: '11px', padding: '4px 10px' }}
+                                            onClick={() => {
+                                                import('@/app/lib/api').then(({ memberAPI }) => {
+                                                    memberAPI.getGrowthInfo().then(data => {
+                                                        if (data.address || data.phone) {
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                address: data.address || prev.address,
+                                                                phone: data.phone || prev.phone
+                                                            }));
+                                                            alert('마이페이지에서 정보를 불러왔습니다! 🐥');
+                                                        } else {
+                                                            alert('저장된 기본 정보가 없습니다. 마이페이지에서 먼저 저장해주세요! 🐤');
+                                                        }
+                                                    });
+                                                });
+                                            }}
+                                        >
+                                            기본 정보 불러오기
+                                        </button>
+                                    )}
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label className={styles.label}>배송 주소</label>
+                                    <input
+                                        type="text"
+                                        name="address"
+                                        value={formData.address}
+                                        onChange={handleInputChange}
+                                        placeholder="정확한 주소를 입력해주세요"
+                                        className={styles.input}
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label className={styles.label}>요청 사항</label>
+                                    <textarea
+                                        name="memo"
+                                        value={formData.memo}
+                                        onChange={handleInputChange}
+                                        placeholder="카페에 전달할 메시지를 적어주세요 (예: 얼음 많이 주세요!)"
+                                        className={styles.input}
+                                        style={{ height: '80px', resize: 'none' }}
+                                    />
+                                </div>
+                            </section>
+                        )}
+
+                        {isAuthenticated && (
+                            <section className={styles.card}>
+                                <h2 className={styles.cardTitle}>
+                                    <MessageSquare size={20} /> 파덕 포인트 사용 🐥
+                                </h2>
+                                <div className={styles.pointsActionArea}>
+                                    <div className={styles.pointsStatus}>
+                                        보유 포인트: <strong>{availablePoints.toLocaleString()} P</strong>
+                                    </div>
+                                    <div className={styles.pointsInputRow}>
+                                        <input
+                                            type="number"
+                                            value={pointsToUse || ''}
+                                            onChange={handlePointsChange}
+                                            placeholder="사용할 포인트를 입력하세요"
+                                            className={styles.pointInput}
+                                        />
+                                        <button 
+                                            className={styles.useAllBtn}
+                                            onClick={handleUseAllPoints}
+                                        >
+                                            전액 사용
+                                        </button>
+                                    </div>
+                                    <p className={styles.pointNote}>* 결제 금액의 100%까지 사용 가능합니다.</p>
+                                </div>
+                            </section>
+                        )}
 
                         <section className={styles.card}>
                             <h2 className={styles.cardTitle}>
@@ -249,6 +378,13 @@ export default function CheckoutPage() {
                                 <span>배송비</span>
                                 <span>{isAuthenticated ? '무료' : deliveryFee.toLocaleString() + '원'}</span>
                             </div>
+
+                            {pointsToUse > 0 && (
+                                <div className={styles.summaryRow} style={{ color: '#dc2626', fontWeight: 700 }}>
+                                    <span>포인트 할인</span>
+                                    <span>- {pointsToUse.toLocaleString()} P</span>
+                                </div>
+                            )}
 
                             <div className={styles.totalRow}>
                                 <span>총 결제 예정액</span>

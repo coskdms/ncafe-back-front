@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +29,14 @@ public class JdbcMemberRepository implements MemberRepository {
             .nickname(rs.getString("nickname"))
             .password(rs.getString("password"))
             .role(rs.getString("role"))
+            .currentPoints(rs.getInt("current_points"))
+            .totalAccumulatedPoints(rs.getInt("total_accumulated_points"))
+            .lastOrderDate(rs.getTimestamp("last_order_date") != null
+                    ? rs.getTimestamp("last_order_date").toLocalDateTime()
+                    : null)
+            .growthLevel(rs.getString("growth_level"))
+            .address(rs.getString("address"))
+            .phone(rs.getString("phone"))
             .createdAt(rs.getTimestamp("created_at") != null
                     ? rs.getTimestamp("created_at").toLocalDateTime()
                     : null)
@@ -44,20 +53,46 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
+    public Optional<Member> findById(String id) {
+        String sql = "SELECT * FROM users WHERE id = ?::uuid";
+        List<Member> members = jdbcTemplate.query(sql, memberRowMapper, id);
+        return members.stream().findFirst();
+    }
+
+    @Override
     public Member save(Member member) {
-        // DB의 id 컬럼이 uuid 타입이므로, 문자열이 아닌 UUID 객체를 직접 전달
         String sql = """
-                INSERT INTO users (id, nickname, password, role, created_at, updated_at)
-                VALUES (?::uuid, ?, ?, ?, ?, ?)
+                INSERT INTO users (id, nickname, password, role, 
+                                 current_points, total_accumulated_points, 
+                                 last_order_date, growth_level,
+                                 address, phone,
+                                 created_at, updated_at)
+                VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT (id) DO UPDATE SET
+                    current_points = EXCLUDED.current_points,
+                    total_accumulated_points = EXCLUDED.total_accumulated_points,
+                    last_order_date = EXCLUDED.last_order_date,
+                    growth_level = EXCLUDED.growth_level,
+                    address = EXCLUDED.address,
+                    phone = EXCLUDED.phone,
+                    updated_at = CURRENT_TIMESTAMP
                 """;
-        String id = UUID.randomUUID().toString();
+        
+        String id = (member.getId() != null) ? member.getId() : UUID.randomUUID().toString();
+        
         jdbcTemplate.update(sql,
                 id,
                 member.getNickname(),
                 member.getPassword(),
                 member.getRole(),
-                member.getCreatedAt(),
-                member.getUpdatedAt());
+                member.getCurrentPoints(),
+                member.getTotalAccumulatedPoints(),
+                member.getLastOrderDate(),
+                member.getGrowthLevel(),
+                member.getAddress(),
+                member.getPhone(),
+                member.getCreatedAt() != null ? member.getCreatedAt() : LocalDateTime.now(),
+                member.getUpdatedAt() != null ? member.getUpdatedAt() : LocalDateTime.now());
 
         member.setId(id);
         return member;

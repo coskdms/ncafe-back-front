@@ -1,5 +1,6 @@
 package com.newlecture.backend.order.adapter.out.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class OrderItemJpaEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private OrderJpaEntity order;
 
     @Column(nullable = false)

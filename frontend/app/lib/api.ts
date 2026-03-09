@@ -77,3 +77,24 @@ export const authAPI = {
 
     getSession: () => fetchAPI('/auth/session'),
 };
+
+// 주문 관련 API
+export const orderAPI = {
+    getMyOrders: () => fetchAPI('/orders/mine'),
+    cancelOrder: (paymentId: String) => fetchAPI(`/orders/${paymentId}/cancel`, { method: 'POST' }),
+};
+
+// 회원 정보 관련 API
+export const memberAPI = {
+    getGrowthInfo: () => fetchAPI('/members/growth'),
+    updateProfile: (address: string, phone: string) => 
+        fetchAPI('/members/profile', {
+            method: 'PUT',
+            body: JSON.stringify({ address, phone }),
+        }),
+    updatePassword: (currentPassword: string, newPassword: string) =>
+        fetchAPI('/members/password', {
+            method: 'PUT',
+            body: JSON.stringify({ currentPassword, newPassword }),
+        }),
+};

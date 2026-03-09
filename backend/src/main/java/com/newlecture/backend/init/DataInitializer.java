@@ -261,10 +261,22 @@ public class DataInitializer implements ApplicationRunner {
                                 "nickname VARCHAR(50) NOT NULL UNIQUE, " +
                                 "password VARCHAR(255) NOT NULL, " +
                                 "role VARCHAR(20) NOT NULL DEFAULT 'USER', " +
+                                "current_points INTEGER DEFAULT 0, " +
+                                "total_accumulated_points INTEGER DEFAULT 0, " +
+                                "last_order_date TIMESTAMP WITH TIME ZONE, " +
+                                "growth_level VARCHAR(50) DEFAULT 'Lv.1 갓 태어난 알', " +
                                 "created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, " +
                                 "updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP" +
                                 ")";
                 jdbcTemplate.execute(createTableSql);
+
+                // 기존 테이블에 새로운 컬럼이 없을 경우 추가
+                try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS current_points INTEGER DEFAULT 0"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS total_accumulated_points INTEGER DEFAULT 0"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS last_order_date TIMESTAMP WITH TIME ZONE"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS growth_level VARCHAR(50) DEFAULT 'Lv.1 갓 태어난 알'"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)"); } catch (Exception e) {}
 
                 // 3. coskdms 계정 하나만 관리자로 남기고 나머지는 제거
                 insertUserIfMissing("coskdms", "thgud6173!", "ADMIN");

@@ -14,7 +14,11 @@ function FailContent() {
     return (
         <div className={styles.resultContainer}>
             <div className={styles.failIconWrapper}>
-                <XCircle size={80} color="#dc2626" strokeWidth={3} />
+                <img 
+                    src="/images/fail-duck.png" 
+                    alt="Fail Duck" 
+                    className={styles.successIconImg} 
+                />
             </div>
             <h1 className={styles.resultTitle}>결제에 실패했습니다 🐣</h1>
             <p className={styles.resultDesc}>
