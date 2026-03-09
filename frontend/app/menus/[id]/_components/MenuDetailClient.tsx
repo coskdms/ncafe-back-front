@@ -22,7 +22,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const [isOptionModalOpen, setIsOptionModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState<'cart' | 'order'>('cart');
-    const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+    const [selectedOptions, setSelectedOptions] = useState<Record<string, string[]>>({});
     const router = useRouter();
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
@@ -33,11 +33,30 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
 
     const addItem = useCartStore((state) => state.addItem);
 
-    const handleOptionChange = (groupName: string, optionName: string) => {
-        setSelectedOptions(prev => ({
-            ...prev,
-            [groupName]: optionName
-        }));
+    const handleOptionChange = (groupName: string, optionName: string, isMultiple?: boolean) => {
+        setSelectedOptions(prev => {
+            const current = prev[groupName] || [];
+            if (isMultiple) {
+                // 다중 선택: 이미 있으면 제거, 없으면 추가
+                if (current.includes(optionName)) {
+                    return {
+                        ...prev,
+                        [groupName]: current.filter(name => name !== optionName)
+                    };
+                } else {
+                    return {
+                        ...prev,
+                        [groupName]: [...current, optionName]
+                    };
+                }
+            } else {
+                // 단일 선택: 무조건 교체
+                return {
+                    ...prev,
+                    [groupName]: [optionName]
+                };
+            }
+        });
     };
 
     const calculateTotalPrice = () => {
@@ -47,13 +66,13 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
         // 선택된 옵션들의 추가 비용 합산
         if (menu.optionGroups) {
             menu.optionGroups.forEach(group => {
-                const selectedOptionName = selectedOptions[group.name];
-                if (selectedOptionName) {
-                    const option = group.optionDetails.find(d => d.name === selectedOptionName);
+                const selectedNames = selectedOptions[group.name] || [];
+                selectedNames.forEach(name => {
+                    const option = group.optionDetails.find(d => d.name === name);
                     if (option) {
                         total += option.additionalPrice || 0;
                     }
-                }
+                });
             });
         }
         return total;
@@ -63,7 +82,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
         if (!menu) return;
 
         // 필수 옵션 체크
-        const missingRequired = menu.optionGroups?.filter(g => g.isRequired && !selectedOptions[g.name]);
+        const missingRequired = menu.optionGroups?.filter(g => g.isRequired && (!selectedOptions[g.name] || selectedOptions[g.name].length === 0));
         if (missingRequired && missingRequired.length > 0) {
             // 모달이 안 열려있었다면 열어줌
             if (!isOptionModalOpen) {
@@ -75,13 +94,22 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
             return;
         }
 
+        // 카트용 옵션 데이터 변환 (Record<string, string[]> -> Record<string, string>)
+        const cartOptions: Record<string, string> = {};
+        Object.entries(selectedOptions).forEach(([group, names]) => {
+            if (names.length > 0) {
+                // 선택 순서에 상관없이 동일한 문자열을 생성하기 위해 정렬 후 결합
+                cartOptions[group] = [...names].sort().join(', ');
+            }
+        });
+
         // 카트에 아이템 추가
         await addItem({
             menuId: menu.id,
             korName: menu.korName,
             price: calculateTotalPrice(),
             imageSrc: menu.imagesSrc?.split(',')[0]?.trim() || 'blank.png',
-            options: selectedOptions
+            options: cartOptions
         });
 
         setIsOptionModalOpen(false);
@@ -92,7 +120,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
         if (!menu) return;
 
         // 필수 옵션 체크
-        const missingRequired = menu.optionGroups?.filter(g => g.isRequired && !selectedOptions[g.name]);
+        const missingRequired = menu.optionGroups?.filter(g => g.isRequired && (!selectedOptions[g.name] || selectedOptions[g.name].length === 0));
         if (missingRequired && missingRequired.length > 0) {
             if (!isOptionModalOpen) {
                 setModalMode('order');
@@ -103,13 +131,22 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
             return;
         }
 
+        // 체크아웃용 옵션 데이터 변환
+        const checkoutOptions: Record<string, string> = {};
+        Object.entries(selectedOptions).forEach(([group, names]) => {
+            if (names.length > 0) {
+                // 선택 순서에 상관없이 동일한 문자열을 생성하기 위해 정렬 후 결합
+                checkoutOptions[group] = [...names].sort().join(', ');
+            }
+        });
+
         // 바로 주문을 위한 체크아웃 아이템 설정
         const buyNowItem = {
             menuId: menu.id,
             korName: menu.korName,
             price: calculateTotalPrice(),
             imageSrc: menu.imagesSrc?.split(',')[0]?.trim() || 'blank.png',
-            options: selectedOptions,
+            options: checkoutOptions,
             id: Date.now(), // 임시 ID
             quantity: 1
         };
@@ -287,12 +324,12 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                                         {group.optionDetails.map((option) => (
                                             <div key={option.id} className={styles.optionItem}>
                                                 <input
-                                                    type="radio"
+                                                    type={group.isMultiple ? "checkbox" : "radio"}
                                                     id={`modal-option-${option.id}`}
                                                     name={`modal-group-${group.id}`}
                                                     className={styles.optionInput}
-                                                    checked={selectedOptions[group.name] === option.name}
-                                                    onChange={() => handleOptionChange(group.name, option.name)}
+                                                    checked={selectedOptions[group.name]?.includes(option.name) || false}
+                                                    onChange={() => handleOptionChange(group.name, option.name, group.isMultiple)}
                                                 />
                                                 <label htmlFor={`modal-option-${option.id}`} className={styles.optionLabel}>
                                                     <span>{option.name}</span>
