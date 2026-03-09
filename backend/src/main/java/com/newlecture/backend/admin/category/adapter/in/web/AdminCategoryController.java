@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,25 +37,34 @@ public class AdminCategoryController {
 
     // 상세 조회
     @GetMapping("/{id}")
-    public String detailCategory() {
-        return "detailCategory";
+    public Category detailCategory(@PathVariable Integer id) {
+        return adminCategoryUseCase.getAll().stream()
+                .filter(c -> c.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     // 카테고리 생성
     @PostMapping
-    public String newCategory(Category category) {
-        return "newCategory";
+    public Category newCategory(@RequestBody Category category) {
+        return adminCategoryUseCase.create(category);
     }
 
     // 카테고리 수정
     @PutMapping("/{id}")
-    public String editCategory(Category category) {
-        return "editCategory";
+    public Category editCategory(@PathVariable Integer id, @RequestBody Category category) {
+        return adminCategoryUseCase.update(id, category);
     }
 
     // 카테고리 삭제
     @DeleteMapping("/{id}")
-    public String deleteCategory() {
-        return "deleteCategory";
+    public void deleteCategory(@PathVariable Integer id) {
+        adminCategoryUseCase.delete(id);
+    }
+
+    // 순서 변경
+    @PatchMapping("/reorder")
+    public void reorder(@RequestBody List<Integer> categoryIds) {
+        adminCategoryUseCase.updateSortOrder(categoryIds);
     }
 }

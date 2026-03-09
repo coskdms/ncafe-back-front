@@ -9,4 +9,8 @@ import com.newlecture.backend.admin.category.domain.Category;
  */
 public interface AdminCategoryUseCase {
     List<Category> getAll();
+    Category create(Category category);
+    Category update(Integer id, Category category);
+    void delete(Integer id);
+    void updateSortOrder(List<Integer> categoryIds);
 }

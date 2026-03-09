@@ -37,4 +37,16 @@ public class CategoryPersistenceAdapter implements CategoryRepository {
                 .map(CategoryJpaEntity::toDomain)
                 .orElse(null);
     }
+
+    @Override
+    public Category save(Category category) {
+        CategoryJpaEntity entity = CategoryJpaEntity.fromDomain(category);
+        CategoryJpaEntity savedEntity = categoryJpaRepository.save(entity);
+        return savedEntity.toDomain();
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        categoryJpaRepository.deleteById(id);
+    }
 }
