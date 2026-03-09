@@ -138,7 +138,7 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
 
     return (
         <>
-            <div className={styles.menuGrid}>
+            <div className={styles.menuList}>
                 {paginatedMenus.map((menu) => (
                     <MenuCard
                         key={menu.id}

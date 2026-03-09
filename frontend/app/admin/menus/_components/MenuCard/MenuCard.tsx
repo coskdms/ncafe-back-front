@@ -51,7 +51,7 @@ export default function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled 
             style={style}
             onClick={handleCardClick}
         >
-            <div className={styles.imageWrapper}>
+            <div className={styles.menuInfo}>
                 {dragEnabled && (
                     <div
                         className={styles.dragHandle}
@@ -60,73 +60,68 @@ export default function MenuCard({ menu, onToggleSoldOut, onDelete, dragEnabled 
                         aria-label="Drag to reorder"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <GripVertical size={16} />
+                        <GripVertical size={20} />
                     </div>
                 )}
-
-                {/* imagesSrc가 있으면 이미지 표시, 없으면 placeholder */}
-                {menu.imagesSrc ? (
-
-                    <Image
-                        src={`/images/${menu.imagesSrc}`}
-                        alt={menu.korName}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 300px"
-                        className={styles.image}
-                    />
-                ) : (
-                    <div className={styles.placeholder}>
-                        <Coffee size={48} />
-                    </div>
-                )}
-
-                {!menu.isAvailable && (
-                    <div className={styles.soldOutBadge}>품절</div>
-                )}
-            </div>
-
-            <div className={styles.content}>
-                <div className={styles.header}>
-                    <div>
-                        <h3 className={styles.name}>{menu.korName}</h3>
-                        <p className={styles.engName}>{menu.engName}</p>
-                    </div>
+                
+                <div className={styles.imageWrapper}>
+                    {menu.imagesSrc ? (
+                        <Image
+                            src={`/images/${menu.imagesSrc}`}
+                            alt={menu.korName}
+                            fill
+                            sizes="60px"
+                            className={styles.image}
+                        />
+                    ) : (
+                        <div className={styles.placeholder}>
+                            <Coffee size={24} />
+                        </div>
+                    )}
+                    {!menu.isAvailable && (
+                        <div className={styles.soldOutBadge}>품절</div>
+                    )}
                 </div>
 
-                <p className={styles.price}>₩{formatPrice(menu.price)}</p>
+                <div className={styles.menuDetails}>
+                    <h3 className={styles.name}>{menu.korName}</h3>
+                    <p className={styles.engName}>{menu.engName}</p>
+                    <p className={styles.price}>₩{formatPrice(menu.price)}</p>
+                </div>
+            </div>
 
-                <div className={styles.footer}>
-                    <label
-                        className={styles.toggle}
-                        onClick={(e) => e.stopPropagation()}
-                    >
+            <div className={styles.rightSection}>
+                <div className={styles.toggleWrapper} onClick={(e) => e.stopPropagation()}>
+                    <span className={styles.toggleLabel}>품절 표시</span>
+                    <label className={styles.toggle}>
                         <input
                             type="checkbox"
                             checked={!menu.isAvailable}
                             onChange={() => onToggleSoldOut(menu.id)}
                         />
                         <span className={styles.toggleSlider}></span>
-                        <span className={styles.toggleLabel}>품절</span>
                     </label>
+                </div>
 
-                    <div className={styles.actions}>
-                        <Link
-                            href={`/admin/menus/${menu.id}/edit`}
-                            className={styles.actionButton}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <Edit size={16} />
-                        </Link>
-                        <button
-                            className={`${styles.actionButton} ${styles.danger}`}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onDelete(menu.id);
-                            }}
-                        >
-                            <Trash2 size={16} />
-                        </button>
-                    </div>
+                <div className={styles.itemActions}>
+                    <Link
+                        href={`/admin/menus/${menu.id}/edit`}
+                        className={`${styles.actionIconBtn} ${styles.editBtn}`}
+                        onClick={(e) => e.stopPropagation()}
+                        title="수정"
+                    >
+                        <Edit size={18} />
+                    </Link>
+                    <button
+                        className={`${styles.actionIconBtn} ${styles.deleteBtn}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(menu.id);
+                        }}
+                        title="삭제"
+                    >
+                        <Trash2 size={18} />
+                    </button>
                 </div>
             </div>
         </div>
