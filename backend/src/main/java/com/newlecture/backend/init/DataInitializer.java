@@ -41,6 +41,7 @@ public class DataInitializer implements ApplicationRunner {
                 // =====================================
                 initUsersTable();
                 initCartItemsTable();
+                initOrdersTable();
 
                 // =====================================
                 // [2] 메뉴 및 카테고리 초기 데이터 삽입
@@ -321,5 +322,48 @@ public class DataInitializer implements ApplicationRunner {
                 }
 
                 System.out.println("✅ DataInitializer: cart_items 테이블 확인 및 생성 완료 (옵션 지원)");
+        }
+
+        private void initOrdersTable() {
+                // 1. orders 테이블 생성 (컬럼 'type', 'used_points' 등 누락 방지)
+                String createOrdersTableSql = "CREATE TABLE IF NOT EXISTS orders (" +
+                                "id BIGSERIAL PRIMARY KEY, " +
+                                "payment_id VARCHAR(255) NOT NULL UNIQUE, " +
+                                "member_id UUID, " +
+                                "total_price INTEGER NOT NULL, " +
+                                "status VARCHAR(50) NOT NULL, " +
+                                "type VARCHAR(50) NOT NULL, " +
+                                "receiver_name VARCHAR(255), " +
+                                "receiver_phone VARCHAR(20), " +
+                                "address TEXT, " +
+                                "memo TEXT, " +
+                                "used_points INTEGER DEFAULT 0, " +
+                                "tx_id VARCHAR(255), " +
+                                "created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP" +
+                                ")";
+                jdbcTemplate.execute(createOrdersTableSql);
+
+                // 2. 누락된 컬럼(type, used_points 등) 강제 보정
+                try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS type VARCHAR(50) NOT NULL DEFAULT 'DELIVERY'"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS used_points INTEGER DEFAULT 0"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS tx_id VARCHAR(255)"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS receiver_name VARCHAR(255)"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS receiver_phone VARCHAR(20)"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS address TEXT"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS memo TEXT"); } catch (Exception e) {}
+
+                // 3. order_items 테이블 생성
+                String createOrderItemsTableSql = "CREATE TABLE IF NOT EXISTS order_items (" +
+                                "id BIGSERIAL PRIMARY KEY, " +
+                                "order_id BIGINT REFERENCES orders(id), " +
+                                "menu_id BIGINT NOT NULL, " +
+                                "kor_name VARCHAR(255) NOT NULL, " +
+                                "options TEXT, " +
+                                "price INTEGER NOT NULL, " +
+                                "quantity INTEGER NOT NULL" +
+                                ")";
+                jdbcTemplate.execute(createOrderItemsTableSql);
+
+                System.out.println("✅ DataInitializer: orders 및 order_items 테이블 확인 및 생성 완료 (자동 마이그레이션 포함)");
         }
 }
