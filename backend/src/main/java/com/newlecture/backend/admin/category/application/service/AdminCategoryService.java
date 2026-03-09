@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.newlecture.backend.admin.category.domain.Category;
 import com.newlecture.backend.admin.category.application.port.in.AdminCategoryUseCase;
@@ -13,6 +14,7 @@ import com.newlecture.backend.admin.category.application.port.out.CategoryReposi
  * 어드민 카테고리 서비스
  */
 @Service("adminCategoryService")
+@Transactional(readOnly = true)
 public class AdminCategoryService implements AdminCategoryUseCase {
 
     private final CategoryRepository categoryRepository;
@@ -28,6 +30,7 @@ public class AdminCategoryService implements AdminCategoryUseCase {
     }
 
     @Override
+    @Transactional
     public Category create(Category category) {
         // 새 카테고리의 정렬 순서를 마지막으로 설정
         int nextOrder = categoryRepository.findAll().size() + 1;
@@ -36,6 +39,7 @@ public class AdminCategoryService implements AdminCategoryUseCase {
     }
 
     @Override
+    @Transactional
     public Category update(Integer id, Category category) {
         Category existing = categoryRepository.findById(id);
         if (existing == null) {
@@ -50,11 +54,13 @@ public class AdminCategoryService implements AdminCategoryUseCase {
     }
 
     @Override
+    @Transactional
     public void delete(Integer id) {
         categoryRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public void updateSortOrder(List<Integer> categoryIds) {
         for (int i = 0; i < categoryIds.size(); i++) {
             Integer id = categoryIds.get(i);

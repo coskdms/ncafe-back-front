@@ -102,18 +102,25 @@ export default function CategoriesPage() {
         // 위치 교체
         [newCategories[index], newCategories[targetIndex]] = [newCategories[targetIndex], newCategories[index]];
         
-        // Optimistic UI update
-        setCategories(newCategories);
+        // UI 즉시 반영을 위해 sortOrder 값들을 인덱스 순서대로 재지정
+        const updatedWithOrders = newCategories.map((cat, idx) => ({
+            ...cat,
+            sortOrder: idx + 1
+        }));
+        
+        setCategories(updatedWithOrders);
 
         // 서버에 순서 업데이트 요청
         try {
             const res = await fetch('/api/admin/categories/reorder', {
-                method: 'PATCH',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newCategories.map(c => c.id)),
+                body: JSON.stringify(updatedWithOrders.map(c => c.id)),
             });
+            
             if (!res.ok) {
-                fetchCategories(); // 실패 시 롤백
+                console.error('Failed to update order on server');
+                fetchCategories(); // 실패 시 서버 데이터로 롤백
             }
         } catch (error) {
             console.error('Failed to reorder:', error);
