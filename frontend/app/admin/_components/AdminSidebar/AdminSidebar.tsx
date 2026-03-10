@@ -34,6 +34,7 @@ export default function AdminSidebar() {
     }, [isOpen]);
 
     const isActive = (href: string) => {
+        if (!pathname) return false;
         if (href === '/admin') {
             return pathname === '/admin';
         }

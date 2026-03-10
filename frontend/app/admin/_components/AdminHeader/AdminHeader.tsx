@@ -4,7 +4,8 @@ import { usePathname } from 'next/navigation';
 import { Bell, User } from 'lucide-react';
 import styles from './AdminHeader.module.css';
 
-const getPageTitle = (pathname: string) => {
+const getPageTitle = (pathname: string | null) => {
+    if (!pathname) return 'NCafe Admin';
     if (pathname === '/admin') return '대시보드';
     if (pathname === '/admin/menus') return '메뉴 관리';
     if (pathname === '/admin/menus/new') return '메뉴 등록';

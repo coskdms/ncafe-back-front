@@ -310,9 +310,9 @@ export default function MyPage() {
                         {/* 등급 정보 카드 */}
                         <div className={styles.gradeInfoRow}>
                             {[
-                                { name: 'Lv.1 알', point: `${shopSettings.level1Threshold.toLocaleString()} ~ ${shopSettings.level2Threshold.toLocaleString()} P` },
-                                { name: 'Lv.2 아기', point: `${shopSettings.level2Threshold.toLocaleString()} ~ ${shopSettings.level3Threshold.toLocaleString()} P` },
-                                { name: 'Lv.3 청소년', point: `${shopSettings.level3Threshold.toLocaleString()} ~ ${shopSettings.level4Threshold.toLocaleString()} P` },
+                                { name: 'Lv.1 알', point: `${shopSettings.level1Threshold.toLocaleString()} ~ ${(shopSettings.level2Threshold - 1).toLocaleString()} P` },
+                                { name: 'Lv.2 아기', point: `${shopSettings.level2Threshold.toLocaleString()} ~ ${(shopSettings.level3Threshold - 1).toLocaleString()} P` },
+                                { name: 'Lv.3 청소년', point: `${shopSettings.level3Threshold.toLocaleString()} ~ ${(shopSettings.level4Threshold - 1).toLocaleString()} P` },
                                 { name: 'Lv.4 현자', point: `${shopSettings.level4Threshold.toLocaleString()} P ~` }
                             ].map((grade, idx) => {
                                 const isCurrent = idx === 3 

@@ -46,7 +46,7 @@ export default function AgentChat() {
     let msgIdCounter = useRef(0);
 
     // 관리자 페이지(/admin으로 시작하는 모든 경로)에서는 사용자용 에이전트를 표시하지 않음
-    if (pathname?.startsWith('/admin')) {
+    if (!pathname || pathname.startsWith('/admin')) {
         return null;
     }
 
