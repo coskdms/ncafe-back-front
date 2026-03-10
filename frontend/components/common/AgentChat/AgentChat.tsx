@@ -45,10 +45,6 @@ export default function AgentChat() {
     const inputRef = useRef<HTMLInputElement>(null);
     let msgIdCounter = useRef(0);
 
-    // 관리자 페이지(/admin으로 시작하는 모든 경로)에서는 사용자용 에이전트를 표시하지 않음
-    if (!pathname || pathname.startsWith('/admin')) {
-        return null;
-    }
 
     /**
      * 메시지 텍스트 내의 특수 마커(::menu{...}::)를 찾아 
@@ -122,6 +118,12 @@ export default function AgentChat() {
         });
     };
 
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     // 스크롤 하단 고정
     const scrollToBottom = useCallback(() => {
         if (bodyRef.current) {
@@ -169,60 +171,53 @@ export default function AgentChat() {
         setIsTyping(true);
 
         try {
-            // 지금까지의 대화 이력을 beomini-server 형식에 맞춰 변환
-            // 첫 메시지는 인사말이므로 포함하거나, 직전 대화들만 포함
-            // 여기서 messages 상태는 비동기적으로 아직 업데이트 되지 않았으므로
-            // 함수 스코프 내에서 prevMessages 배열을 사용
-            setMessages(currentMessages => {
-                const apiMessages = currentMessages.map(m => ({
-                    role: m.sender === 'bot' ? 'model' : 'user',
-                    content: m.text
-                }));
+            // API 호출 (현재 메시지 + 새 메시지)
+            const apiMessages = [...messages, newUserMsg].map(m => ({
+                role: m.sender === 'bot' ? 'model' : 'user',
+                content: m.text
+            }));
 
-                // API 호출 (BFF 경유)
-                fetch('/api/agent/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: apiMessages,
-                        stream: false
-                    })
+            const res = await fetch('/api/agent/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: apiMessages,
+                    stream: false
                 })
-                    .then(res => res.json())
-                    .then(data => {
-                        setIsTyping(false);
-                        const botId = ++msgIdCounter.current;
-                        const replyText = data.content || "앗... 서버에서 응답을 가져올 수 없었다덕! 💦";
-
-                        setMessages(prev => [...prev, { id: botId, text: replyText, sender: 'bot' }]);
-
-                        // 봇 응답 내용에 따라 센스 있는 퀵 리플라이(버튼) 제시
-                        if (replyText.includes('개인정보') || replyText.includes('맛있는 메뉴를 소개해주는 건')) {
-                            setTimeout(() => {
-                                setQuickReplies(['그래, 메뉴 추천해줘!', '아니 괜찮아']);
-                            }, 500);
-                        } else if (replyText.includes('추천')) {
-                            // 추천 후에는 바로 장바구니로 유도하거나 다른 메뉴 보기
-                            setTimeout(() => {
-                                setQuickReplies(['다른 메뉴 추천해줘', '장바구니 볼래']);
-                            }, 500);
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Chat error:', err);
-                        setIsTyping(false);
-                        const botId = ++msgIdCounter.current;
-                        setMessages(prev => [...prev, { id: botId, text: "앗... 무언가 문제가 생겼다덕! 다시 말해줄래덕? 💦", sender: 'bot' }]);
-                    });
-
-                return currentMessages;
             });
+            
+            const data = await res.json();
+            setIsTyping(false);
+            
+            const botId = ++msgIdCounter.current;
+            const replyText = data.content || "앗... 서버에서 응답을 가져올 수 없었다덕! 💦";
+
+            setMessages(prev => [...prev, { id: botId, text: replyText, sender: 'bot' }]);
+
+            // 봇 응답 내용에 따라 센스 있는 퀵 리플라이(버튼) 제시
+            if (replyText.includes('개인정보') || replyText.includes('맛있는 메뉴를 소개해주는 건')) {
+                setTimeout(() => {
+                    setQuickReplies(['그래, 메뉴 추천해줘!', '아니 괜찮아']);
+                }, 500);
+            } else if (replyText.includes('추천')) {
+                setTimeout(() => {
+                    setQuickReplies(['다른 메뉴 추천해줘', '장바구니 볼래']);
+                }, 500);
+            }
 
         } catch (error) {
-            console.error(error);
+            console.error('Chat error:', error);
             setIsTyping(false);
+            const botId = ++msgIdCounter.current;
+            setMessages(prev => [...prev, { id: botId, text: "앗... 무언가 문제가 생겼다덕! 다시 말해줄래덕? 💦", sender: 'bot' }]);
         }
     };
+
+    // 하이드레이션 전이거나 관리자 페이지면 렌더링하지 않음
+    // 모든 Hook은 이 위에서 호출되어야 함
+    if (!isMounted || !pathname || pathname.startsWith('/admin')) {
+        return null;
+    }
 
     return (
         <div className={styles.root}>
