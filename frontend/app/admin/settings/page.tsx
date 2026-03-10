@@ -64,8 +64,8 @@ export default function AdminSettingsPage() {
         });
     };
 
-    const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSave = async (e?: React.FormEvent) => {
+        e?.preventDefault();
         if (!settings) return;
 
         setIsSaving(true);
@@ -98,8 +98,21 @@ export default function AdminSettingsPage() {
     return (
         <main className={styles.container}>
             <header className={styles.header}>
-                <h1>관리자 설정 🐤⚙️</h1>
-                <p>매장의 기본 정보와 운영 정책을 관리하세요.</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                        <h1>관리자 설정 🐤⚙️</h1>
+                        <p>매장의 기본 정보와 운영 정책을 관리하세요.</p>
+                    </div>
+                    <button 
+                        onClick={handleSave} 
+                        className={styles.saveBtn}
+                        style={{ padding: '0.6rem 1.2rem', fontSize: '0.9rem' }}
+                        disabled={isSaving}
+                    >
+                        <Save size={18} />
+                        {isSaving ? '저장 중...' : '지금 저장'}
+                    </button>
+                </div>
             </header>
 
             <nav className={styles.tabs}>
