@@ -1,10 +1,10 @@
 # Build stage
-FROM gradle:8.10.2-jdk21 AS builder
+FROM gradle:9.2.1-jdk21 AS builder
 WORKDIR /app
 COPY . .
 RUN chmod +x ./gradlew
-# 백엔드 프로젝트 빌드 (gradle-wrapper.properties의 버전을 맞추거나 다운로드 무시를 위해 빌드 시도)
-RUN ./gradlew :backend:bootJar --no-daemon -x test
+# 백엔드 프로젝트 빌드 (이미지에 이미 포함된 gradle:9.2.1을 사용하여 속도 개선 및 네트워크 이슈 회피)
+RUN gradle :backend:bootJar --no-daemon -x test
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine
