@@ -104,7 +104,7 @@ export default function AdminSettingsPage() {
                         <p>매장의 기본 정보와 운영 정책을 관리하세요.</p>
                     </div>
                     <button 
-                        onClick={handleSave} 
+                        onClick={() => handleSave()} 
                         className={styles.saveBtn}
                         style={{ padding: '0.6rem 1.2rem', fontSize: '0.9rem' }}
                         disabled={isSaving}
@@ -116,24 +116,27 @@ export default function AdminSettingsPage() {
             </header>
 
             <nav className={styles.tabs}>
-                <div 
+                <button 
+                    type="button"
                     className={`${styles.tab} ${activeTab === 'store' ? styles.activeTab : ''}`}
                     onClick={() => setActiveTab('store')}
                 >
                     매장 정보
-                </div>
-                <div 
+                </button>
+                <button 
+                    type="button"
                     className={`${styles.tab} ${activeTab === 'ordering' ? styles.activeTab : ''}`}
                     onClick={() => setActiveTab('ordering')}
                 >
                     주문 정책
-                </div>
-                <div 
+                </button>
+                <button 
+                    type="button"
                     className={`${styles.tab} ${activeTab === 'loyalty' ? styles.activeTab : ''}`}
                     onClick={() => setActiveTab('loyalty')}
                 >
                     포인트 & 등급
-                </div>
+                </button>
             </nav>
 
             <form onSubmit={handleSave}>
