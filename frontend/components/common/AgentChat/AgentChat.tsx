@@ -51,15 +51,17 @@ export default function AgentChat() {
      * 텍스트와 메뉴 카드를 분리하여 렌더링합니다.
      */
     const renderMessageContent = (text: string) => {
-        const parts = text.split(/(::menu\{.*?\}::)/g);
+        // ::menu와 ::action 마커를 모두 찾아서 나눔
+        const parts = text.split(/(::menu\{.*?\}::|::action\{.*?\}::)/g);
 
         return parts.map((part, index) => {
+            // 메뉴 마커 처리
             if (part.startsWith('::menu{') && part.endsWith('}::')) {
                 try {
                     const jsonStr = part.slice(6, -2);
                     const menu = JSON.parse(jsonStr);
 
-                    // 이미지 노출 여부 확인 (전체 메뉴 목록 등에서는 이미지를 숨김)
+                    // 이미지 노출 여부 확인
                     const showImage = !menu.noImage;
                     const firstImage = menu.imagesSrc
                         ? menu.imagesSrc.split(',')[0].trim()
@@ -114,6 +116,12 @@ export default function AgentChat() {
                     return <span key={index}>{part}</span>;
                 }
             }
+
+            // 액션 마커 처리 (텍스트 노출 안 함)
+            if (part.startsWith('::action{') && part.endsWith('}::')) {
+                return null;
+            }
+
             return <span key={index}>{part}</span>;
         });
     };
@@ -193,6 +201,32 @@ export default function AgentChat() {
             const replyText = data.content || "앗... 서버에서 응답을 가져올 수 없었다덕! 💦";
 
             setMessages(prev => [...prev, { id: botId, text: replyText, sender: 'bot' }]);
+
+            // --- [액션 실행 로직 추가] ---
+            const actionMatch = replyText.match(/::action(\{.*?\})::/);
+            if (actionMatch) {
+                try {
+                    const action = JSON.parse(actionMatch[1]);
+                    console.log('[AgentChat] Executing Action:', action);
+                    
+                    if (action.type === 'add_to_cart') {
+                        await addItem({
+                            menuId: action.menuId,
+                            korName: action.korName,
+                            price: action.price,
+                            imageSrc: action.imageSrc || 'blank.png'
+                        });
+                        setLastAddedMenu(action);
+                        setIsModalOpen(true);
+                    } else if (action.type === 'navigate') {
+                        console.log('[AgentChat] Navigating to:', action.path);
+                        router.push(action.path);
+                    }
+                } catch (e) {
+                    console.error('[AgentChat] Action parse error:', e);
+                }
+            }
+            // ---------------------------
 
             // 봇 응답 내용에 따라 센스 있는 퀵 리플라이(버튼) 제시
             if (replyText.includes('개인정보') || replyText.includes('맛있는 메뉴를 소개해주는 건')) {

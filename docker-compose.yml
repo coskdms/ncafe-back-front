@@ -49,9 +49,9 @@ services:
       - beomini
     restart: unless-stopped
 
-  # ── 데이터베이스 (PostgreSQL) ──
+  # ── 데이터베이스 (PostgreSQL + pgvector) ──
   db:
-    image: postgres:17
+    image: pgvector/pgvector:pg17
     profiles: [ "with-db" ]
     container_name: ${USER_ID:-newnaeun}-ncafe-db
     environment:
@@ -74,8 +74,13 @@ services:
     # AI 에이전트 서버는 외부 공개 불필요 (프론트엔드가 내부 네트워크로 접근)
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DB_HOST=db
+      - DB_NAME=ncafedb
+      - DB_USER=ncafe
+      - DB_PASSWORD=${DB_PASSWORD:-1234}
     depends_on:
       - backend
+      - db
     restart: unless-stopped
 
 volumes:

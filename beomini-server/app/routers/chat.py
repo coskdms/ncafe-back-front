@@ -1,26 +1,45 @@
 import json
-from fastapi import APIRouter
+import logging
+import traceback
+from fastapi import APIRouter, Header, HTTPException
+from fastapi.responses import JSONResponse
 from sse_starlette.sse import EventSourceResponse
 
 from app.models.schemas import ChatRequest, Message
 from app.services.gemini import chat, chat_stream
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 def to_gemini_messages(messages: list[Message]) -> list[dict]:
     return [{"role": m.role, "parts": [{"text": m.content}]} for m in messages]
 
 @router.post("/chat")
-async def chat_endpoint(request: ChatRequest):
-    messages = to_gemini_messages(request.messages)
+async def chat_endpoint(request: ChatRequest, authorization: str = Header(None)):
+    try:
+        messages = to_gemini_messages(request.messages)
+        logger.info(f"Chat request received. Stream: {request.stream}, Auth: {bool(authorization)}")
+        
+        if not request.stream:
+            content = chat(messages, auth_token=authorization)
+            logger.info("Chat success (non-stream)")
+            return {"content": content}
+        
+        async def event_generator():
+            try:
+                for chunk in chat_stream(messages, auth_token=authorization):
+                    yield {"data": json.dumps({"content": chunk}, ensure_ascii=False)}
+                yield {"data": "[DONE]"}
+            except Exception as e:
+                logger.error(f"Stream error: {e}")
+                logger.error(traceback.format_exc())
+                yield {"data": json.dumps({"error": str(e)}, ensure_ascii=False)}
     
-    if not request.stream:
-        content = chat(messages)
-        return {"content": content}
-    
-    async def event_generator():
-        for chunk in chat_stream(messages):
-            yield {"data": json.dumps({"content": chunk}, ensure_ascii=False)}
-        yield {"data": "[DONE]"}
-
-    return EventSourceResponse(event_generator())
+        return EventSourceResponse(event_generator())
+    except Exception as e:
+        logger.error(f"Endpoint error: {e}")
+        logger.error(traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)}
+        )

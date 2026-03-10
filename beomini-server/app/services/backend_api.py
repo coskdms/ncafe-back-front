@@ -25,3 +25,18 @@ def get_categories() -> dict:
         return response.json()
     except Exception as e:
         return {"error": f"카테고리 목록을 가져오는 데 실패했습니다: {str(e)}"}
+
+def get_my_growth_info(auth_token: str = None) -> dict:
+    """
+    로그인한 사용자의 현재 포인트, 누적 포인트, 성장 단계(레벨) 등 성장 정보를 조회합니다.
+    """
+    if not auth_token:
+        return {"error": "로그인이 필요한 기능이다덕! 로그인 후 다시 물어봐달라덕~"}
+    
+    try:
+        headers = {"Authorization": auth_token}
+        response = requests.get(f"{BACKEND_URL}/members/growth", headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        return {"error": f"성장 정보를 가져오는 데 실패했다덕: {str(e)}"}
