@@ -181,4 +181,55 @@ public class OrderService {
 
         return orderRepository.save(order);
     }
+
+    /**
+     * 관리자용: 모든 주문 조회
+     */
+    public List<OrderJpaEntity> getAllOrders() {
+        return orderRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    /**
+     * 관리자용: 주문 상태 변경
+     */
+    public void updateOrderStatus(String paymentId, OrderStatus status) {
+        OrderJpaEntity order = orderRepository.findByPaymentId(paymentId)
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+        
+        order.setStatus(status);
+        orderRepository.save(order);
+    }
+
+    /**
+     * 관리자용: 주문 취소 (강제 취소 포함)
+     */
+    public void adminCancelOrder(String paymentId) {
+        OrderJpaEntity order = orderRepository.findByPaymentId(paymentId)
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+
+        // 관리자는 시간 제한 없이 취소 가능하도록 처리
+        
+        // 결제가 완료된 주문인 경우 포인트 회수 및 환불 요청
+        if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.PREPARING) {
+            if (order.getMemberId() != null) {
+                memberRepository.findById(order.getMemberId().toString())
+                        .ifPresent(member -> {
+                            memberService.revokePoints(member.getNickname(), order.getTotalPrice());
+                        });
+            }
+            // PortOne V2 API 환불 연동
+            portOneService.cancelPayment(paymentId, "관리자에 의한 취소");
+        }
+
+        // 사용했던 포인트 환불
+        if (order.getUsedPoints() != null && order.getUsedPoints() > 0 && order.getMemberId() != null) {
+            memberRepository.findById(order.getMemberId().toString())
+                    .ifPresent(member -> {
+                        memberService.refundPoints(member.getNickname(), order.getUsedPoints());
+                    });
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+    }
 }
