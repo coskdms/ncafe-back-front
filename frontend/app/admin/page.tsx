@@ -57,7 +57,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className={styles.statContent}>
                         <span className={styles.statLabel}>오늘 주문</span>
-                        <span className={styles.statValue}>{stats?.todayOrderCount.toLocaleString()}건</span>
+                        <span className={styles.statValue}>{(stats?.todayOrderCount ?? 0).toLocaleString()}건</span>
                     </div>
                 </div>
 
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className={styles.statContent}>
                         <span className={styles.statLabel}>총 메뉴</span>
-                        <span className={styles.statValue}>{stats?.totalMenuCount.toLocaleString()}개</span>
+                        <span className={styles.statValue}>{(stats?.totalMenuCount ?? 0).toLocaleString()}개</span>
                     </div>
                 </div>
 
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className={styles.statContent}>
                         <span className={styles.statLabel}>품절 메뉴</span>
-                        <span className={styles.statValue}>{stats?.soldOutMenuCount.toLocaleString()}개</span>
+                        <span className={styles.statValue}>{(stats?.soldOutMenuCount ?? 0).toLocaleString()}개</span>
                     </div>
                 </div>
 
@@ -87,7 +87,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className={styles.statContent}>
                         <span className={styles.statLabel}>오늘 매출</span>
-                        <span className={styles.statValue}>₩{stats?.todaySales.toLocaleString()}</span>
+                        <span className={styles.statValue}>₩{(stats?.todaySales ?? 0).toLocaleString()}</span>
                     </div>
                 </div>
             </div>
