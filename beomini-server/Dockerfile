@@ -15,9 +15,11 @@ RUN apt-get update \
 
 # 패키지 설치
 COPY requirements.txt .
+# pip 최신 버전 업그레이드 및 타임아웃 설정 추가
+RUN pip install --no-cache-dir --upgrade pip
 # CPU 전용 PyTorch 설치 (빌드 속도 개선 및 이미지 경량화)
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --default-timeout=100 torch --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir --default-timeout=100 -r requirements.txt
 
 # 애플리케이션 코드 복사
 COPY . .
