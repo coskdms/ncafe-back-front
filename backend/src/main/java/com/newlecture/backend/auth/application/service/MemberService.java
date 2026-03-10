@@ -18,6 +18,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final com.newlecture.backend.admin.setting.application.service.AdminSettingService settingService;
 
     public Member getMyInfo() {
         String nickname = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -62,7 +63,9 @@ public class MemberService {
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        int earnedPoints = (int) (price * 0.05);
+        var setting = settingService.getSetting();
+        int earnedPoints = (int) (price * setting.getPointAccrualRate());
+        
         member.setCurrentPoints(Math.max(0, member.getCurrentPoints() - earnedPoints));
         member.setTotalAccumulatedPoints(Math.max(0, member.getTotalAccumulatedPoints() - earnedPoints));
 
@@ -79,7 +82,9 @@ public class MemberService {
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        int earnedPoints = (int) (price * 0.05); // 5% 적립
+        var setting = settingService.getSetting();
+        int earnedPoints = (int) (price * setting.getPointAccrualRate());
+        
         member.setCurrentPoints(member.getCurrentPoints() + earnedPoints);
         member.setTotalAccumulatedPoints(member.getTotalAccumulatedPoints() + earnedPoints);
         member.setLastOrderDate(LocalDateTime.now());
@@ -92,12 +97,13 @@ public class MemberService {
 
     private void updateGrowthLevel(Member member) {
         int total = member.getTotalAccumulatedPoints();
+        var setting = settingService.getSetting();
 
-        if (total >= 20000) {
+        if (total >= setting.getLevel4Threshold()) {
             member.setGrowthLevel("Lv.4 현자 고라파덕");
-        } else if (total >= 5000) {
+        } else if (total >= setting.getLevel3Threshold()) {
             member.setGrowthLevel("Lv.3 청소년 골덕");
-        } else if (total >= 1000) {
+        } else if (total >= setting.getLevel2Threshold()) {
             member.setGrowthLevel("Lv.2 아기 파덕");
         } else {
             member.setGrowthLevel("Lv.1 갓 태어난 알");
@@ -110,18 +116,19 @@ public class MemberService {
     public Map<String, Object> getGrowthInfo() {
         Member member = getMyInfo();
         int total = member.getTotalAccumulatedPoints();
+        var setting = settingService.getSetting();
         
         int nextGoal = 0;
         String nextLevel = "";
         
-        if (total < 1000) {
-            nextGoal = 1000;
+        if (total < setting.getLevel2Threshold()) {
+            nextGoal = setting.getLevel2Threshold();
             nextLevel = "Lv.2 아기 파덕";
-        } else if (total < 5000) {
-            nextGoal = 5000;
+        } else if (total < setting.getLevel3Threshold()) {
+            nextGoal = setting.getLevel3Threshold();
             nextLevel = "Lv.3 청소년 골덕";
-        } else if (total < 20000) {
-            nextGoal = 20000;
+        } else if (total < setting.getLevel4Threshold()) {
+            nextGoal = setting.getLevel4Threshold();
             nextLevel = "Lv.4 현자 고라파덕";
         }
 

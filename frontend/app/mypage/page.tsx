@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './MyPage.module.css';
 import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
-import { memberAPI, orderAPI } from '@/app/lib/api';
+import { memberAPI, orderAPI, fetchAPI } from '@/app/lib/api';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import { useRouter } from 'next/navigation';
@@ -50,6 +50,7 @@ export default function MyPage() {
     const router = useRouter();
     
     const [growthInfo, setGrowthInfo] = useState<GrowthInfo | null>(null);
+    const [shopSettings, setShopSettings] = useState<any>(null);
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'orders' | 'settings'>('orders');
@@ -76,12 +77,14 @@ export default function MyPage() {
     const fetchMyData = async () => {
         setIsLoading(true);
         try {
-            const [growthData, ordersData] = await Promise.all([
+            const [growthData, ordersData, settingsData] = await Promise.all([
                 memberAPI.getGrowthInfo(),
-                orderAPI.getMyOrders()
+                orderAPI.getMyOrders(),
+                fetchAPI('/settings')
             ]);
             setGrowthInfo(growthData);
             setOrders(ordersData);
+            setShopSettings(settingsData);
             if (growthData.address) setAddress(growthData.address);
             if (growthData.phone) setPhone(growthData.phone);
         } catch (error) {
@@ -261,7 +264,7 @@ export default function MyPage() {
                 </div>
 
                 {/* 고라파덕 성장 가이드 (진화 타임라인) */}
-                {growthInfo && (
+                {growthInfo && shopSettings && (
                     <div className={styles.growthSection}>
                         <div className={styles.growthTitle}>
                             고라파덕 성장 가이드 🐣
@@ -273,21 +276,22 @@ export default function MyPage() {
                             <div className={styles.evolutionTimeline}>
                                 <div 
                                     className={styles.evolutionProgress} 
-                                    style={{ width: `${Math.min(100, (growthInfo.totalAccumulatedPoints / 20000) * 100)}%` }}
+                                    style={{ width: `${Math.min(100, (growthInfo.totalAccumulatedPoints / shopSettings.level4Threshold) * 100)}%` }}
                                 ></div>
                             </div>
 
                             {[
-                                { id: 1, name: '알', points: '0 P', img: '/images/growth/stage_1.png', threshold: 0 },
-                                { id: 2, name: '아기 파덕', points: '1,000 P', img: '/images/growth/stage_2.png', threshold: 1001 },
-                                { id: 3, name: '청소년 골덕', points: '5,000 P', img: '/images/growth/stage_3.png', threshold: 5001 },
-                                { id: 4, name: '현자 파덕', points: '20,000 P', img: '/images/growth/stage_4.png', threshold: 20001 }
+                                { id: 1, name: '알', points: `${shopSettings.level1Threshold.toLocaleString()} P`, img: '/images/growth/stage_1.png', threshold: shopSettings.level1Threshold },
+                                { id: 2, name: '아기 파덕', points: `${shopSettings.level2Threshold.toLocaleString()} P`, img: '/images/growth/stage_2.png', threshold: shopSettings.level2Threshold },
+                                { id: 3, name: '청소년 골덕', points: `${shopSettings.level3Threshold.toLocaleString()} P`, img: '/images/growth/stage_3.png', threshold: shopSettings.level3Threshold },
+                                { id: 4, name: '현자 파덕', points: `${shopSettings.level4Threshold.toLocaleString()} P`, img: '/images/growth/stage_4.png', threshold: shopSettings.level4Threshold }
                             ].map((stage, idx) => {
                                 const isReached = growthInfo.totalAccumulatedPoints >= stage.threshold;
-                                // 현재 등급 판단 (다음 단계 threshold보다 작거나 마지막 단계인 경우)
+                                
+                                // 현재 등급 판단
                                 const isCurrent = idx === 3 
-                                    ? growthInfo.totalAccumulatedPoints >= 20001
-                                    : (growthInfo.totalAccumulatedPoints >= stage.threshold && growthInfo.totalAccumulatedPoints < [1001, 5001, 20001][idx]);
+                                    ? growthInfo.totalAccumulatedPoints >= shopSettings.level4Threshold
+                                    : (growthInfo.totalAccumulatedPoints >= stage.threshold && growthInfo.totalAccumulatedPoints < [shopSettings.level2Threshold, shopSettings.level3Threshold, shopSettings.level4Threshold][idx]);
 
                                 return (
                                     <div 
@@ -306,14 +310,14 @@ export default function MyPage() {
                         {/* 등급 정보 카드 */}
                         <div className={styles.gradeInfoRow}>
                             {[
-                                { name: 'Lv.1 알', point: '0 ~ 1,000 P' },
-                                { name: 'Lv.2 아기', point: '1,001 ~ 5,000 P' },
-                                { name: 'Lv.3 청소년', point: '5,001 ~ 20,000 P' },
-                                { name: 'Lv.4 현자', point: '20,001 P ~' }
+                                { name: 'Lv.1 알', point: `${shopSettings.level1Threshold.toLocaleString()} ~ ${shopSettings.level2Threshold.toLocaleString()} P` },
+                                { name: 'Lv.2 아기', point: `${shopSettings.level2Threshold.toLocaleString()} ~ ${shopSettings.level3Threshold.toLocaleString()} P` },
+                                { name: 'Lv.3 청소년', point: `${shopSettings.level3Threshold.toLocaleString()} ~ ${shopSettings.level4Threshold.toLocaleString()} P` },
+                                { name: 'Lv.4 현자', point: `${shopSettings.level4Threshold.toLocaleString()} P ~` }
                             ].map((grade, idx) => {
                                 const isCurrent = idx === 3 
-                                    ? growthInfo.totalAccumulatedPoints >= 20001
-                                    : (growthInfo.totalAccumulatedPoints >= [0, 1001, 5001][idx] && growthInfo.totalAccumulatedPoints < [1001, 5001, 20001][idx]);
+                                    ? growthInfo.totalAccumulatedPoints >= shopSettings.level4Threshold
+                                    : (growthInfo.totalAccumulatedPoints >= [shopSettings.level1Threshold, shopSettings.level2Threshold, shopSettings.level3Threshold][idx] && growthInfo.totalAccumulatedPoints < [shopSettings.level2Threshold, shopSettings.level3Threshold, shopSettings.level4Threshold][idx]);
 
                                 return (
                                     <div key={idx} className={`${styles.gradeCard} ${isCurrent ? styles.highlight : ''}`}>
@@ -324,7 +328,7 @@ export default function MyPage() {
                             })}
                         </div>
 
-                        {growthInfo.nextGoal > 0 && growthInfo.totalAccumulatedPoints < 20001 && (
+                        {growthInfo.nextGoal > 0 && growthInfo.totalAccumulatedPoints < shopSettings.level4Threshold && (
                             <p className={styles.remainingText} style={{ marginTop: '30px' }}>
                                 다음 진화까지 <strong>{growthInfo.remainingForNext.toLocaleString()} P</strong> 남았어요! 화이팅! 🐥🔥
                             </p>
