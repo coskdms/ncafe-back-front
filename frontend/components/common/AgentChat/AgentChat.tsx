@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useCartStore } from '@/stores/cartStore';
 import { useAuthStore } from '@/stores/authStore';
 import styles from './AgentChat.module.css';
@@ -39,10 +39,16 @@ export default function AgentChat() {
     const addItem = useCartStore((state) => state.addItem);
     const { isAuthenticated } = useAuthStore();
     const router = useRouter();
+    const pathname = usePathname();
 
     const bodyRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     let msgIdCounter = useRef(0);
+
+    // 관리자 페이지(/admin으로 시작하는 모든 경로)에서는 사용자용 에이전트를 표시하지 않음
+    if (pathname?.startsWith('/admin')) {
+        return null;
+    }
 
     /**
      * 메시지 텍스트 내의 특수 마커(::menu{...}::)를 찾아 
