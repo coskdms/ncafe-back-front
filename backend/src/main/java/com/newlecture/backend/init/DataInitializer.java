@@ -279,10 +279,11 @@ public class DataInitializer implements ApplicationRunner {
                 try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)"); } catch (Exception e) {}
 
-                // 3. coskdms 계정 하나만 관리자로 남기고 나머지는 제거
+                // 3. 관리자 계정 초기화
                 insertUserIfMissing("coskdms", "thgud6173!", "ADMIN");
+                insertUserIfMissing("admin", "admin1234", "ADMIN");
 
-                System.out.println("✅ DataInitializer: 'coskdms' 관리자 계정 확인 완료");
+                System.out.println("✅ DataInitializer: 관리자 계정 확인 완료 (coskdms, admin)");
         }
 
         private void insertUserIfMissing(String nickname, String plainPassword, String role) {
