@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './MyPage.module.css';
 import { useAuthStore } from '@/stores/authStore';
+import { Bell, ChevronDown, Sparkles } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { memberAPI, orderAPI, fetchAPI } from '@/app/lib/api';
 import Navbar from '@/components/landing/Navbar';
@@ -24,7 +25,10 @@ interface GrowthInfo {
     nextLevel: string;
     nextGoal: number;
     remainingForNext: number;
+    accrualRate?: number;
+    discount?: number;
 }
+
 
 interface OrderItem {
     id: number;
@@ -291,10 +295,33 @@ export default function MyPage() {
                 {/* 고라파덕 성장 가이드 (진화 타임라인) */}
                 {growthInfo && shopSettings && (
                     <div className={styles.growthSection}>
-                        <div className={styles.growthTitle}>
-                            고라파덕 성장 가이드 🐣
+                    <h3 className={styles.growthTitle}>
+                        <Sparkles size={20} color="#f59e0b" />
+                        고라파덕 성장 가이드
+                    </h3>
+                    <p className={styles.growthDesc}>주문할수록 파덕이가 진화하고 더 큰 혜택을 드려요! 🐣✨</p>
+
+                    {/* 현재 혜택 강조 배너 🎁 */}
+                    {growthInfo && (
+                        <div className={styles.benefitBanner}>
+                            <div className={styles.benefitItem}>
+                                <span className={styles.benefitLabel}>현재 적립 혜택</span>
+                                <span className={styles.benefitValue}>{growthInfo.accrualRate}% 적립</span>
+                            </div>
+                            {growthInfo.discount && growthInfo.discount > 0 ? (
+                                <div className={styles.benefitItem}>
+                                    <span className={styles.benefitLabel}>주문 즉시 할인</span>
+                                    <span className={styles.benefitValue}>{growthInfo.discount.toLocaleString()}원</span>
+                                </div>
+                            ) : (
+                                <div className={styles.benefitItem}>
+                                    <span className={styles.benefitLabel}>다음 할인 혜택</span>
+                                    <span className={styles.benefitValue}>Lv.3부터 즉시 할인!</span>
+                                </div>
+                            )}
                         </div>
-                        <p className={styles.growthDesc}>포인트를 모을수록 파덕이가 멋지게 성장해요!</p>
+                    )}
+
                         
                         <div className={styles.evolutionContainer}>
                             {/* 타임라인 배경 라인 */}
@@ -335,23 +362,25 @@ export default function MyPage() {
                         {/* 등급 정보 카드 */}
                         <div className={styles.gradeInfoRow}>
                             {[
-                                { name: 'Lv.1 알', point: `${shopSettings.level1Threshold.toLocaleString()} ~ ${(shopSettings.level2Threshold - 1).toLocaleString()} P` },
-                                { name: 'Lv.2 아기', point: `${shopSettings.level2Threshold.toLocaleString()} ~ ${(shopSettings.level3Threshold - 1).toLocaleString()} P` },
-                                { name: 'Lv.3 청소년', point: `${shopSettings.level3Threshold.toLocaleString()} ~ ${(shopSettings.level4Threshold - 1).toLocaleString()} P` },
-                                { name: 'Lv.4 현자', point: `${shopSettings.level4Threshold.toLocaleString()} P ~` }
+                                { name: 'Lv.1 알', point: `0 ~ ${(shopSettings.level2Threshold - 1).toLocaleString()} P`, perk: '1% 적립' },
+                                { name: 'Lv.2 아기 파덕', point: `${shopSettings.level2Threshold.toLocaleString()} ~ ${(shopSettings.level3Threshold - 1).toLocaleString()} P`, perk: '2% 적립' },
+                                { name: 'Lv.3 청소년 골덕', point: `${shopSettings.level3Threshold.toLocaleString()} ~ ${(shopSettings.level4Threshold - 1).toLocaleString()} P`, perk: '4% 적립 + 500원 할인' },
+                                { name: 'Lv.4 현자 고라파덕', point: `${shopSettings.level4Threshold.toLocaleString()} P ~`, perk: '7% 적립 + 1,000원 할인' }
                             ].map((grade, idx) => {
                                 const isCurrent = idx === 3 
                                     ? growthInfo.totalAccumulatedPoints >= shopSettings.level4Threshold
-                                    : (growthInfo.totalAccumulatedPoints >= [shopSettings.level1Threshold, shopSettings.level2Threshold, shopSettings.level3Threshold][idx] && growthInfo.totalAccumulatedPoints < [shopSettings.level2Threshold, shopSettings.level3Threshold, shopSettings.level4Threshold][idx]);
+                                    : (growthInfo.totalAccumulatedPoints >= [0, shopSettings.level2Threshold, shopSettings.level3Threshold][idx] && growthInfo.totalAccumulatedPoints < [shopSettings.level2Threshold, shopSettings.level3Threshold, shopSettings.level4Threshold][idx]);
 
                                 return (
                                     <div key={idx} className={`${styles.gradeCard} ${isCurrent ? styles.highlight : ''}`}>
                                         <div className={styles.gradeName}>{grade.name}</div>
                                         <div className={styles.gradePoint}>{grade.point}</div>
+                                        <div className={styles.perkInfo}>{grade.perk}</div>
                                     </div>
                                 );
                             })}
                         </div>
+
 
                         {growthInfo.nextGoal > 0 && growthInfo.totalAccumulatedPoints < shopSettings.level4Threshold && (
                             <p className={styles.remainingText} style={{ marginTop: '30px' }}>

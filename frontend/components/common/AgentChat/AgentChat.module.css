@@ -83,6 +83,18 @@
     pointer-events: auto;
 }
 
+/* ===== 배경 오버레이 (바깥 클릭 시 닫기용) ===== */
+.bgOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0); /* 완전 투명하지만 클릭 이벤트는 받음 */
+    z-index: 999; /* 패널(1000) 바로 아래 */
+}
+
+
 /* ===== Chat Header ===== */
 .header {
     background: linear-gradient(135deg, var(--agent-main) 0%, #FFE066 100%);

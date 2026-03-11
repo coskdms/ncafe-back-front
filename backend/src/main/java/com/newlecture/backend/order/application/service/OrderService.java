@@ -165,6 +165,21 @@ public class OrderService {
             totalPrice += 3000;
         }
 
+        // 멤버십 등급별 즉시 할인 적용 🎁
+        int membershipDiscount = 0;
+        if (memberId != null) {
+            Member member = memberRepository.findByNickname(nickname)
+                .orElse(null);
+            if (member != null) {
+                membershipDiscount = member.getImmediateDiscount();
+                if (membershipDiscount > 0) {
+                    totalPrice = Math.max(0, totalPrice - membershipDiscount);
+                    System.out.println("[OrderService] Membership discount applied: " + membershipDiscount + "원 for " + nickname);
+                }
+            }
+        }
+
+
         // 포인트 사용 처리
         int usedPoints = 0;
         if (memberId != null && request.getUsedPoints() != null && request.getUsedPoints() > 0) {

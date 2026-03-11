@@ -64,10 +64,12 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         var setting = settingService.getSetting();
-        int earnedPoints = (int) (price * setting.getPointAccrualRate());
+        double multiplier = member.getPointAccrualMultiplier();
+        int earnedPoints = (int) (price * setting.getPointAccrualRate() * multiplier);
         
         member.setCurrentPoints(Math.max(0, member.getCurrentPoints() - earnedPoints));
         member.setTotalAccumulatedPoints(Math.max(0, member.getTotalAccumulatedPoints() - earnedPoints));
+
 
         // 성장 단계 재계산
         updateGrowthLevel(member);
@@ -83,11 +85,13 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         var setting = settingService.getSetting();
-        int earnedPoints = (int) (price * setting.getPointAccrualRate());
+        double multiplier = member.getPointAccrualMultiplier();
+        int earnedPoints = (int) (price * setting.getPointAccrualRate() * multiplier);
         
         member.setCurrentPoints(member.getCurrentPoints() + earnedPoints);
         member.setTotalAccumulatedPoints(member.getTotalAccumulatedPoints() + earnedPoints);
         member.setLastOrderDate(LocalDateTime.now());
+
 
         // 성장 단계 업데이트 로직
         updateGrowthLevel(member);
@@ -132,19 +136,23 @@ public class MemberService {
             nextLevel = "Lv.4 현자 고라파덕";
         }
 
-        return Map.of(
-            "nickname", member.getNickname(),
-            "currentLevel", member.getGrowthLevel(),
-            "currentPoints", member.getCurrentPoints(),
-            "totalAccumulatedPoints", total,
-            "nextLevel", nextLevel,
-            "nextGoal", nextGoal,
-            "remainingForNext", Math.max(0, nextGoal - total),
-            "address", member.getAddress() != null ? member.getAddress() : "",
-            "phone", member.getPhone() != null ? member.getPhone() : "",
-            "lastOrderDate", member.getLastOrderDate() != null ? member.getLastOrderDate() : ""
-        );
+        Map<String, Object> info = new java.util.HashMap<>();
+        info.put("nickname", member.getNickname());
+        info.put("currentLevel", member.getGrowthLevel());
+        info.put("currentPoints", member.getCurrentPoints());
+        info.put("totalAccumulatedPoints", total);
+        info.put("nextLevel", nextLevel);
+        info.put("nextGoal", nextGoal);
+        info.put("remainingForNext", Math.max(0, nextGoal - total));
+        info.put("address", member.getAddress() != null ? member.getAddress() : "");
+        info.put("phone", member.getPhone() != null ? member.getPhone() : "");
+        info.put("lastOrderDate", member.getLastOrderDate() != null ? member.getLastOrderDate() : "");
+        info.put("accrualRate", (int)(setting.getPointAccrualRate() * 100 * member.getPointAccrualMultiplier()));
+        info.put("discount", member.getImmediateDiscount());
+
+        return info;
     }
+
 
     /**
      * 회원 프로필 수정 (주소, 전화번호)

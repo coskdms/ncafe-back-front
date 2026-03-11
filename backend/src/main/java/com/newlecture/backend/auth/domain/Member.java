@@ -31,6 +31,37 @@ public class Member {
     private String address;
     private String phone;
 
+    public int getLevelInt() {
+        try {
+            if (growthLevel == null) return 1;
+            // "Lv.4 현자 고라파덕" -> 4
+            String levelStr = growthLevel.split(" ")[0].replace("Lv.", "");
+            return Integer.parseInt(levelStr);
+        } catch (Exception e) {
+            return 1;
+        }
+    }
+
+    public double getPointAccrualMultiplier() {
+        int level = getLevelInt();
+        return switch (level) {
+            case 2 -> 2.0;
+            case 3 -> 4.0;
+            case 4 -> 7.0;
+            default -> 1.0;
+        };
+    }
+
+    public int getImmediateDiscount() {
+        int level = getLevelInt();
+        return switch (level) {
+            case 3 -> 500;
+            case 4 -> 1000;
+            default -> 0;
+        };
+    }
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
+

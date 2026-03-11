@@ -422,6 +422,11 @@
     font-weight: 700;
 }
 
+.discountRow {
+    color: #dc2626;
+    font-weight: 700;
+}
+
 .homeBtn {
     padding: var(--space-4) var(--space-12);
     background: #f59e0b;

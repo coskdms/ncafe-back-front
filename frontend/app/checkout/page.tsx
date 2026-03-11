@@ -35,7 +35,9 @@ export default function CheckoutPage() {
 
     const [availablePoints, setAvailablePoints] = useState(0);
     const [pointsToUse, setPointsToUse] = useState(0);
+    const [membershipDiscount, setMembershipDiscount] = useState(0);
     const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'KAKAO'>('CARD'); // CARD: KG, KAKAO: 카카오
+
 
 
     useEffect(() => {
@@ -52,7 +54,9 @@ export default function CheckoutPage() {
                 memberAPI.getGrowthInfo().then(data => {
                     if (data) {
                         setAvailablePoints(data.currentPoints || 0);
+                        setMembershipDiscount(data.discount || 0);
                         // 마이페이지에 저장된 기본 정보가 있다면 자동 세팅
+
                         setFormData(prev => ({
                             ...prev,
                             address: data.address || prev.address,
@@ -89,7 +93,8 @@ export default function CheckoutPage() {
 
     const totalPrice = getCheckoutTotalPrice();
     const deliveryFee = (orderType === 'DELIVERY') ? (isAuthenticated ? 0 : 3000) : 0;
-    const finalPrice = Math.max(0, totalPrice + deliveryFee - pointsToUse);
+    const finalPrice = Math.max(0, totalPrice + deliveryFee - pointsToUse - membershipDiscount);
+
 
     const handlePayment = async () => {
         if (isProcessing) return;
@@ -448,6 +453,13 @@ export default function CheckoutPage() {
                                 <span>배송비</span>
                                 <span>{isAuthenticated ? '무료' : deliveryFee.toLocaleString() + '원'}</span>
                             </div>
+                            {membershipDiscount > 0 && (
+                                <div className={`${styles.summaryRow} ${styles.discountRow}`}>
+                                    <span>멤버십 할인 🎁</span>
+                                    <span>-{membershipDiscount.toLocaleString()}원</span>
+                                </div>
+                            )}
+
 
                             {pointsToUse > 0 && (
                                 <div className={styles.summaryRow} style={{ color: '#dc2626', fontWeight: 700 }}>

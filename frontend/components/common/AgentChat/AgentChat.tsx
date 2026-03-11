@@ -255,8 +255,14 @@ export default function AgentChat() {
 
     return (
         <div className={styles.root}>
+            {/* Background Overlay for closing when clicking outside */}
+            {isOpen && (
+                <div className={styles.bgOverlay} onClick={toggleChat} />
+            )}
+
             {/* Chat Panel */}
             <div className={`${styles.panel} ${isOpen ? styles.panelOpen : ''}`}>
+
                 {/* Header */}
                 <div className={styles.header}>
                     <div className={styles.headerInfo}>
