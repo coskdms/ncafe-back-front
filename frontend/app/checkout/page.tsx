@@ -82,14 +82,16 @@ export default function CheckoutPage() {
 
     const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = parseInt(e.target.value) || 0;
-        const maxSpend = Math.min(val, availablePoints, totalPrice + deliveryFee);
+        const maxSpend = Math.min(val, availablePoints, totalPrice + deliveryFee - membershipDiscount);
         setPointsToUse(Math.max(0, maxSpend));
     };
 
+
     const handleUseAllPoints = () => {
-        const maxSpend = Math.min(availablePoints, totalPrice + deliveryFee);
-        setPointsToUse(maxSpend);
+        const maxSpend = Math.min(availablePoints, totalPrice + deliveryFee - membershipDiscount);
+        setPointsToUse(Math.max(0, maxSpend));
     };
+
 
     const totalPrice = getCheckoutTotalPrice();
     const deliveryFee = (orderType === 'DELIVERY') ? (isAuthenticated ? 0 : 3000) : 0;

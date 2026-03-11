@@ -183,10 +183,12 @@ public class OrderService {
         // 포인트 사용 처리
         int usedPoints = 0;
         if (memberId != null && request.getUsedPoints() != null && request.getUsedPoints() > 0) {
-            usedPoints = request.getUsedPoints();
+            // 멤버십 할인이 적용된 후의 남은 금액(totalPrice)만큼만 포인트 사용 가능하도록 제한
+            usedPoints = Math.min(request.getUsedPoints(), totalPrice);
             memberService.usePoints(nickname, usedPoints);
             totalPrice = Math.max(0, totalPrice - usedPoints);
         }
+
 
         OrderJpaEntity order = OrderJpaEntity.builder()
                 .paymentId(paymentId)
