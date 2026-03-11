@@ -33,6 +33,7 @@ jobs:
           echo "PORTONE_WEBHOOK_SECRET=${PORTONE_WEBHOOK_SECRET}" >> .env
           echo "NEXT_PUBLIC_PORTONE_STORE_ID=${NEXT_PUBLIC_PORTONE_STORE_ID}" >> .env
           echo "NEXT_PUBLIC_PORTONE_CHANNEL_KEY=${NEXT_PUBLIC_PORTONE_CHANNEL_KEY}" >> .env
+          echo "NEXT_PUBLIC_PORTONE_KG_CHANNEL_KEY=${NEXT_PUBLIC_PORTONE_KG_CHANNEL_KEY}" >> .env
         env:
           COMPOSE_PROJECT_NAME: ${{ vars.COMPOSE_PROJECT_NAME }}
           USER_ID: ${{ vars.USER_ID }}
@@ -47,6 +48,8 @@ jobs:
           PORTONE_WEBHOOK_SECRET: ${{ secrets.PORTONE_WEBHOOK_SECRET }}
           NEXT_PUBLIC_PORTONE_STORE_ID: ${{ vars.NEXT_PUBLIC_PORTONE_STORE_ID }}
           NEXT_PUBLIC_PORTONE_CHANNEL_KEY: ${{ vars.NEXT_PUBLIC_PORTONE_CHANNEL_KEY }}
+          NEXT_PUBLIC_PORTONE_KG_CHANNEL_KEY: ${{ vars.NEXT_PUBLIC_PORTONE_KG_CHANNEL_KEY }}
+
 
       # 단계 3: 기존 컨테이너 정리 (이름 충돌 방지)
       - name: Stop old containers
