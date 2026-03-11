@@ -56,7 +56,13 @@ export default function MyPage() {
     const [activeTab, setActiveTab] = useState<'orders' | 'settings'>('orders');
     const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
 
+    // 결제 선택 모달 관련 상태
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'KAKAO'>('CARD');
+
     // 설정 관련 상태
+
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
@@ -146,7 +152,14 @@ export default function MyPage() {
         }
     };
 
-    const handlePayNow = async (order: Order) => {
+    const handlePayNow = (order: Order) => {
+        setSelectedOrder(order);
+        setIsPaymentModalOpen(true);
+    };
+
+    const processPayment = async () => {
+        if (!selectedOrder) return;
+
         const { PortOne } = window;
         if (!PortOne) {
             alert('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요. 🐥');
@@ -154,39 +167,47 @@ export default function MyPage() {
         }
 
         try {
-            const orderName = order.items[0].korName + (order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : '');
-            
-            // 재결제 시에도 고객 정보(이메일, 연락처) 누락 시 이니시스 등에서 에러 발생 가능
+            const orderName = selectedOrder.items[0].korName + (selectedOrder.items.length > 1 ? ` 외 ${selectedOrder.items.length - 1}건` : '');
+            const kakaoKey = process.env.NEXT_PUBLIC_PORTONE_CHANNEL_KEY;
+            const kgKey = process.env.NEXT_PUBLIC_PORTONE_KG_CHANNEL_KEY;
+            const channelKey = paymentMethod === 'KAKAO' ? kakaoKey : kgKey;
+
+            if (!channelKey) {
+                alert('결제 채널 설정이 올바르지 않습니다.');
+                return;
+            }
+
             const response = await PortOne.requestPayment({
                 storeId: process.env.NEXT_PUBLIC_PORTONE_STORE_ID!,
-                channelKey: process.env.NEXT_PUBLIC_PORTONE_CHANNEL_KEY!, // 기본 카카오 채널
-                paymentId: order.paymentId,
+                channelKey: channelKey,
+                paymentId: selectedOrder.paymentId,
                 orderName: orderName,
-                totalAmount: order.totalPrice,
+                totalAmount: selectedOrder.totalPrice,
                 currency: 'CURRENCY_KRW',
-                payMethod: 'EASY_PAY',
+                payMethod: paymentMethod === 'KAKAO' ? 'EASY_PAY' : 'CARD',
                 customer: {
                     fullName: user?.nickname || '회원',
                     email: (user as any)?.email || 'customer@example.com',
                     phoneNumber: (user as any)?.phone?.replace(/[^0-9]/g, '') || '01000000000'
                 },
-                redirectUrl: `${window.location.origin}/checkout/success?paymentId=${order.paymentId}`
+                redirectUrl: `${window.location.origin}/checkout/success?paymentId=${selectedOrder.paymentId}`
             });
 
-
             if (response.code != null) {
-                // 결제창 닫힘 혹은 실패
                 alert('결제가 중단되었거나 실패했습니다. 다시 시도해주세요.');
                 return;
             }
 
-            // 결제 성공 (V2는 결과가 서버로 가거나 리다이렉트됨)
-            router.push(`/checkout/success?paymentId=${order.paymentId}`);
+            router.push(`/checkout/success?paymentId=${selectedOrder.paymentId}`);
         } catch (error) {
             console.error('Payment Error:', error);
             alert('결제 처리 중 오류가 발생했습니다.');
+        } finally {
+            setIsPaymentModalOpen(false);
+            setSelectedOrder(null);
         }
     };
+
 
     const handleReorder = async (order: Order) => {
         try {
@@ -514,9 +535,52 @@ export default function MyPage() {
                     </section>
                 )}
             </main>
-
             <Footer />
+
+            {/* 결제 수단 선택 모달 */}
+            {isPaymentModalOpen && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modalContent}>
+                        <h2 className={styles.modalTitle}>결제 수단 선택 💳</h2>
+                        <p className={styles.modalDesc}>결제하실 수단을 선택해주세요.</p>
+                        
+                        <div className={styles.methodSelector}>
+                            <button 
+                                className={`${styles.methodBtn} ${paymentMethod === 'CARD' ? styles.active : ''}`}
+                                onClick={() => setPaymentMethod('CARD')}
+                            >
+                                <span className={styles.methodIcon}>💳</span>
+                                <span className={styles.methodName}>일반 카드</span>
+                            </button>
+                            <button 
+                                className={`${styles.methodBtn} ${paymentMethod === 'KAKAO' ? styles.active : ''}`}
+                                onClick={() => setPaymentMethod('KAKAO')}
+                            >
+                                <span className={styles.methodIcon}>💬</span>
+                                <span className={styles.methodName}>카카오페이</span>
+                            </button>
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <button 
+                                className={styles.modalCancelBtn}
+                                onClick={() => setIsPaymentModalOpen(false)}
+                            >
+                                취소
+                            </button>
+                            <button 
+                                className={styles.modalPayBtn}
+                                onClick={processPayment}
+                            >
+                                {selectedOrder?.totalPrice.toLocaleString()}원 결제하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <Script src="https://cdn.portone.io/v2/browser-sdk.js" />
         </div>
     );
 }
+
