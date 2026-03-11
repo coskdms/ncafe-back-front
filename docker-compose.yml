@@ -54,10 +54,9 @@ services:
       - NEXT_PUBLIC_PORTONE_KG_CHANNEL_KEY=${NEXT_PUBLIC_PORTONE_KG_CHANNEL_KEY}
       - NEXT_PUBLIC_KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
       - NEXT_PUBLIC_KAKAO_REDIRECT_URI=${KAKAO_REDIRECT_URI}
-
-
-      # 앱 내부 포트 명시
+      - FRONTEND_BASE_URL=${FRONTEND_BASE_URL}
       - PORT=3032
+
     depends_on:
       - backend
       - beomini
