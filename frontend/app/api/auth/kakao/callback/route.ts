@@ -41,7 +41,10 @@ export async function GET(req: NextRequest) {
         await session.save();
 
         // 3. 성공 시 메인 페이지 또는 마이페이지로 이동
-        return NextResponse.redirect(new URL('/', req.url));
+        // 0.0.0.0 등의 문제를 방지하기 위해 정해진 BASE_URL 또는 실시간 origin 사용
+        const baseUrl = process.env.FRONTEND_BASE_URL || req.nextUrl.origin;
+        return NextResponse.redirect(new URL('/', baseUrl));
+
 
     } catch (error) {
         console.error('Kakao auth callback error:', error);
