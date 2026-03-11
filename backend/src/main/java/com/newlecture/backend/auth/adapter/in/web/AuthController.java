@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -37,23 +38,45 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        // ... 기존 코드
+        return loginProcess(request.getNickname(), request.getPassword());
+    }
+
+    /**
+     * GET /auth/kakao?code=xxx
+     * 카카오 인증 완료 후 리다이렉트되어 오는 엔드포인트
+     */
+    @GetMapping("/kakao")
+    public ResponseEntity<?> kakaoLogin(@RequestParam String code) {
         try {
-            Member member = authUseCase.login(request.getNickname(), request.getPassword());
+            Member member = authUseCase.kakaoLogin(code);
+            return createAuthResponse(member);
+        } catch (Exception e) {
+            return ResponseEntity.status(401)
+                    .body(Map.of("message", "카카오 로그인 실패: " + e.getMessage()));
+        }
+    }
 
-            // Access Token 생성
-            String accessToken = jwtProvider.createAccessToken(member.getNickname(), member.getRole());
-
-            // ★ BFF 패턴: JWT를 쿠키가 아닌 JSON body로 반환
-            return ResponseEntity.ok(Map.of(
-                    "token", accessToken,
-                    "id", member.getId(),
-                    "nickname", member.getNickname(),
-                    "role", member.getRole()));
+    private ResponseEntity<?> loginProcess(String nickname, String password) {
+        try {
+            Member member = authUseCase.login(nickname, password);
+            return createAuthResponse(member);
         } catch (RuntimeException e) {
             return ResponseEntity.status(401)
                     .body(Map.of("message", e.getMessage()));
         }
     }
+
+    private ResponseEntity<?> createAuthResponse(Member member) {
+        String accessToken = jwtProvider.createAccessToken(member.getNickname(), member.getRole());
+        return ResponseEntity.ok(Map.of(
+                "token", accessToken,
+                "id", member.getId(),
+                "nickname", member.getNickname(),
+                "role", member.getRole(),
+                "socialProvider", member.getSocialProvider()));
+    }
+
 
     /**
      * GET /v1/auth/me

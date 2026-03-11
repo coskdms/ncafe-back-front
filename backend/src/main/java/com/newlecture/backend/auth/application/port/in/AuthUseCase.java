@@ -25,7 +25,15 @@ public interface AuthUseCase {
     Member signup(Member member);
 
     /**
+     * 카카오 로그인 / 회원가입
+     * @param code 카카오 인증 코드
+     * @return 로그인 된 회원 정보
+     */
+    Member kakaoLogin(String code);
+
+    /**
      * 닉네임 중복 확인
+
      */
     boolean isNicknameDuplicated(String nickname);
 }

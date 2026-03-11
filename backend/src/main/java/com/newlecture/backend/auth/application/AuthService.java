@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * 인증 서비스: AuthUseCase 구현체
@@ -18,20 +19,19 @@ public class AuthService implements AuthUseCase {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final KakaoService kakaoService;
 
-    public AuthService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, KakaoService kakaoService) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
+        this.kakaoService = kakaoService;
     }
 
     @Override
     public Member login(String nickname, String password) {
-        // 1. 닉네임(아이디)으로 회원 조회
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
 
-        // 2. PasswordEncoder로 비밀번호 검증
-        // DB에 저장된 비밀번호: {bcrypt}$2a$10$... ← DelegatingPasswordEncoder가 자동 처리
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
@@ -41,15 +41,11 @@ public class AuthService implements AuthUseCase {
 
     @Override
     public Member signup(Member member) {
-        // 1. 닉네임 중복 확인
         if (memberRepository.existsByNickname(member.getNickname())) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
 
-        // 2. 비밀번호 해싱 (DelegatingPasswordEncoder → {bcrypt} 접두사 자동 추가)
         member.setPassword(passwordEncoder.encode(member.getPassword()));
-
-        // 3. 기본값 설정
         member.setRole("USER");
         member.setCreatedAt(LocalDateTime.now());
         member.setUpdatedAt(LocalDateTime.now());
@@ -60,5 +56,33 @@ public class AuthService implements AuthUseCase {
     @Override
     public boolean isNicknameDuplicated(String nickname) {
         return memberRepository.existsByNickname(nickname);
+    }
+
+    @Override
+    public Member kakaoLogin(String code) {
+        String accessToken = kakaoService.getAccessToken(code);
+        Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
+        String socialId = String.valueOf(userInfo.get("id"));
+        
+        @SuppressWarnings("unchecked")
+        Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
+        String kakaoNickname = (properties != null && properties.get("nickname") != null) 
+                          ? (String) properties.get("nickname") 
+                          : "카카오유저_" + socialId;
+
+        return memberRepository.findBySocialId("KAKAO", socialId)
+                .orElseGet(() -> {
+                    String finalNickname = kakaoNickname;
+                    int suffix = 1;
+                    while (memberRepository.existsByNickname(finalNickname)) {
+                        finalNickname = kakaoNickname + "_" + (socialId.length() > 4 ? socialId.substring(socialId.length()-4) : socialId) + (suffix > 1 ? suffix : "");
+                        suffix++;
+                    }
+
+                    Member newMember = Member.createSocialMember(finalNickname, "KAKAO", socialId);
+                    newMember.setCreatedAt(LocalDateTime.now());
+                    newMember.setUpdatedAt(LocalDateTime.now());
+                    return memberRepository.save(newMember);
+                });
     }
 }

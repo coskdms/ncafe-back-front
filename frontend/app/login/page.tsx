@@ -37,6 +37,7 @@ function LoginContent() {
     };
 
     const handleSignup = async (nickname: string, password: string) => {
+        // ... 기존 코드
         setError('');
         setIsLoading(true);
 
@@ -61,6 +62,14 @@ function LoginContent() {
         }
     };
 
+    const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI}&response_type=code`;
+
+    const handleKakaoLogin = () => {
+        setIsLoading(true);
+        window.location.href = kakaoAuthUrl;
+    };
+
+
     return (
         <main className={styles.page}>
             <div className={styles.card}>
@@ -84,10 +93,25 @@ function LoginContent() {
                 </div>
 
                 {activeTab === 'login' ? (
-                    <LoginForm onLogin={handleLogin} error={error} isLoading={isLoading} />
+                    <>
+                        <LoginForm onLogin={handleLogin} error={error} isLoading={isLoading} />
+                        <div className={styles.divider}>또는</div>
+                        <button 
+                            type="button" 
+                            className={styles.kakaoButton} 
+                            onClick={handleKakaoLogin}
+                            disabled={isLoading}
+                        >
+                            <svg className={styles.kakaoIcon} viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3C6.477 3 2 6.48 2 10.791c0 2.758 1.817 5.176 4.545 6.474l-1.155 4.234c-.053.197.103.385.295.334l4.981-2.924c.433.052.876.082 1.334.082 5.523 0 10-3.48 10-7.791S17.523 3 12 3z"/>
+                            </svg>
+                            카카오 로그인
+                        </button>
+                    </>
                 ) : (
                     <SignupForm onSignup={handleSignup} error={error} isLoading={isLoading} />
                 )}
+
             </div>
         </main>
     );

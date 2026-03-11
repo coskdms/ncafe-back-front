@@ -35,6 +35,8 @@ public class JdbcMemberRepository implements MemberRepository {
                     ? rs.getTimestamp("last_order_date").toLocalDateTime()
                     : null)
             .growthLevel(rs.getString("growth_level"))
+            .socialProvider(rs.getString("social_provider"))
+            .socialId(rs.getString("social_id"))
             .address(rs.getString("address"))
             .phone(rs.getString("phone"))
             .createdAt(rs.getTimestamp("created_at") != null
@@ -60,14 +62,22 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
+    public Optional<Member> findBySocialId(String provider, String socialId) {
+        String sql = "SELECT * FROM users WHERE social_provider = ? AND social_id = ?";
+        List<Member> members = jdbcTemplate.query(sql, memberRowMapper, provider, socialId);
+        return members.stream().findFirst();
+    }
+
+    @Override
     public Member save(Member member) {
         String sql = """
                 INSERT INTO users (id, nickname, password, role, 
                                  current_points, total_accumulated_points, 
                                  last_order_date, growth_level,
+                                 social_provider, social_id,
                                  address, phone,
                                  created_at, updated_at)
-                VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT (id) DO UPDATE SET
                     current_points = EXCLUDED.current_points,
                     total_accumulated_points = EXCLUDED.total_accumulated_points,
@@ -89,6 +99,8 @@ public class JdbcMemberRepository implements MemberRepository {
                 member.getTotalAccumulatedPoints(),
                 member.getLastOrderDate(),
                 member.getGrowthLevel(),
+                member.getSocialProvider(),
+                member.getSocialId(),
                 member.getAddress(),
                 member.getPhone(),
                 member.getCreatedAt() != null ? member.getCreatedAt() : LocalDateTime.now(),

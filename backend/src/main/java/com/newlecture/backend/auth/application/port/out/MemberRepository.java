@@ -21,8 +21,11 @@ public interface MemberRepository {
      */
     Member save(Member member);
 
-    /**
-     * 닉네임 존재 여부 확인
-     */
     boolean existsByNickname(String nickname);
+
+    /**
+     * 소셜 프로바이더와 소셜 ID로 회원 조회
+     */
+    Optional<Member> findBySocialId(String provider, String socialId);
+
 }

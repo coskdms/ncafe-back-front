@@ -268,9 +268,14 @@ public class DataInitializer implements ApplicationRunner {
                                 "total_accumulated_points INTEGER DEFAULT 0, " +
                                 "last_order_date TIMESTAMP WITH TIME ZONE, " +
                                 "growth_level VARCHAR(50) DEFAULT 'Lv.1 갓 태어난 알', " +
+                                "social_provider VARCHAR(20) DEFAULT 'LOCAL', " +
+                                "social_id VARCHAR(100), " +
+                                "address TEXT, " +
+                                "phone VARCHAR(20), " +
                                 "created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, " +
                                 "updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP" +
                                 ")";
+
                 jdbcTemplate.execute(createTableSql);
 
                 // 기존 테이블에 새로운 컬럼이 없을 경우 추가
@@ -280,6 +285,11 @@ public class DataInitializer implements ApplicationRunner {
                 try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS growth_level VARCHAR(50) DEFAULT 'Lv.1 갓 태어난 알'"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS social_provider VARCHAR(20) DEFAULT 'LOCAL'"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS social_id VARCHAR(100)"); } catch (Exception e) {}
+
+                // 소셜 로그인 검색용 인덱스
+                try { jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS idx_users_social ON users (social_provider, social_id)"); } catch (Exception e) {}
 
                 // 3. 관리자 계정 초기화
                 insertUserIfMissing("coskdms", "thgud6173!", "ADMIN");
