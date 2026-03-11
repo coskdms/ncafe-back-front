@@ -156,9 +156,10 @@ export default function MyPage() {
         try {
             const orderName = order.items[0].korName + (order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : '');
             
+            // 재결제 시에도 고객 정보(이메일, 연락처) 누락 시 이니시스 등에서 에러 발생 가능
             const response = await PortOne.requestPayment({
                 storeId: process.env.NEXT_PUBLIC_PORTONE_STORE_ID!,
-                channelKey: process.env.NEXT_PUBLIC_PORTONE_CHANNEL_KEY!,
+                channelKey: process.env.NEXT_PUBLIC_PORTONE_CHANNEL_KEY!, // 기본 카카오 채널
                 paymentId: order.paymentId,
                 orderName: orderName,
                 totalAmount: order.totalPrice,
@@ -166,9 +167,12 @@ export default function MyPage() {
                 payMethod: 'EASY_PAY',
                 customer: {
                     fullName: user?.nickname || '회원',
+                    email: (user as any)?.email || 'customer@example.com',
+                    phoneNumber: (user as any)?.phone?.replace(/[^0-9]/g, '') || '01000000000'
                 },
                 redirectUrl: `${window.location.origin}/checkout/success?paymentId=${order.paymentId}`
             });
+
 
             if (response.code != null) {
                 // 결제창 닫힘 혹은 실패
