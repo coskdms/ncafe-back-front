@@ -32,7 +32,7 @@
 
 .statCard {
     background-color: white;
-    padding: var(--space-6);
+    padding: var(--space-5) var(--space-6);
     border-radius: 20px;
     border: 1px solid #f1f1f1;
     display: flex;
@@ -40,6 +40,7 @@
     gap: var(--space-4);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     transition: transform 0.2s;
+    min-width: 0; /* flex 자식의 최소 너비 제한 해제 */
 }
 
 .statCard:hover {
@@ -54,24 +55,39 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0; /* 아이콘 크기 고정 */
 }
 
 .statContent {
     display: flex;
     flex-direction: column;
+    min-width: 0; /* 텍스트 넘침 제어용 */
+    flex: 1;
 }
 
 .statLabel {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: #64748b;
+    white-space: nowrap;
 }
 
 .statValue {
-    font-size: 1.75rem;
+    font-size: 1.5rem; /* 1.75rem에서 약간 축소 */
     font-weight: 800;
     color: #1a1a1b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 너무 길면 말줄임표 */
 }
+
+/* 금액이 매우 길어질 경우를 위해 폰트 크기 자동 조절 (반응형) */
+@media (max-width: 1400px) {
+    .statValue {
+        font-size: 1.25rem;
+    }
+}
+
 
 .quickLinks {
     margin-top: var(--space-4);
