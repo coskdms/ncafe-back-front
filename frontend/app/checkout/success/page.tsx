@@ -11,9 +11,10 @@ import { fetchAPI } from '@/app/lib/api';
 function SuccessContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const paymentId = searchParams.get('paymentId');
+    const paymentId = searchParams.get('paymentId') || searchParams.get('payment_id'); // V2 리다이렉트는 payment_id로 옴
     const [orderData, setOrderData] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
+
 
     const { clearCart, setCheckoutItems, syncWithServer } = useCartStore();
 
@@ -106,8 +107,9 @@ function SuccessContent() {
                         <div className={styles.detailLabel}>
                             <CreditCard size={16} /> 결제수단
                         </div>
-                        <div className={styles.detailValue}>포트원 간편결제</div>
+                        <div className={styles.detailValue}>온라인 결제 완료</div>
                     </div>
+
                     {orderData?.usedPoints > 0 && (
                         <div className={`${styles.detailRow} ${styles.pointDiscountRow}`} style={{ borderTop: '1px dashed #eee', paddingTop: '10px', marginTop: '10px' }}>
                             <div className={styles.detailLabel}>

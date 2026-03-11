@@ -35,6 +35,8 @@ export default function CheckoutPage() {
 
     const [availablePoints, setAvailablePoints] = useState(0);
     const [pointsToUse, setPointsToUse] = useState(0);
+    const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'KAKAO'>('CARD'); // CARD: KG, KAKAO: 카카오
+
 
     useEffect(() => {
         setIsMounted(true);
@@ -145,22 +147,57 @@ export default function CheckoutPage() {
             }
 
             // 2-2. 포트원 V2 결제 요청
-            const response = await window.PortOne.requestPayment({
-                storeId: process.env.NEXT_PUBLIC_PORTONE_STORE_ID,
-                channelKey: process.env.NEXT_PUBLIC_PORTONE_CHANNEL_KEY,
+            const kakaoKey = process.env.NEXT_PUBLIC_PORTONE_CHANNEL_KEY;
+            const kgKey = process.env.NEXT_PUBLIC_PORTONE_KG_CHANNEL_KEY;
+            
+            const channelKey = paymentMethod === 'KAKAO' ? kakaoKey : kgKey;
+
+            if (!channelKey) {
+                throw new Error(`${paymentMethod === 'KAKAO' ? '카카오페이' : '카드결제'} 채널 키가 설정되지 않았습니다. .env 파일을 확인해주세요.`);
+            }
+
+            // KG 이니시스 등 일부 PG사는 휴대폰 번호에 하이픈(-)이 있으면 파싱 에러가 날 수 있음
+            const sanitizedPhone = formData.phone.replace(/[^0-9]/g, '');
+
+            // KG 이니시스 V2에서 "지원하지 않는 기능" 에러는 
+            // 보통 payMethod가 "CARD"일 때 추가적인 파라미터 충돌이나 
+            // 필수 필드 누락(특히 고객 이메일 등) 혹은 redirectUrl의 프로토콜 문제일 수 있습니다.
+            const paymentData: any = {
+                storeId: process.env.NEXT_PUBLIC_PORTONE_STORE_ID!,
+                channelKey: channelKey,
                 paymentId: orderRes.paymentId,
                 orderName: checkoutItems.length > 1
                     ? `${checkoutItems[0].korName} 외 ${checkoutItems.length - 1}건`
                     : checkoutItems[0].korName,
                 totalAmount: finalPrice,
                 currency: "CURRENCY_KRW",
-                payMethod: "EASY_PAY", // 카카오페이 등 간편결제
                 customer: {
-                    fullName: formData.receiver,
-                    ...(formData.phone ? { phoneNumber: formData.phone } : {}),
+                    fullName: formData.receiver || '구매자',
+                    email: (user as any)?.email || 'customer@example.com', // 이니시스 V2 필수 이메일
+                    phoneNumber: sanitizedPhone || '01000000000', // 이니시스 V2 필수 휴대폰 번호 📱
                 },
-                redirectUrl: `${window.location.origin}/checkout/success` // 모바일 환경 대응
-            });
+
+                redirectUrl: `${window.location.origin}/checkout/success`
+            };
+
+
+
+            // 카카오페이(EASY_PAY)와 일반카드(CARD)의 payMethod 구분
+            if (paymentMethod === 'KAKAO') {
+                paymentData.payMethod = "EASY_PAY";
+            } else {
+                // KG 이니시스 V2의 경우 channelKey에 이미 수단이 포함되어 있으면 
+                // payMethod를 명시하지 않거나 "CARD"로 명시합니다. 
+                // 일부 환경에서는 명시하지 않는 것이 더 안정적일 수 있습니다.
+                paymentData.payMethod = "CARD";
+            }
+
+            console.log('Sending Payment Request:', JSON.stringify(paymentData, null, 2));
+
+            const response = await window.PortOne.requestPayment(paymentData);
+
+
+
 
 
             // 3. 결제 결과 처리
@@ -342,6 +379,31 @@ export default function CheckoutPage() {
                                 </div>
                             </section>
                         )}
+
+                        <section className={styles.card}>
+                            <h2 className={styles.cardTitle}>
+                                <CreditCard size={20} /> 결제 수단 선택
+                            </h2>
+                            <div className={styles.methodSelector}>
+                                <button 
+                                    className={`${styles.methodBtn} ${paymentMethod === 'CARD' ? styles.active : ''}`}
+                                    onClick={() => setPaymentMethod('CARD')}
+                                >
+                                    <CreditCard size={24} color={paymentMethod === 'CARD' ? "#f59e0b" : "#78350f"} />
+                                    <span>일반 결제 (카드)</span>
+                                </button>
+                                <button 
+                                    className={`${styles.methodBtn} ${paymentMethod === 'KAKAO' ? styles.active : ''}`}
+                                    onClick={() => setPaymentMethod('KAKAO')}
+                                >
+                                    <div className={styles.paymentIcon}>
+                                        <span style={{ fontSize: '20px' }}>💬</span>
+                                    </div>
+                                    <span>카카오페이</span>
+                                </button>
+                            </div>
+                        </section>
+
 
                         <section className={styles.card}>
                             <h2 className={styles.cardTitle}>

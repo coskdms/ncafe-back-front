@@ -191,6 +191,55 @@
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
 }
 
+/* 결제 수단 선택 */
+.methodSelector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+}
+
+.methodBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-2);
+    border: 2px solid #fde68a;
+    border-radius: 16px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.methodBtn span {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: #78350f;
+}
+
+.methodBtn:hover {
+    border-color: #fbbf24;
+    background: #fffbeb;
+}
+
+.methodBtn.active {
+    border-color: #f59e0b;
+    background: #fffbeb;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+}
+
+.methodBtn.active span {
+    color: #f59e0b;
+}
+
+.paymentIcon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+
 /* 오른쪽: 결제 요약 카드 */
 .summaryCard {
     position: sticky;
