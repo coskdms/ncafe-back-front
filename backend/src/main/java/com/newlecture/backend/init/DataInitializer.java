@@ -42,6 +42,8 @@ public class DataInitializer implements ApplicationRunner {
                 initUsersTable();
                 initCartItemsTable();
                 initOrdersTable();
+                initNotificationsTable();
+
 
                 // =====================================
                 // [2] 메뉴 및 카테고리 초기 데이터 삽입
@@ -348,7 +350,9 @@ public class DataInitializer implements ApplicationRunner {
                 try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS type VARCHAR(50) NOT NULL DEFAULT 'DELIVERY'"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS used_points INTEGER DEFAULT 0"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS tx_id VARCHAR(255)"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS points_awarded BOOLEAN DEFAULT FALSE"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS receiver_name VARCHAR(255)"); } catch (Exception e) {}
+
                 try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS receiver_phone VARCHAR(20)"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS address TEXT"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS memo TEXT"); } catch (Exception e) {}
@@ -367,4 +371,18 @@ public class DataInitializer implements ApplicationRunner {
 
                 System.out.println("✅ DataInitializer: orders 및 order_items 테이블 확인 및 생성 완료 (자동 마이그레이션 포함)");
         }
+
+        private void initNotificationsTable() {
+                String sql = "CREATE TABLE IF NOT EXISTS admin_notifications (" +
+                                "id BIGSERIAL PRIMARY KEY, " +
+                                "type VARCHAR(30) NOT NULL, " +
+                                "title VARCHAR(200) NOT NULL, " +
+                                "message TEXT, " +
+                                "link VARCHAR(500), " +
+                                "is_read BOOLEAN NOT NULL DEFAULT FALSE, " +
+                                "created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)";
+                jdbcTemplate.execute(sql);
+                System.out.println("✅ DataInitializer: admin_notifications 테이블 확인 및 생성 완료");
+        }
 }
+

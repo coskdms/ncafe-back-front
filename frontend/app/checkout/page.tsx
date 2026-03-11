@@ -137,7 +137,14 @@ export default function CheckoutPage() {
                 throw new Error('주문 생성에 실패했습니다.');
             }
 
-            // 2. 포트원 V2 결제 요청
+            // 💰 2-1. 0원 결제 처리 (포인트 전액 결제 등)
+            // 포트원 V2는 0원 결제를 지원하지 않으므로, 백엔드에서 이미 처리했을 거라 믿고 즉시 이동합니다.
+            if (finalPrice === 0) {
+                router.push(`/checkout/success?paymentId=${orderRes.paymentId}`);
+                return;
+            }
+
+            // 2-2. 포트원 V2 결제 요청
             const response = await window.PortOne.requestPayment({
                 storeId: process.env.NEXT_PUBLIC_PORTONE_STORE_ID,
                 channelKey: process.env.NEXT_PUBLIC_PORTONE_CHANNEL_KEY,
@@ -154,6 +161,7 @@ export default function CheckoutPage() {
                 },
                 redirectUrl: `${window.location.origin}/checkout/success` // 모바일 환경 대응
             });
+
 
             // 3. 결제 결과 처리
             if (response.code != null) {

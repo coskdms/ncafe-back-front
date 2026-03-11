@@ -27,7 +27,14 @@
     gap: var(--space-2);
 }
 
+/* 드롭다운 앵커 (position relative 역할) */
+.dropdownAnchor {
+    position: relative;
+}
+
+/* 알림 버튼 */
 .iconButton {
+    position: relative;
     width: 40px;
     height: 40px;
     display: flex;
@@ -43,11 +50,38 @@
     color: var(--text-primary);
 }
 
+/* 읽지 않은 알림 뱃지 */
+.badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    background: var(--color-error);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    border: 2px solid var(--bg-primary);
+    animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* 프로필 버튼 */
 .profileButton {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
     border-radius: var(--radius-md);
     color: var(--text-secondary);
     transition: all var(--transition-fast);
@@ -61,6 +95,32 @@
 .profileButton span {
     font-size: var(--text-sm);
     font-weight: 500;
+}
+
+/* 아바타 (작은 원형) */
+.avatarSmall {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));
+    color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    flex-shrink: 0;
+}
+
+/* 화살표 회전 */
+.chevron {
+    transition: transform var(--transition-fast);
+    color: var(--color-gray-400);
+    flex-shrink: 0;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
 }
 
 /* ── Desktop (768px+) ── */

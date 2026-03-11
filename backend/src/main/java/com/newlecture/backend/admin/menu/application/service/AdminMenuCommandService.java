@@ -15,6 +15,8 @@ import com.newlecture.backend.admin.menu.domain.Menu;
 import com.newlecture.backend.admin.menu.application.port.in.UpdateMenuImagesUseCase;
 import com.newlecture.backend.admin.menu.application.port.out.MenuImageRepository;
 import com.newlecture.backend.admin.menu.domain.MenuImage;
+import com.newlecture.backend.admin.notification.application.service.NotificationService;
+
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,15 +37,20 @@ public class AdminMenuCommandService
     private final MenuRepository menuRepository;
     private final MenuImageRepository menuImageRepository;
     private final com.newlecture.backend.admin.menu.application.port.out.MenuOptionRepository menuOptionRepository;
+    private final NotificationService notificationService;
+
 
     public AdminMenuCommandService(
             @Qualifier("adminMenuPersistenceAdapter") MenuRepository menuRepository,
             @Qualifier("adminMenuImagePersistenceAdapter") MenuImageRepository menuImageRepository,
-            @Qualifier("adminMenuOptionPersistenceAdapter") com.newlecture.backend.admin.menu.application.port.out.MenuOptionRepository menuOptionRepository) {
+            @Qualifier("adminMenuOptionPersistenceAdapter") com.newlecture.backend.admin.menu.application.port.out.MenuOptionRepository menuOptionRepository,
+            NotificationService notificationService) {
         this.menuRepository = menuRepository;
         this.menuImageRepository = menuImageRepository;
         this.menuOptionRepository = menuOptionRepository;
+        this.notificationService = notificationService;
     }
+
 
     @Override
     @Transactional
@@ -55,6 +62,7 @@ public class AdminMenuCommandService
                 .price(command.getPrice() != null ? command.getPrice() : 0)
                 .categoryId(command.getCategoryId())
                 .isAvailable(command.getIsAvailable() != null ? command.getIsAvailable() : true)
+                .sortOrder(command.getSortOrder() != null ? command.getSortOrder() : 0)
                 .createdAt(java.time.LocalDateTime.now())
                 .updatedAt(java.time.LocalDateTime.now())
                 .build();
@@ -84,6 +92,7 @@ public class AdminMenuCommandService
         menu.setPrice(command.getPrice());
         menu.setCategoryId(command.getCategoryId());
         menu.setIsAvailable(command.getIsAvailable());
+        menu.setSortOrder(command.getSortOrder());
         menu.setUpdatedAt(java.time.LocalDateTime.now());
 
         Menu updatedMenu = menuRepository.save(menu);
@@ -107,8 +116,19 @@ public class AdminMenuCommandService
             menu.setIsAvailable(isAvailable);
             menu.setUpdatedAt(LocalDateTime.now());
             menuRepository.save(menu);
+
+            // 품절 알림 생성 🔔
+            if (!isAvailable) {
+                notificationService.createNotification(
+                    "SOLD_OUT", 
+                    "품절 알림 🔴", 
+                    "'" + menu.getKorName() + "' 메뉴가 품절 처리되었습니다.", 
+                    "/admin/menus"
+                );
+            }
         }
     }
+
 
     @Override
     @Transactional

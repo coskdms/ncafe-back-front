@@ -45,7 +45,9 @@ public class OrderJpaEntity {
     private String address;
     private String memo;
     private Integer usedPoints;
+    private Boolean pointsAwarded; // 포인트 지급 여부 (중복 방지)
     private String txId; // 결제 승인 후 저장할 거래 키
+
 
     @CreationTimestamp
     private LocalDateTime createdAt;
