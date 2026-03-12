@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, ArrowUp, ArrowDown, Save, X } from 'lucide-react';
 import styles from './Categories.module.css';
+import { toast } from '@/stores/toastStore';
 
 interface Category {
     id: number;
@@ -69,7 +70,7 @@ export default function CategoriesPage() {
                 setIsModalOpen(false);
                 fetchCategories();
             } else {
-                alert('저장에 실패했습니다.');
+                toast.error('저장에 실패했습니다.');
             }
         } catch (error) {
             console.error('Error saving category:', error);
@@ -86,7 +87,7 @@ export default function CategoriesPage() {
             if (res.ok) {
                 fetchCategories();
             } else {
-                alert('삭제에 실패했습니다.');
+                toast.error('삭제에 실패했습니다.');
             }
         } catch (error) {
             console.error('Error deleting category:', error);

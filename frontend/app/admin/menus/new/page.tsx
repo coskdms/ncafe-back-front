@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { fetchAPI } from '@/app/lib/api';
 import MenuForm, { MenuFormData } from '../_components/MenuForm/MenuForm';
 import styles from './page.module.css';
+import { toast } from '@/stores/toastStore';
 
 export default function NewMenuPage() {
     const router = useRouter();
@@ -48,11 +49,11 @@ export default function NewMenuPage() {
                 });
             }
 
-            alert('메뉴가 성공적으로 등록되었습니다.');
+            toast.success('메뉴가 성공적으로 등록되었습니다.');
             router.push('/admin/menus');
         } catch (error) {
             console.error(error);
-            alert('메뉴 등록 중 오류가 발생했습니다.');
+            toast.error('메뉴 등록 중 오류가 발생했습니다.');
         }
     };
 

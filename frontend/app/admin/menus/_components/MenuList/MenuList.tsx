@@ -8,6 +8,7 @@ import MenuCard from '../MenuCard';
 import styles from './MenuList.module.css';
 import { useMenus, MenuListParams, MenuResponse } from './useMenus';
 import { fetchAPI } from '@/app/lib/api';
+import { toast } from '@/stores/toastStore';
 import {
     DndContext,
     closestCenter,
@@ -116,7 +117,7 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
             setMenus(prev => prev.map(m =>
                 m.id === id ? { ...m, isAvailable: menu.isAvailable } : m
             ));
-            alert('품절 상태를 변경하는 중 오류가 발생했습니다.');
+            toast.error('품절 상태를 변경하는 중 오류가 발생했습니다.');
         }
     };
 
@@ -143,7 +144,7 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
         } catch (err) {
             console.error('순서 변경 실패:', err);
             refetch();
-            alert('메뉴 순서를 변경하는 중 오류가 발생했습니다.');
+            toast.error('메뉴 순서를 변경하는 중 오류가 발생했습니다.');
         }
     };
 
@@ -152,11 +153,11 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
         if (confirm('정말 이 메뉴를 삭제하시겠습니까?')) {
             try {
                 await fetchAPI(`/admin/menus/${id}`, { method: 'DELETE' });
-                alert('삭제되었습니다.');
+                toast.success('삭제되었습니다.');
                 refetch();
             } catch (error) {
                 console.error('삭제 오류:', error);
-                alert('메뉴를 삭제하는 중 오류가 발생했습니다.');
+                toast.error('메뉴를 삭제하는 중 오류가 발생했습니다.');
             }
         }
     };

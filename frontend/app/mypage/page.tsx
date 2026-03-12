@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { Bell, ChevronDown, Sparkles } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { memberAPI, orderAPI, fetchAPI } from '@/app/lib/api';
+import { toast } from '@/stores/toastStore';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import { useRouter } from 'next/navigation';
@@ -118,27 +119,27 @@ export default function MyPage() {
         e.preventDefault();
         try {
             await memberAPI.updateProfile(address, phone);
-            alert('기본 정보가 저장되었습니다. 🐤');
+            toast.success('기본 정보가 저장되었습니다. 🐤');
             fetchMyData();
         } catch (error: any) {
-            alert(error.message || '정보 수정에 실패했습니다.');
+            toast.error(error.message || '정보 수정에 실패했습니다.');
         }
     };
 
     const handleUpdatePassword = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newPassword !== confirmPassword) {
-            alert('새 비밀번호가 일치하지 않습니다.');
+            toast.warning('새 비밀번호가 일치하지 않습니다.');
             return;
         }
         try {
             await memberAPI.updatePassword(currentPassword, newPassword);
-            alert('비밀번호가 변경되었습니다. 🔐');
+            toast.success('비밀번호가 변경되었습니다. 🔐');
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
         } catch (error: any) {
-            alert(error.message || '비밀번호 변경에 실패했습니다.');
+            toast.error(error.message || '비밀번호 변경에 실패했습니다.');
         }
     };
 
@@ -149,10 +150,10 @@ export default function MyPage() {
 
         try {
             await orderAPI.cancelOrder(paymentId);
-            alert('주문이 취소되었습니다. 🐣');
+            toast.success('주문이 취소되었습니다. 🐣');
             fetchMyData(); // 데이터 새로고침 (포인트, 등급, 주문 목록 갱신)
         } catch (error: any) {
-            alert(error.message || '취소 처리에 실패했습니다. 고객센터로 문의해주세요.');
+            toast.error(error.message || '취소 처리에 실패했습니다. 고객센터로 문의해주세요.');
         }
     };
 
@@ -166,7 +167,7 @@ export default function MyPage() {
 
         const { PortOne } = window;
         if (!PortOne) {
-            alert('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요. 🐥');
+            toast.info('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요. 🐥');
             return;
         }
 
@@ -177,7 +178,7 @@ export default function MyPage() {
             const channelKey = paymentMethod === 'KAKAO' ? kakaoKey : kgKey;
 
             if (!channelKey) {
-                alert('결제 채널 설정이 올바르지 않습니다.');
+                toast.error('결제 채널 설정이 올바르지 않습니다.');
                 return;
             }
 
@@ -198,14 +199,14 @@ export default function MyPage() {
             });
 
             if (response.code != null) {
-                alert('결제가 중단되었거나 실패했습니다. 다시 시도해주세요.');
+                toast.error('결제가 중단되었거나 실패했습니다. 다시 시도해주세요.');
                 return;
             }
 
             router.push(`/checkout/success?paymentId=${selectedOrder.paymentId}`);
         } catch (error) {
             console.error('Payment Error:', error);
-            alert('결제 처리 중 오류가 발생했습니다.');
+            toast.error('결제 처리 중 오류가 발생했습니다.');
         } finally {
             setIsPaymentModalOpen(false);
             setSelectedOrder(null);
@@ -230,11 +231,11 @@ export default function MyPage() {
                     options: parsedOptions
                 });
             }
-            alert('이전 주문 상품들을 장바구니에 담았어요! 🐤 장바구니로 이동합니다.');
+            toast.success('이전 주문 상품들을 장바구니에 담았어요! 🐤 장바구니로 이동합니다.');
             router.push('/cart');
         } catch (error) {
             console.error('Reorder error:', error);
-            alert('재주문 처리 중 오류가 발생했습니다.');
+            toast.error('재주문 처리 중 오류가 발생했습니다.');
         }
     };
 

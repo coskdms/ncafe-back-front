@@ -10,6 +10,7 @@ import Footer from '@/components/landing/Footer';
 import styles from './Checkout.module.css';
 import Script from 'next/script';
 import { fetchAPI } from '@/app/lib/api';
+import { toast } from '@/stores/toastStore';
 
 declare global {
     interface Window {
@@ -104,17 +105,17 @@ export default function CheckoutPage() {
         // 폼 유효성 검사
         if (orderType === 'DINE_IN') {
             if (!formData.receiver) {
-                alert('닉네임(이름)을 입력해주세요! 🐤');
+                toast.warning('닉네임(이름)을 입력해주세요! 🐤');
                 return;
             }
         } else if (orderType === 'PICK_UP') {
             if (!formData.receiver || !formData.phone) {
-                alert('수령인 이름과 연락처를 모두 입력해주세요! 🐤');
+                toast.warning('수령인 이름과 연락처를 모두 입력해주세요! 🐤');
                 return;
             }
         } else if (orderType === 'DELIVERY') {
             if (!formData.receiver || !formData.phone || !formData.address) {
-                alert('수령인 정보와 주소를 모두 입력해주세요! 🐤');
+                toast.warning('수령인 정보와 주소를 모두 입력해주세요! 🐤');
                 return;
             }
         }
@@ -218,7 +219,7 @@ export default function CheckoutPage() {
 
         } catch (error: any) {
             console.error('Payment Error:', error);
-            alert(error.message || '결제 준비 중 오류가 발생했습니다.');
+            toast.error(error.message || '결제 준비 중 오류가 발생했습니다.');
         } finally {
             setIsProcessing(false);
         }
@@ -321,9 +322,9 @@ export default function CheckoutPage() {
                                                                 address: data.address || prev.address,
                                                                 phone: data.phone || prev.phone
                                                             }));
-                                                            alert('마이페이지에서 정보를 불러왔습니다! 🐥');
+                                                            toast.success('마이페이지에서 정보를 불러왔습니다! 🐥');
                                                         } else {
-                                                            alert('저장된 기본 정보가 없습니다. 마이페이지에서 먼저 저장해주세요! 🐤');
+                                                            toast.info('저장된 기본 정보가 없습니다. 마이페이지에서 먼저 저장해주세요! 🐤');
                                                         }
                                                     });
                                                 });

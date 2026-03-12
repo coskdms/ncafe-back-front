@@ -10,6 +10,7 @@ import Footer from '@/components/landing/Footer';
 import { ChevronLeft, ShoppingCart, CreditCard, X } from 'lucide-react';
 import styles from '../MenuDetail.module.css';
 import { useMenuDetail } from './useMenuDetail';
+import { toast } from '@/stores/toastStore';
 
 interface MenuDetailClientProps {
     params: Promise<{ id: string }>;
@@ -90,7 +91,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                 setIsOptionModalOpen(true);
                 return;
             }
-            alert(`필수 옵션을 선택해주세요: ${missingRequired.map(g => g.name).join(', ')}`);
+            toast.warning(`필수 옵션을 선택해주세요: ${missingRequired.map(g => g.name).join(', ')}`);
             return;
         }
 
@@ -127,7 +128,7 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                 setIsOptionModalOpen(true);
                 return;
             }
-            alert(`필수 옵션을 선택해주세요: ${missingRequired.map(g => g.name).join(', ')}`);
+            toast.warning(`필수 옵션을 선택해주세요: ${missingRequired.map(g => g.name).join(', ')}`);
             return;
         }
 

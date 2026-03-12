@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AgentChat from "@/components/common/AgentChat/AgentChat";
+import ToastContainer from "@/components/common/Toast/Toast";
 
 export const metadata: Metadata = {
   title: "고라파덕 카페 ☕🐤",
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body>
         {children}
         <AgentChat />
+        <ToastContainer />
       </body>
     </html>
   );

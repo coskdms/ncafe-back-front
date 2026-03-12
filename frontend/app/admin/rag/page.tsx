@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FileText, Upload, Plus, Loader2, BookOpen, Edit2, Trash2, XCircle, RotateCcw } from 'lucide-react';
 import styles from './page.module.css';
+import { toast } from '@/stores/toastStore';
 
 interface RagDocument {
   id: number;
@@ -58,14 +59,14 @@ export default function RagManagementPage() {
 
       if (res.ok) {
         handleCancel(); // Reset form
-        alert(editingId ? '문서가 성공적으로 수정되었습니다.' : '문서가 성공적으로 저장되었습니다.');
+        toast.success(editingId ? '문서가 성공적으로 수정되었습니다.' : '문서가 성공적으로 저장되었습니다.');
         fetchDocuments();
       } else {
-        alert('저장 중 오류가 발생했습니다.');
+        toast.error('저장 중 오류가 발생했습니다.');
       }
     } catch (error) {
       console.error('Save error:', error);
-      alert('통신 중 오류가 발생했습니다.');
+      toast.error('통신 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -89,15 +90,15 @@ export default function RagManagementPage() {
       });
 
       if (res.ok) {
-        alert('문서가 삭제되었습니다.');
+        toast.success('문서가 삭제되었습니다.');
         fetchDocuments();
         if (editingId === id) handleCancel();
       } else {
-        alert('삭제 중 오류가 발생했습니다.');
+        toast.error('삭제 중 오류가 발생했습니다.');
       }
     } catch (error) {
       console.error('Delete error:', error);
-      alert('통신 중 오류가 발생했습니다.');
+      toast.error('통신 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -111,7 +112,7 @@ export default function RagManagementPage() {
 
   const processFile = (file: File) => {
     if (file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
-      alert('순수 텍스트(.txt) 파일만 업로드할 수 있습니다.');
+      toast.warning('순수 텍스트(.txt) 파일만 업로드할 수 있습니다.');
       return;
     }
 
