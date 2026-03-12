@@ -3,8 +3,10 @@ FROM gradle:9.2.1-jdk21 AS builder
 WORKDIR /app
 COPY . .
 RUN chmod +x ./gradlew
-# Docker 이미지(gradle:9.2.1-jdk21)에 내장된 gradle 사용 (wrapper 다운로드 실패 방지)
-RUN gradle :backend:bootJar --no-daemon -x test --no-build-cache
+# 네트워크 불안정 대비 재시도 로직
+RUN gradle :backend:bootJar --no-daemon -x test --no-build-cache \
+    || (sleep 10 && gradle :backend:bootJar --no-daemon -x test --no-build-cache) \
+    || (sleep 20 && gradle :backend:bootJar --no-daemon -x test --no-build-cache)
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine
