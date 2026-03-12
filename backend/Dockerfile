@@ -3,8 +3,8 @@ FROM gradle:9.2.1-jdk21 AS builder
 WORKDIR /app
 COPY . .
 RUN chmod +x ./gradlew
-# 백엔드 프로젝트 빌드 (이미지에 이미 포함된 gradle:9.2.1을 사용하여 속도 개선 및 네트워크 이슈 회피)
-RUN gradle :backend:bootJar --no-daemon -x test
+# 프로젝트 gradle wrapper를 사용하여 빌드 (플러그인 레포지토리 설정 일관성 보장)
+RUN ./gradlew :backend:bootJar --no-daemon -x test
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine
