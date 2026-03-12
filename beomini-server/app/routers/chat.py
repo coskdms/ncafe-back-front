@@ -21,14 +21,19 @@ async def chat_endpoint(request: ChatRequest, authorization: str = Header(None))
         logger.info(f"Chat request received. Stream: {request.stream}, Auth: {bool(authorization)}")
         
         if not request.stream:
-            content = chat(messages, auth_token=authorization)
+            content = await chat(messages, auth_token=authorization)
             logger.info("Chat success (non-stream)")
             return {"content": content}
         
         async def event_generator():
             try:
-                for chunk in chat_stream(messages, auth_token=authorization):
-                    yield {"data": json.dumps({"content": chunk}, ensure_ascii=False)}
+                async for chunk in chat_stream(messages, auth_token=authorization):
+                    if isinstance(chunk, dict):
+                        # dict 타입은 프론트엔드 액션으로 간주하여 그대로 JSON 전송
+                        yield {"data": json.dumps(chunk, ensure_ascii=False)}
+                    elif chunk:
+                        # str 타입은 텍스트 내용으로 전송
+                        yield {"data": json.dumps({"content": chunk}, ensure_ascii=False)}
                 yield {"data": "[DONE]"}
             except Exception as e:
                 logger.error(f"Stream error: {e}")

@@ -22,6 +22,8 @@ build/
 .gradle/
 node_modules/
 dist/
+.venv/
+__pycache__/
 
 # Uploads
 backend/upload/

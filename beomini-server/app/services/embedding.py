@@ -1,15 +1,27 @@
-from sentence_transformers import SentenceTransformer
+try:
+    from sentence_transformers import SentenceTransformer
+    HAS_TRANSFORMERS = True
+except ImportError:
+    HAS_TRANSFORMERS = False
+
 import numpy as np
 
-# Load the model directly
-model = SentenceTransformer("intfloat/multilingual-e5-small")
+# Load the model lazily
+_model = None
+
+def get_model():
+    global _model
+    if not HAS_TRANSFORMERS:
+        raise ImportError("sentence-transformers 라이브러리가 설치되지 않았다덕! pip install sentence-transformers 명령어로 설치해달라덕.")
+    if _model is None:
+        _model = SentenceTransformer("intfloat/multilingual-e5-small")
+    return _model
 
 def get_embedding(text: str) -> list[float]:
     """
-    텍스트를 384차원 벡터로 변환합니다.
+    텍스트를 벡터로 변환합니다.
     """
-    # e5-small 모델은 "query: " 또는 "passage: " 접두사를 사용하는 것이 좋습니다.
-    # 여기서는 저장용이므로 "passage: "를 사용합니다.
+    model = get_model()
     processed_text = f"passage: {text}"
     embedding = model.encode(processed_text)
     return embedding.tolist()

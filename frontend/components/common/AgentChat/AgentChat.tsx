@@ -51,8 +51,8 @@ export default function AgentChat() {
      * 텍스트와 메뉴 카드를 분리하여 렌더링합니다.
      */
     const renderMessageContent = (text: string) => {
-        // ::menu와 ::action 마커를 모두 찾아서 나눔
-        const parts = text.split(/(::menu\{.*?\}::|::action\{.*?\}::)/g);
+        // ::menu, ::action, ::growth 마커를 모두 찾아서 나눔
+        const parts = text.split(/(::menu\{.*?\}::|::action\{.*?\}::|::growth\{.*?\}::)/g);
 
         return parts.map((part, index) => {
             // 메뉴 마커 처리
@@ -113,6 +113,40 @@ export default function AgentChat() {
                     );
                 } catch (e) {
                     console.error('Menu JSON parse error:', e);
+                    return <span key={index}>{part}</span>;
+                }
+            }
+
+            // 성장 정보(포인트) 마커 처리
+            if (part.startsWith('::growth{') && part.endsWith('}::')) {
+                try {
+                    const jsonStr = part.slice(8, -2);
+                    const growth = JSON.parse(jsonStr);
+
+                    return (
+                        <div key={index} className={styles.growthCard}>
+                            <div className={styles.growthBadge}>{growth.level}</div>
+                            <div className={styles.growthContent}>
+                                <div className={styles.growthMain}>
+                                    <span className={styles.growthLabel}>보유 포인트</span>
+                                    <span className={styles.growthValue}>{growth.points.toLocaleString()}P</span>
+                                </div>
+                                {growth.nextLevel && (
+                                    <div className={styles.growthSub}>
+                                        <div className={styles.growthProgress}>
+                                            <div className={styles.growthTarget}>다음 등급: {growth.nextLevel}</div>
+                                            <div className={styles.growthRemaining}>{growth.remaining.toLocaleString()}P 남음</div>
+                                        </div>
+                                        <div className={styles.progressBar}>
+                                            <div className={styles.progressFill} style={{ width: '60%' }}></div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    );
+                } catch (e) {
+                    console.error('Growth JSON parse error:', e);
                     return <span key={index}>{part}</span>;
                 }
             }
@@ -179,7 +213,6 @@ export default function AgentChat() {
         setIsTyping(true);
 
         try {
-            // API 호출 (현재 메시지 + 새 메시지)
             const apiMessages = [...messages, newUserMsg].map(m => ({
                 role: m.sender === 'bot' ? 'model' : 'user',
                 content: m.text
@@ -190,21 +223,94 @@ export default function AgentChat() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: apiMessages,
-                    stream: false
+                    stream: true // 스트리밍 활성화
                 })
             });
             
-            const data = await res.json();
-            setIsTyping(false);
-            
+            if (!res.ok) throw new Error('Network response was not ok');
+            if (!res.body) throw new Error('No response body');
+
             const botId = ++msgIdCounter.current;
-            const replyText = data.content || "앗... 서버에서 응답을 가져올 수 없었다덕! 💦";
+            let botMessageCreated = false;
 
-            setMessages(prev => [...prev, { id: botId, text: replyText, sender: 'bot' }]);
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder('utf-8', { fatal: false });
+            let buffer = '';
+            let fullText = '';
 
-            // --- [액션 실행 로직 추가] ---
-            const actionMatch = replyText.match(/::action(\{.*?\})::/);
-            if (actionMatch) {
+            // 마커를 제거하고 보이는 텍스트만 추출
+            const stripMarkers = (text: string) => text
+                .replace(/::\w+\{.*?\}::/g, '')
+                .replace(/\n{2,}/g, '\n')
+                .trim();
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+                
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (trimmed.startsWith('data: ')) {
+                        const dataStr = trimmed.slice(6);
+                        if (dataStr === '[DONE]') continue;
+                        
+                        try {
+                            const data = JSON.parse(dataStr);
+                            if (data.action === 'navigate' && data.url) {
+                                console.log('[AgentChat] ✅ Navigate action received:', data.url);
+                                setTimeout(() => {
+                                    console.log('[AgentChat] 🚀 Navigating to:', data.url);
+                                    router.push(data.url);
+                                }, 1500);
+                            } else if (data.content) {
+                                fullText += data.content;
+                                const visibleText = stripMarkers(fullText);
+                                
+                                if (visibleText && !botMessageCreated) {
+                                    // 첫 번째 보이는 텍스트 → 타이핑 끄고 메시지 추가
+                                    botMessageCreated = true;
+                                    setIsTyping(false);
+                                    setMessages(prev => [...prev, { id: botId, text: visibleText, sender: 'bot' }]);
+                                } else if (visibleText && botMessageCreated) {
+                                    // 실시간 텍스트 업데이트 (마커 제외)
+                                    setMessages(prev => 
+                                        prev.map(m => m.id === botId ? { ...m, text: visibleText } : m)
+                                    );
+                                }
+                            }
+                        } catch (e) {
+                            console.debug('Parsing error:', e);
+                        }
+                    }
+                }
+            }
+
+            // 스트림 종료 → 전체 텍스트(마커 포함)로 교체하여 카드 렌더링
+            setIsTyping(false);
+            if (fullText) {
+                if (botMessageCreated) {
+                    setMessages(prev => 
+                        prev.map(m => m.id === botId ? { ...m, text: fullText } : m)
+                    );
+                } else {
+                    setMessages(prev => [...prev, { id: botId, text: fullText, sender: 'bot' }]);
+                }
+            }
+
+            // --- [액션 실행 로직 - 모든 텍스트가 도착한 후 실행] ---
+            // AI가 자체 생성하는 다양한 navigate 형식 대응을 위한 페이지 맵핑
+            const PAGE_MAP: Record<string, string> = {
+                home: '/', menu_list: '/menus', login: '/login',
+                cart: '/cart', mypage: '/mypage', checkout: '/checkout',
+            };
+
+            const actionMatches = [...fullText.matchAll(/::action(\{.*?\})::/g)];
+            for (const actionMatch of actionMatches) {
                 try {
                     const action = JSON.parse(actionMatch[1]);
                     console.log('[AgentChat] Executing Action:', action);
@@ -218,25 +324,59 @@ export default function AgentChat() {
                         });
                         setLastAddedMenu(action);
                         setIsModalOpen(true);
-                    } else if (action.type === 'navigate') {
-                        console.log('[AgentChat] Navigating to:', action.path);
-                        router.push(action.path);
+                    } else if (action.type === 'direct_order') {
+                        const directItem = {
+                            menuId: action.menuId,
+                            korName: action.korName,
+                            price: action.price,
+                            imageSrc: action.imageSrc || 'blank.png',
+                            options: {},
+                            id: Date.now(),
+                            quantity: 1
+                        };
+                        useCartStore.getState().setCheckoutItems([directItem]);
+                        router.push('/checkout');
+                    } else if (action.type === 'navigate' && action.url) {
+                        // 정상 형식: {"type":"navigate","url":"/login"}
+                        console.log('[AgentChat] 🚀 Navigating to:', action.url);
+                        // checkout 이동 시 장바구니 아이템을 checkoutItems에 세팅
+                        if (action.url === '/checkout') {
+                            const cartItems = useCartStore.getState().items;
+                            if (cartItems.length > 0) {
+                                useCartStore.getState().setCheckoutItems(cartItems);
+                            }
+                        }
+                        setTimeout(() => router.push(action.url), 1500);
+                    } else if (action.type === 'navigate_to_page' || action.type === 'navigate' || action.page) {
+                        // AI 자체 생성 형식: {"type":"navigate_to_page","page":"login"} 등
+                        const pageKey = action.page || action.target || '';
+                        const url = PAGE_MAP[pageKey] || action.url;
+                        if (url) {
+                            console.log('[AgentChat] 🚀 Navigating (AI format) to:', url);
+                            // checkout 이동 시 장바구니 아이템을 checkoutItems에 세팅
+                            if (url === '/checkout' || pageKey === 'checkout') {
+                                const cartItems = useCartStore.getState().items;
+                                if (cartItems.length > 0) {
+                                    useCartStore.getState().setCheckoutItems(cartItems);
+                                }
+                            }
+                            setTimeout(() => router.push(url), 1500);
+                        }
+                    } else if (action.type === 'view_menu_detail' && action.menu_id) {
+                        // AI 자체 생성: {"type":"view_menu_detail","menu_id":19}
+                        console.log('[AgentChat] 🚀 Navigating to menu:', action.menu_id);
+                        setTimeout(() => router.push(`/menus/${action.menu_id}`), 1500);
                     }
                 } catch (e) {
                     console.error('[AgentChat] Action parse error:', e);
                 }
             }
-            // ---------------------------
 
             // 봇 응답 내용에 따라 센스 있는 퀵 리플라이(버튼) 제시
-            if (replyText.includes('개인정보') || replyText.includes('맛있는 메뉴를 소개해주는 건')) {
-                setTimeout(() => {
-                    setQuickReplies(['그래, 메뉴 추천해줘!', '아니 괜찮아']);
-                }, 500);
-            } else if (replyText.includes('추천')) {
-                setTimeout(() => {
-                    setQuickReplies(['다른 메뉴 추천해줘', '장바구니 볼래']);
-                }, 500);
+            if (fullText.includes('개인정보') || fullText.includes('맛있는 메뉴를 소개해주는 건')) {
+                setTimeout(() => setQuickReplies(['그래, 메뉴 추천해줘!', '아니 괜찮아']), 300);
+            } else if (fullText.includes('추천')) {
+                setTimeout(() => setQuickReplies(['다른 메뉴 추천해줘', '장바구니 볼래']), 300);
             }
 
         } catch (error) {

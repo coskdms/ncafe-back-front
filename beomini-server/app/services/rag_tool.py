@@ -3,8 +3,8 @@ from app.services.vector_db import search_documents
 
 def search_knowledge_base(query: str) -> str:
     """
-    카페 이용 안내, 공지사항, FAQ 등 지식 베이스(RAG)에서 관련 정보를 검색합니다.
-    메뉴 정보 이외의 일반적인 질문에 대답할 때 사용합니다.
+    카페 이용 안내, 공지사항, FAQ, 메뉴 추천, 인기 메뉴 등 지식 베이스(RAG)에서 관련 정보를 검색합니다.
+    단순한 메뉴 목록 조회가 아닌, 추천이나 상세 가이드가 필요한 질문에 대답할 때 사용합니다.
     
     Args:
         query: 검색할 질문 또는 키워드
@@ -16,7 +16,8 @@ def search_knowledge_base(query: str) -> str:
         # 일단은 통일성을 위해 embedding.py를 참고하여 처리.
         
         # 검색 시에는 "query: " 접두사를 사용하는 것이 성능상 좋음
-        from app.services.embedding import model
+        from app.services.embedding import get_model
+        model = get_model()
         processed_query = f"query: {query}"
         embedding = model.encode(processed_query).tolist()
         

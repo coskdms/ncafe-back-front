@@ -620,3 +620,85 @@
 .modalBtnSecondary:hover {
     background: var(--agent-main-dark) !important;
 }
+/* ===== Growth (Points) Card in Chat ===== */
+.growthCard {
+    background: linear-gradient(135deg, #FDFCF0 0%, #FFF9E6 100%);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--agent-shadow-md);
+    margin: 12px 0;
+    border: 2px solid var(--agent-main);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    animation: msgAppear 0.4s ease-out;
+}
+
+.growthBadge {
+    background: var(--agent-main);
+    color: var(--agent-accent);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    width: fit-content;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.growthContent {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.growthMain {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.growthLabel {
+    font-size: 0.9rem;
+    color: var(--agent-accent-light);
+    font-weight: 600;
+}
+
+.growthValue {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--agent-accent);
+}
+
+.growthSub {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 12px;
+    border-radius: 12px;
+}
+
+.growthProgress {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--agent-accent-light);
+}
+
+.progressBar {
+    width: 100%;
+    height: 6px;
+    background: #E2E8F0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--agent-main) 0%, var(--agent-main-dark) 100%);
+    border-radius: 3px;
+    transition: width 1s ease-out;
+}
