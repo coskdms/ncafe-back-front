@@ -3,8 +3,8 @@ FROM gradle:9.2.1-jdk21 AS builder
 WORKDIR /app
 COPY . .
 RUN chmod +x ./gradlew
-# 프로젝트 gradle wrapper를 사용하여 빌드 (플러그인 레포지토리 설정 일관성 보장)
-RUN ./gradlew :backend:bootJar --no-daemon -x test
+# Docker 이미지(gradle:9.2.1-jdk21)에 내장된 gradle 사용 (wrapper 다운로드 실패 방지)
+RUN gradle :backend:bootJar --no-daemon -x test --no-build-cache
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine
