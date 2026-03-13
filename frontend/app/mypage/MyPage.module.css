@@ -606,7 +606,7 @@
 .addressSearchBtn {
     flex-shrink: 0;
     width: auto;
-    padding: 10px 20px;
+    padding: 12px 32px;
     background: #f59e0b;
     color: white;
     border: none;
