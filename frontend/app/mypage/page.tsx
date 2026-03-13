@@ -531,13 +531,13 @@ export default function MyPage() {
                             <h3>기본 배송 정보 🏠</h3>
                             <div className={styles.inputGroup}>
                                 <label>기본 배송 주소</label>
-                                <div style={{ display: 'flex', gap: '8px' }}>
+                                <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
                                     <input 
                                         type="text" 
                                         value={address} 
                                         readOnly
                                         placeholder="주소 검색을 클릭하세요"
-                                        style={{ flex: 1, cursor: 'pointer', background: '#f9f5ef' }}
+                                        style={{ flex: 1, cursor: 'pointer', background: '#f9f5ef', minWidth: 0 }}
                                         onClick={async () => {
                                             try {
                                                 const result = await openAddressSearch();
@@ -549,8 +549,7 @@ export default function MyPage() {
                                     />
                                     <button 
                                         type="button"
-                                        className={styles.saveBtn}
-                                        style={{ padding: '10px 16px', fontSize: '0.85rem', marginTop: 0 }}
+                                        className={styles.addressSearchBtn}
                                         onClick={async () => {
                                             try {
                                                 const result = await openAddressSearch();

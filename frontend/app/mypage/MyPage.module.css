@@ -602,6 +602,27 @@
     box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);
 }
 
+/* 주소 검색 버튼 */
+.addressSearchBtn {
+    flex-shrink: 0;
+    width: auto;
+    padding: 10px 20px;
+    background: #f59e0b;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.addressSearchBtn:hover {
+    background: #d97706;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
 @media (max-width: 640px) {
     .profileCard {
         flex-direction: column;
