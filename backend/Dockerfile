@@ -3,10 +3,7 @@ FROM gradle:9.2.1-jdk21 AS builder
 WORKDIR /app
 COPY . .
 RUN chmod +x ./gradlew
-# 네트워크 불안정 대비 재시도 로직
-RUN gradle :backend:bootJar --no-daemon -x test --no-build-cache \
-    || (sleep 10 && gradle :backend:bootJar --no-daemon -x test --no-build-cache) \
-    || (sleep 20 && gradle :backend:bootJar --no-daemon -x test --no-build-cache)
+RUN ./gradlew :backend:bootJar --no-daemon -x test
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine

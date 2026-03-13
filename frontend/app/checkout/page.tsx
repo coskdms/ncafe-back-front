@@ -11,6 +11,8 @@ import styles from './Checkout.module.css';
 import Script from 'next/script';
 import { fetchAPI } from '@/app/lib/api';
 import { toast } from '@/stores/toastStore';
+import { isValidPhone, isValidAddress } from '@/utils/validators';
+import { openAddressSearch } from '@/utils/addressSearch';
 
 declare global {
     interface Window {
@@ -104,18 +106,38 @@ export default function CheckoutPage() {
 
         // 폼 유효성 검사
         if (orderType === 'DINE_IN') {
-            if (!formData.receiver) {
+            if (!formData.receiver.trim()) {
                 toast.warning('닉네임(이름)을 입력해주세요! 🐤');
                 return;
             }
         } else if (orderType === 'PICK_UP') {
-            if (!formData.receiver || !formData.phone) {
-                toast.warning('수령인 이름과 연락처를 모두 입력해주세요! 🐤');
+            if (!formData.receiver.trim()) {
+                toast.warning('수령인 이름을 입력해주세요! 🐤');
+                return;
+            }
+            if (!formData.phone.trim()) {
+                toast.warning('연락처를 입력해주세요! 🐤');
+                return;
+            }
+            if (!isValidPhone(formData.phone)) {
+                toast.warning('올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)');
                 return;
             }
         } else if (orderType === 'DELIVERY') {
-            if (!formData.receiver || !formData.phone || !formData.address) {
-                toast.warning('수령인 정보와 주소를 모두 입력해주세요! 🐤');
+            if (!formData.receiver.trim()) {
+                toast.warning('수령인 이름을 입력해주세요! 🐤');
+                return;
+            }
+            if (!formData.phone.trim()) {
+                toast.warning('연락처를 입력해주세요! 🐤');
+                return;
+            }
+            if (!isValidPhone(formData.phone)) {
+                toast.warning('올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)');
+                return;
+            }
+            if (!isValidAddress(formData.address)) {
+                toast.warning('배송 주소를 5자 이상 입력해주세요! 🐤');
                 return;
             }
         }
@@ -336,13 +358,55 @@ export default function CheckoutPage() {
                                 </div>
                                 <div className={styles.formGroup}>
                                     <label className={styles.label}>배송 주소</label>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <input
+                                            type="text"
+                                            name="address"
+                                            value={formData.address}
+                                            readOnly
+                                            placeholder="주소 검색을 클릭하세요"
+                                            className={styles.input}
+                                            style={{ flex: 1, cursor: 'pointer', background: '#f9f5ef' }}
+                                            onClick={async () => {
+                                                try {
+                                                    const result = await openAddressSearch();
+                                                    setFormData(prev => ({ ...prev, address: result.fullAddress }));
+                                                } catch (err: any) {
+                                                    toast.error(err.message);
+                                                }
+                                            }}
+                                        />
+                                        <button
+                                            type="button"
+                                            className={styles.useAllBtn}
+                                            style={{ padding: '10px 16px', whiteSpace: 'nowrap', fontSize: '0.85rem' }}
+                                            onClick={async () => {
+                                                try {
+                                                    const result = await openAddressSearch();
+                                                    setFormData(prev => ({ ...prev, address: result.fullAddress }));
+                                                } catch (err: any) {
+                                                    toast.error(err.message);
+                                                }
+                                            }}
+                                        >
+                                            🔍 주소 검색
+                                        </button>
+                                    </div>
                                     <input
                                         type="text"
-                                        name="address"
-                                        value={formData.address}
-                                        onChange={handleInputChange}
-                                        placeholder="정확한 주소를 입력해주세요"
+                                        name="addressDetail"
+                                        placeholder="상세 주소를 입력하세요 (동/호수 등)"
                                         className={styles.input}
+                                        style={{ marginTop: '8px' }}
+                                        onChange={(e) => {
+                                            // 기존 주소에서 상세 주소 부분만 업데이트
+                                            const baseAddress = formData.address.split(' / ')[0];
+                                            if (e.target.value) {
+                                                setFormData(prev => ({ ...prev, address: `${baseAddress} / ${e.target.value}` }));
+                                            } else {
+                                                setFormData(prev => ({ ...prev, address: baseAddress }));
+                                            }
+                                        }}
                                     />
                                 </div>
                                 <div className={styles.formGroup}>

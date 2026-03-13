@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import styles from './LoginForm.module.css';
+import { validateNickname } from '@/utils/validators';
 
 interface LoginFormProps {
     onLogin: (nickname: string, password: string) => void;
@@ -13,8 +14,12 @@ export default function LoginForm({ onLogin, error, isLoading }: LoginFormProps)
     const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
 
+    const nicknameValidation = nickname.length > 0 ? validateNickname(nickname) : null;
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (nicknameValidation && !nicknameValidation.isValid) return;
+        if (!password) return;
         onLogin(nickname, password);
     };
 
@@ -25,12 +30,15 @@ export default function LoginForm({ onLogin, error, isLoading }: LoginFormProps)
                 <input
                     id="login-nickname"
                     type="text"
-                    className={styles.input}
+                    className={`${styles.input} ${nicknameValidation && !nicknameValidation.isValid ? styles.inputError : ''}`}
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
                     placeholder="아이디를 입력하세요"
                     required
                 />
+                {nicknameValidation && !nicknameValidation.isValid && (
+                    <span className={styles.fieldError}>{nicknameValidation.message}</span>
+                )}
             </div>
             <div className={styles.inputGroup}>
                 <label htmlFor="login-password" className={styles.label}>비밀번호</label>

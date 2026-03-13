@@ -68,7 +68,7 @@ jobs:
         run: |
           docker compose --profile with-db down --remove-orphans || true
           # 이전 배포에서 남은 컨테이너가 있으면 강제 삭제
-          docker rm -f ${USER_ID}-ncafe-backend ${USER_ID}-ncafe-frontend ${USER_ID}-ncafe-db 2>/dev/null || true
+          docker rm -f ${USER_ID}-ncafe-backend ${USER_ID}-ncafe-frontend ${USER_ID}-ncafe-db ${USER_ID}-beomini-server 2>/dev/null || true
         env:
           USER_ID: ${{ vars.USER_ID }}
 

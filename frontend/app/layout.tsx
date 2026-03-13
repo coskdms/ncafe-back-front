@@ -1,7 +1,19 @@
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AgentChat from "@/components/common/AgentChat/AgentChat";
 import ToastContainer from "@/components/common/Toast/Toast";
+import Script from "next/script";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "고라파덕 카페 ☕🐤",
@@ -18,7 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <head>
+        <Script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" strategy="afterInteractive" />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
         <AgentChat />
         <ToastContainer />

@@ -36,6 +36,15 @@
     color: #c4a882;
 }
 
+.inputError {
+    border-color: #e74c3c;
+}
+
+.fieldError {
+    font-size: 0.8rem;
+    color: #e74c3c;
+}
+
 .error {
     color: #e74c3c;
     font-size: 0.85rem;

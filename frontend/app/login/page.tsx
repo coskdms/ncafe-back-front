@@ -80,13 +80,13 @@ function LoginContent() {
                 <div className={styles.tabs}>
                     <button
                         className={`${styles.tab} ${activeTab === 'login' ? styles.tabActive : ''}`}
-                        onClick={() => { setActiveTab('login'); setError(''); }}
+                        onClick={() => { setActiveTab('login'); setError(''); setIsLoading(false); }}
                     >
                         로그인
                     </button>
                     <button
                         className={`${styles.tab} ${activeTab === 'signup' ? styles.tabActive : ''}`}
-                        onClick={() => { setActiveTab('signup'); setError(''); }}
+                        onClick={() => { setActiveTab('signup'); setError(''); setIsLoading(false); }}
                     >
                         회원가입
                     </button>

@@ -7,6 +7,8 @@ import { Bell, ChevronDown, Sparkles } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { memberAPI, orderAPI, fetchAPI } from '@/app/lib/api';
 import { toast } from '@/stores/toastStore';
+import { isValidPhone, isValidAddress, validatePassword } from '@/utils/validators';
+import { openAddressSearch } from '@/utils/addressSearch';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import { useRouter } from 'next/navigation';
@@ -117,6 +119,14 @@ export default function MyPage() {
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (phone && !isValidPhone(phone)) {
+            toast.warning('올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)');
+            return;
+        }
+        if (address && !isValidAddress(address)) {
+            toast.warning('주소를 5자 이상 입력해주세요.');
+            return;
+        }
         try {
             await memberAPI.updateProfile(address, phone);
             toast.success('기본 정보가 저장되었습니다. 🐤');
@@ -128,6 +138,15 @@ export default function MyPage() {
 
     const handleUpdatePassword = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!currentPassword) {
+            toast.warning('현재 비밀번호를 입력해주세요.');
+            return;
+        }
+        const pwValidation = validatePassword(newPassword);
+        if (!pwValidation.isValid) {
+            toast.warning(pwValidation.message);
+            return;
+        }
         if (newPassword !== confirmPassword) {
             toast.warning('새 비밀번호가 일치하지 않습니다.');
             return;
@@ -512,12 +531,38 @@ export default function MyPage() {
                             <h3>기본 배송 정보 🏠</h3>
                             <div className={styles.inputGroup}>
                                 <label>기본 배송 주소</label>
-                                <input 
-                                    type="text" 
-                                    value={address} 
-                                    onChange={(e) => setAddress(e.target.value)} 
-                                    placeholder="배송받으실 주소를 입력해주세요"
-                                />
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <input 
+                                        type="text" 
+                                        value={address} 
+                                        readOnly
+                                        placeholder="주소 검색을 클릭하세요"
+                                        style={{ flex: 1, cursor: 'pointer', background: '#f9f5ef' }}
+                                        onClick={async () => {
+                                            try {
+                                                const result = await openAddressSearch();
+                                                setAddress(result.fullAddress);
+                                            } catch (err: any) {
+                                                toast.error(err.message);
+                                            }
+                                        }}
+                                    />
+                                    <button 
+                                        type="button"
+                                        className={styles.saveBtn}
+                                        style={{ padding: '10px 16px', fontSize: '0.85rem', marginTop: 0 }}
+                                        onClick={async () => {
+                                            try {
+                                                const result = await openAddressSearch();
+                                                setAddress(result.fullAddress);
+                                            } catch (err: any) {
+                                                toast.error(err.message);
+                                            }
+                                        }}
+                                    >
+                                        🔍 검색
+                                    </button>
+                                </div>
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>연락처</label>
