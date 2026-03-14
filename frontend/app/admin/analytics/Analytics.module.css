@@ -19,8 +19,10 @@
 }
 
 .chartWrapper {
-    height: 280px;
+    width: 100%;
     position: relative;
+    aspect-ratio: 2.2 / 1;
+    min-height: 250px;
 }
 
 /* ── 기간 선택 탭 ── */
@@ -299,7 +301,7 @@
     }
 
     .chartWrapper {
-        height: 220px;
+        min-height: 200px;
     }
 
     .topMenuItem {

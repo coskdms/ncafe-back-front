@@ -262,7 +262,7 @@ export default function AnalyticsPage() {
                     일별 매출 추이
                 </h3>
                 <div className={styles.chartWrapper}>
-                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className={styles.svgChart}>
+                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className={styles.svgChart} style={{ width: '100%', height: '100%' }} preserveAspectRatio="xMidYMid meet">
                         <defs>
                             <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="0%" stopColor="#fde047" stopOpacity="0.5" />
@@ -379,7 +379,7 @@ export default function AnalyticsPage() {
                     일별 주문 건수
                 </h3>
                 <div className={styles.chartWrapper}>
-                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className={styles.svgChart}>
+                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className={styles.svgChart} style={{ width: '100%', height: '100%' }} preserveAspectRatio="xMidYMid meet">
                         {(() => {
                             const maxCount = Math.max(...dailySales.map(d => d.count), 1);
                             const barWidth = Math.max(plotW / dailySales.length - 4, 8);
