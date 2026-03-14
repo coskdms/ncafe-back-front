@@ -7,6 +7,7 @@ import { fetchAPI } from '@/app/lib/api';
 import Button from '@/components/common/Button/Button';
 import { toast } from '@/stores/toastStore';
 import { getErrorMessage } from '@/utils/errorMessage';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 interface ShopSettings {
     shopName: string;
@@ -79,6 +80,8 @@ export default function AdminSettingsPage() {
             });
             setSaveMessage('설정이 저장되었습니다! 🐤✨');
             setTimeout(() => setSaveMessage(''), 3000);
+            // 사용자 페이지 캐시 즉시 무효화
+            useSettingsStore.getState().invalidate();
         } catch (error) {
             console.error('Failed to save settings:', error);
             toast.error(getErrorMessage(error, '설정 저장 중 오류가 발생했습니다.'));

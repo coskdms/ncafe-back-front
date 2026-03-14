@@ -11,6 +11,7 @@ import styles from './Checkout.module.css';
 import Script from 'next/script';
 import { fetchAPI } from '@/app/lib/api';
 import { toast } from '@/stores/toastStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { isValidPhone, isValidAddress } from '@/utils/validators';
 import { openAddressSearch } from '@/utils/addressSearch';
 
@@ -39,7 +40,13 @@ export default function CheckoutPage() {
     const [availablePoints, setAvailablePoints] = useState(0);
     const [pointsToUse, setPointsToUse] = useState(0);
     const [membershipDiscount, setMembershipDiscount] = useState(0);
-    const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'KAKAO'>('CARD'); // CARD: KG, KAKAO: 카카오
+    const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'KAKAO'>('CARD');
+    const { settings: shopSettings, fetchSettings } = useSettingsStore();
+
+    // 설정 불러오기
+    useEffect(() => {
+        fetchSettings();
+    }, [fetchSettings]);
 
 
 
@@ -97,7 +104,7 @@ export default function CheckoutPage() {
 
 
     const totalPrice = getCheckoutTotalPrice();
-    const deliveryFee = (orderType === 'DELIVERY') ? (isAuthenticated ? 0 : 3000) : 0;
+    const deliveryFee = (orderType === 'DELIVERY') ? (shopSettings?.deliveryFee ?? 3000) : 0;
     const finalPrice = Math.max(0, totalPrice + deliveryFee - pointsToUse - membershipDiscount);
 
 

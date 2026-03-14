@@ -10,6 +10,7 @@ import { toast } from '@/stores/toastStore';
 import { isValidPhone, isValidAddress, validatePassword } from '@/utils/validators';
 import { openAddressSearch } from '@/utils/addressSearch';
 import { useFavoriteStore } from '@/stores/favoriteStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import { useRouter } from 'next/navigation';
@@ -59,7 +60,7 @@ export default function MyPage() {
     const router = useRouter();
     
     const [growthInfo, setGrowthInfo] = useState<GrowthInfo | null>(null);
-    const [shopSettings, setShopSettings] = useState<any>(null);
+    const { settings: shopSettings, fetchSettings: fetchShopSettings } = useSettingsStore();
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'orders' | 'favorites' | 'settings'>('orders');
@@ -95,14 +96,13 @@ export default function MyPage() {
     const fetchMyData = async () => {
         setIsLoading(true);
         try {
-            const [growthData, ordersData, settingsData] = await Promise.all([
+            const [growthData, ordersData] = await Promise.all([
                 memberAPI.getGrowthInfo(),
                 orderAPI.getMyOrders(),
-                fetchAPI('/settings')
             ]);
+            await fetchShopSettings();
             setGrowthInfo(growthData);
             setOrders(ordersData);
-            setShopSettings(settingsData);
             if (growthData.address) setAddress(growthData.address);
             if (growthData.phone) setPhone(growthData.phone);
         } catch (error) {
