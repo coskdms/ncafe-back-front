@@ -28,8 +28,8 @@
 
 .input:focus {
     outline: none;
-    border-color: #f5c518;
-    box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.15);
+    border-color: #ca8a04;
+    box-shadow: 0 0 0 3px rgba(202, 138, 4, 0.12);
 }
 
 .input::placeholder {

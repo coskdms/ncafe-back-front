@@ -167,10 +167,11 @@ export default function SignupForm({ onSignup, error, isLoading }: SignupFormPro
                     value={securityQuestion}
                     onChange={(e) => setSecurityQuestion(e.target.value)}
                     required
+                    style={{ color: securityQuestion ? '#4a3728' : '#c4a882' }}
                 >
-                    <option value="">보안 질문을 선택하세요</option>
+                    <option value="" disabled>보안 질문을 선택하세요</option>
                     {SECURITY_QUESTIONS.map(q => (
-                        <option key={q} value={q}>{q}</option>
+                        <option key={q} value={q} style={{ color: '#4a3728' }}>{q}</option>
                     ))}
                 </select>
             </div>
