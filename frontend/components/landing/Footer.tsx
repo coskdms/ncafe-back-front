@@ -1,7 +1,24 @@
+'use client';
+
 import styles from './Footer.module.css';
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function Footer() {
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const scrollToSection = (sectionId: string) => {
+        if (pathname !== '/') {
+            router.push(`/#${sectionId}`);
+            return;
+        }
+        const el = document.getElementById(sectionId);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <footer className={styles.footer}>
             <div className={styles.container}>
@@ -11,9 +28,9 @@ export default function Footer() {
                 </div>
                 <div className={styles.links}>
                     <h4>고라파덕 카페</h4>
-                    <Link href="/#about" style={{ color: 'inherit', textDecoration: 'none' }}>카페 소개</Link>
+                    <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>카페 소개</a>
                     <Link href="/menus" style={{ color: 'inherit', textDecoration: 'none' }}>메뉴</Link>
-                    <Link href="/#location" style={{ color: 'inherit', textDecoration: 'none' }}>매장 안내</Link>
+                    <a href="#location" onClick={(e) => { e.preventDefault(); scrollToSection('location'); }}>매장 안내</a>
                 </div>
                 <div className={styles.links}>
                     <h4>고객 지원</h4>
