@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import styles from './LoginForm.module.css';
 import { validateNickname } from '@/utils/validators';
+import { highlightAndScroll } from '@/utils/formScroll';
 
 interface LoginFormProps {
     onLogin: (nickname: string, password: string) => void;
@@ -18,8 +19,21 @@ export default function LoginForm({ onLogin, error, isLoading }: LoginFormProps)
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (nicknameValidation && !nicknameValidation.isValid) return;
-        if (!password) return;
+        if (!nickname) {
+            const el = document.getElementById('login-nickname');
+            if (el) highlightAndScroll(el);
+            return;
+        }
+        if (nicknameValidation && !nicknameValidation.isValid) {
+            const el = document.getElementById('login-nickname');
+            if (el) highlightAndScroll(el);
+            return;
+        }
+        if (!password) {
+            const el = document.getElementById('login-password');
+            if (el) highlightAndScroll(el);
+            return;
+        }
         onLogin(nickname, password);
     };
 

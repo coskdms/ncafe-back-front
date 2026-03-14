@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import styles from './SignupForm.module.css';
 import { validateNickname, validatePassword, getPasswordStrength } from '@/utils/validators';
+import { highlightAndScroll } from '@/utils/formScroll';
 
 const SECURITY_QUESTIONS = [
     '처음 키운 반려동물의 이름은?',
@@ -25,6 +26,7 @@ export default function SignupForm({ onSignup, error, isLoading }: SignupFormPro
     const [phone, setPhone] = useState('');
     const [securityQuestion, setSecurityQuestion] = useState('');
     const [securityAnswer, setSecurityAnswer] = useState('');
+    const formRef = useRef<HTMLFormElement>(null);
 
     const nicknameValidation = nickname.length > 0 ? validateNickname(nickname) : null;
     const passwordValidation = password.length > 0 ? validatePassword(password) : null;
@@ -44,7 +46,29 @@ export default function SignupForm({ onSignup, error, isLoading }: SignupFormPro
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!isFormValid) return;
+        
+        // 비어있는 필드로 스크롤 이동
+        if (!isFormValid) {
+            const checks: [boolean, string][] = [
+                [!nickname, 'signup-nickname'],
+                [nickname.length > 0 && !nicknameValidation?.isValid, 'signup-nickname'],
+                [!password, 'signup-password'],
+                [password.length > 0 && !passwordValidation?.isValid, 'signup-password'],
+                [!passwordConfirm || passwordMismatch, 'signup-password-confirm'],
+                [!phone || !phoneValid, 'signup-phone'],
+                [!securityQuestion, 'signup-security-q'],
+                [securityQuestion.length > 0 && !securityAnswer.trim(), 'signup-security-a'],
+            ];
+            for (const [invalid, id] of checks) {
+                if (invalid) {
+                    const el = document.getElementById(id);
+                    if (el) highlightAndScroll(el);
+                    return;
+                }
+            }
+            return;
+        }
+        
         const cleanPhone = phone.replace(/-/g, '');
         onSignup(nickname, password, cleanPhone, securityQuestion, securityAnswer.trim());
     };

@@ -14,6 +14,7 @@ import { toast } from '@/stores/toastStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { isValidPhone, isValidAddress } from '@/utils/validators';
 import { openAddressSearch } from '@/utils/addressSearch';
+import { highlightAndScroll } from '@/utils/formScroll';
 
 declare global {
     interface Window {
@@ -111,40 +112,53 @@ export default function CheckoutPage() {
     const handlePayment = async () => {
         if (isProcessing) return;
 
-        // 폼 유효성 검사
+        const scrollTo = (id: string) => {
+            const el = document.getElementById(id);
+            if (el) highlightAndScroll(el);
+        };
+
+        // 폼 유효성 검사 + 자동 스크롤
         if (orderType === 'DINE_IN') {
             if (!formData.receiver.trim()) {
                 toast.warning('닉네임(이름)을 입력해주세요! 🐤');
+                scrollTo('checkout-receiver');
                 return;
             }
         } else if (orderType === 'PICK_UP') {
             if (!formData.receiver.trim()) {
                 toast.warning('수령인 이름을 입력해주세요! 🐤');
+                scrollTo('checkout-receiver');
                 return;
             }
             if (!formData.phone.trim()) {
                 toast.warning('연락처를 입력해주세요! 🐤');
+                scrollTo('checkout-phone');
                 return;
             }
             if (!isValidPhone(formData.phone)) {
                 toast.warning('올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)');
+                scrollTo('checkout-phone');
                 return;
             }
         } else if (orderType === 'DELIVERY') {
             if (!formData.receiver.trim()) {
                 toast.warning('수령인 이름을 입력해주세요! 🐤');
+                scrollTo('checkout-receiver');
                 return;
             }
             if (!formData.phone.trim()) {
                 toast.warning('연락처를 입력해주세요! 🐤');
+                scrollTo('checkout-phone');
                 return;
             }
             if (!isValidPhone(formData.phone)) {
                 toast.warning('올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)');
+                scrollTo('checkout-phone');
                 return;
             }
             if (!isValidAddress(formData.address)) {
                 toast.warning('배송 주소를 5자 이상 입력해주세요! 🐤');
+                scrollTo('checkout-address');
                 return;
             }
         }
@@ -309,6 +323,7 @@ export default function CheckoutPage() {
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>{orderType === 'DINE_IN' ? '닉네임' : '수령인 이름'}</label>
                                 <input
+                                    id="checkout-receiver"
                                     type="text"
                                     name="receiver"
                                     value={formData.receiver}
@@ -321,6 +336,7 @@ export default function CheckoutPage() {
                                 <div className={styles.formGroup}>
                                     <label className={styles.label}>연락처</label>
                                     <input
+                                        id="checkout-phone"
                                         type="tel"
                                         name="phone"
                                         value={formData.phone}
@@ -367,6 +383,7 @@ export default function CheckoutPage() {
                                     <label className={styles.label}>배송 주소</label>
                                     <div style={{ display: 'flex', gap: '8px' }}>
                                         <input
+                                            id="checkout-address"
                                             type="text"
                                             name="address"
                                             value={formData.address}
