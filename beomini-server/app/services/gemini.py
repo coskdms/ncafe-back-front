@@ -250,7 +250,9 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
         if captured_actions is not None:
             captured_actions.append({"action": "navigate", "url": f"/menus/{menu_id}"})
         logger.info(f"[Tool Result] view_menu_detail: /menus/{menu_id}")
-        return f"{kor_name} 상세 페이지로 이동하겠다덕!"
+        # ::action 마커도 반환하여 프론트엔드에서 이중으로 처리 가능
+        marker = f'::action{{"type": "view_menu_detail", "menu_id": {menu_id}}}::'
+        return f"{kor_name} 상세 페이지를 보여주겠다덕! 🐤 {marker}"
 
     # ═══════════════════════════════════════
     # 회원 전용 도구 (MEMBER, ADMIN)
@@ -405,7 +407,10 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
             captured_actions.append({"action": "navigate", "url": page_info["url"]})
         
         logger.info(f"[Tool Result] navigate_to_page: {page_info['url']}")
-        return f"{page_info['description']}로 이동하겠다덕!"
+        # ::action 마커도 반환하여 프론트엔드에서 이중으로 처리 가능
+        marker = f'::action{{"type": "navigate", "url": "{page_info["url"]}"}}'
+        marker += '::'
+        return f"{page_info['description']}로 이동하겠다덕! {marker}"
 
     # navigate 함수의 docstring을 역할에 맞게 동적 설정
     available_pages_desc = ', '.join(f"{k}: {v['description']}" for k, v in allowed_pages.items())
