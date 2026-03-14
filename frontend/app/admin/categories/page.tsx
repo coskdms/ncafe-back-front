@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, ArrowUp, ArrowDown, Save, X } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Plus, Edit2, Trash2, GripVertical, Save, X } from 'lucide-react';
 import styles from './Categories.module.css';
 import { toast } from '@/stores/toastStore';
 
@@ -19,6 +19,11 @@ export default function CategoriesPage() {
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const [formData, setFormData] = useState({ name: '', icon: '' });
     const [isSaving, setIsSaving] = useState(false);
+
+    // 드래그 상태
+    const [dragIndex, setDragIndex] = useState<number | null>(null);
+    const [overIndex, setOverIndex] = useState<number | null>(null);
+    const dragNodeRef = useRef<HTMLDivElement | null>(null);
 
     const fetchCategories = async () => {
         try {
@@ -69,6 +74,7 @@ export default function CategoriesPage() {
             if (res.ok) {
                 setIsModalOpen(false);
                 fetchCategories();
+                toast.success(editingCategory ? '카테고리가 수정되었습니다.' : '카테고리가 추가되었습니다.');
             } else {
                 toast.error('저장에 실패했습니다.');
             }
@@ -86,6 +92,7 @@ export default function CategoriesPage() {
             const res = await fetch(`/api/admin/categories/${id}`, { method: 'DELETE' });
             if (res.ok) {
                 fetchCategories();
+                toast.success('카테고리가 삭제되었습니다.');
             } else {
                 toast.error('삭제에 실패했습니다.');
             }
@@ -94,39 +101,72 @@ export default function CategoriesPage() {
         }
     };
 
-    const moveCategory = async (index: number, direction: 'up' | 'down') => {
-        const newCategories = [...categories];
-        const targetIndex = direction === 'up' ? index - 1 : index + 1;
-        
-        if (targetIndex < 0 || targetIndex >= categories.length) return;
+    // ========= 드래그앤드롭 =========
+    const handleDragStart = (e: React.DragEvent, index: number) => {
+        setDragIndex(index);
+        e.dataTransfer.effectAllowed = 'move';
+        // 드래그 이미지를 현재 요소로 설정
+        if (e.currentTarget instanceof HTMLElement) {
+            dragNodeRef.current = e.currentTarget as HTMLDivElement;
+            e.dataTransfer.setDragImage(e.currentTarget, 20, 20);
+        }
+    };
 
-        // 위치 교체
-        [newCategories[index], newCategories[targetIndex]] = [newCategories[targetIndex], newCategories[index]];
-        
-        // UI 즉시 반영을 위해 sortOrder 값들을 인덱스 순서대로 재지정
-        const updatedWithOrders = newCategories.map((cat, idx) => ({
+    const handleDragOver = (e: React.DragEvent, index: number) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (dragIndex !== null && dragIndex !== index) {
+            setOverIndex(index);
+        }
+    };
+
+    const handleDragLeave = () => {
+        setOverIndex(null);
+    };
+
+    const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
+        e.preventDefault();
+        if (dragIndex === null || dragIndex === dropIndex) {
+            setDragIndex(null);
+            setOverIndex(null);
+            return;
+        }
+
+        const newCategories = [...categories];
+        const [dragged] = newCategories.splice(dragIndex, 1);
+        newCategories.splice(dropIndex, 0, dragged);
+
+        // sortOrder 재지정
+        const updated = newCategories.map((cat, idx) => ({
             ...cat,
             sortOrder: idx + 1
         }));
-        
-        setCategories(updatedWithOrders);
 
-        // 서버에 순서 업데이트 요청
+        setCategories(updated);
+        setDragIndex(null);
+        setOverIndex(null);
+
+        // 서버에 순서 업데이트
         try {
             const res = await fetch('/api/admin/categories/reorder', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedWithOrders.map(c => c.id)),
+                body: JSON.stringify(updated.map(c => c.id)),
             });
             
             if (!res.ok) {
-                console.error('Failed to update order on server');
-                fetchCategories(); // 실패 시 서버 데이터로 롤백
+                toast.error('순서 변경에 실패했습니다.');
+                fetchCategories();
             }
         } catch (error) {
             console.error('Failed to reorder:', error);
             fetchCategories();
         }
+    };
+
+    const handleDragEnd = () => {
+        setDragIndex(null);
+        setOverIndex(null);
     };
 
     return (
@@ -144,6 +184,8 @@ export default function CategoriesPage() {
                 </div>
             </header>
 
+            <p className={styles.dragHint}>💡 드래그하여 카테고리 순서를 변경할 수 있습니다</p>
+
             <div className={styles.categoryList}>
                 {loading ? (
                     <div className={styles.emptyState}>로딩 중... 🐥</div>
@@ -151,32 +193,27 @@ export default function CategoriesPage() {
                     <div className={styles.emptyState}>카테고리가 없습니다. 새로 추가해보세요!</div>
                 ) : (
                     categories.map((category, index) => (
-                        <div key={category.id} className={styles.categoryItem}>
+                        <div 
+                            key={category.id} 
+                            className={`${styles.categoryItem} ${dragIndex === index ? styles.dragging : ''} ${overIndex === index ? styles.dragOver : ''}`}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, index)}
+                            onDragOver={(e) => handleDragOver(e, index)}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, index)}
+                            onDragEnd={handleDragEnd}
+                        >
                             <div className={styles.categoryInfo}>
+                                <div className={styles.dragHandle} title="드래그하여 순서 변경">
+                                    <GripVertical size={20} />
+                                </div>
                                 <div className={styles.iconWrapper}>{category.icon}</div>
                                 <div className={styles.categoryDetails}>
                                     <h3>{category.name}</h3>
-                                    <span>순서: {category.sortOrder}</span>
+                                    <span>순서: {index + 1}</span>
                                 </div>
                             </div>
                             <div className={styles.itemActions}>
-                                <button 
-                                    className={`${styles.actionIconBtn} ${styles.moveBtn}`}
-                                    onClick={() => moveCategory(index, 'up')}
-                                    disabled={index === 0}
-                                    title="위로 이동"
-                                >
-                                    <ArrowUp size={18} />
-                                </button>
-                                <button 
-                                    className={`${styles.actionIconBtn} ${styles.moveBtn}`}
-                                    onClick={() => moveCategory(index, 'down')}
-                                    disabled={index === categories.length - 1}
-                                    title="아래로 이동"
-                                >
-                                    <ArrowDown size={18} />
-                                </button>
-                                <div style={{ width: '1px', height: '24px', background: '#eee', margin: '0 8px' }} />
                                 <button 
                                     className={`${styles.actionIconBtn} ${styles.editBtn}`}
                                     onClick={() => openEditModal(category)}

@@ -147,14 +147,45 @@
     color: #dc2626;
 }
 
-.moveBtn:hover:not(:disabled) {
-    background: #f0fdf4;
-    color: #16a34a;
+/* 드래그 핸들 */
+.dragHandle {
+    cursor: grab;
+    color: #c0c0c0;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: 6px;
+    transition: all 0.2s;
 }
 
-.moveBtn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
+.dragHandle:hover {
+    color: #888;
+    background: #f3f4f6;
+}
+
+.dragHandle:active {
+    cursor: grabbing;
+}
+
+/* 드래그 중인 아이템 */
+.dragging {
+    opacity: 0.4;
+    transform: scale(0.98);
+    box-shadow: none !important;
+}
+
+/* 드롭 대상 위치 */
+.dragOver {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+    transform: scale(1.01);
+}
+
+/* 힌트 텍스트 */
+.dragHint {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-bottom: var(--space-4);
 }
 
 /* Modal Styles */
