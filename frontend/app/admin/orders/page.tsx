@@ -54,8 +54,8 @@ export default function AdminOrdersPage() {
     const [statusFilter, setStatusFilter] = useState<string>('ALL');
     const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
 
-    const fetchOrders = useCallback(async () => {
-        setIsLoading(true);
+    const fetchOrders = useCallback(async (silent = false) => {
+        if (!silent) setIsLoading(true);
         try {
             const data = await fetchAPI('/admin/orders');
             setOrders(data);
@@ -68,6 +68,9 @@ export default function AdminOrdersPage() {
 
     useEffect(() => {
         fetchOrders();
+        // 15초마다 자동 갱신 (새 주문 실시간 반영)
+        const interval = setInterval(() => fetchOrders(true), 15000);
+        return () => clearInterval(interval);
     }, [fetchOrders]);
 
     useEffect(() => {
@@ -152,11 +155,19 @@ export default function AdminOrdersPage() {
         );
     }
 
-    // 통계 계산
-    const today = new Date().toISOString().split('T')[0];
-    const todayOrders = orders.filter(o => o.createdAt.startsWith(today));
+    // KST 기준으로 오늘 날짜 계산 (UTC 기반 toISOString은 한국시간과 안맞음)
+    const now = new Date();
+    const kstOffset = 9 * 60; // KST = UTC+9
+    const kstDate = new Date(now.getTime() + (kstOffset + now.getTimezoneOffset()) * 60000);
+    const today = kstDate.toISOString().split('T')[0];
+    const todayOrders = orders.filter(o => {
+        // createdAt을 KST 기준 날짜로 변환하여 비교
+        const orderDate = new Date(o.createdAt);
+        const orderKst = new Date(orderDate.getTime() + (kstOffset + orderDate.getTimezoneOffset()) * 60000);
+        return orderKst.toISOString().split('T')[0] === today;
+    });
     const todaySales = todayOrders
-        .filter(o => o.status !== 'CANCELLED' && o.status !== 'FAILED')
+        .filter(o => o.status !== 'CANCELLED' && o.status !== 'FAILED' && o.status !== 'PENDING')
         .reduce((sum, o) => sum + o.totalPrice, 0);
     const pendingOrders = orders.filter(o => o.status === 'PAID' || o.status === 'PREPARING').length;
 
@@ -167,7 +178,7 @@ export default function AdminOrdersPage() {
                     <h1>주문 관리 🐤📋</h1>
                     <p>우리 매장의 실시간 주문 현황을 확인하고 관리하세요.</p>
                 </div>
-                <Button variant="outline" onClick={fetchOrders}>
+                <Button variant="outline" onClick={() => fetchOrders()}>
                     <RefreshCw size={18} style={{ marginRight: '8px' }} />
                     새로고침
                 </Button>

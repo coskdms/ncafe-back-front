@@ -1,0 +1,248 @@
+/* ===== 매출 분석 대시보드 ===== */
+.chartContainer {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(234, 179, 8, 0.12);
+    margin-bottom: 24px;
+}
+
+.chartTitle {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #451a03;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chartWrapper {
+    height: 280px;
+    position: relative;
+}
+
+/* ── 기간 선택 탭 ── */
+.periodTabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 24px;
+    background: #fefce8;
+    padding: 4px;
+    border-radius: 12px;
+}
+
+.periodTab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: #78350f;
+}
+
+.periodTabActive {
+    background: #ca8a04;
+    color: white;
+    box-shadow: 0 2px 8px rgba(202, 138, 4, 0.3);
+}
+
+/* ── 인기 메뉴 리스트 ── */
+.topMenuList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.topMenuItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #fafaf9;
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+.topMenuItem:hover {
+    background: #fefce8;
+}
+
+.topMenuRank {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.rank1 { background: #fde047; color: #78350f; }
+.rank2 { background: #d4d4d8; color: #3f3f46; }
+.rank3 { background: #fbbf24; color: #78350f; }
+.rankOther { background: #f3f4f6; color: #6b7280; }
+
+.topMenuName {
+    flex: 1;
+    font-weight: 700;
+    color: #451a03;
+    font-size: 0.95rem;
+}
+
+.topMenuBar {
+    flex: 2;
+    height: 8px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.topMenuBarFill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #fde047, #ca8a04);
+    transition: width 0.8s ease-out;
+}
+
+.topMenuCount {
+    font-weight: 800;
+    color: #ca8a04;
+    font-size: 0.9rem;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* ── SVG 차트 스타일 ── */
+.svgChart {
+    width: 100%;
+    height: 100%;
+}
+
+.chartBar {
+    fill: #fde047;
+    transition: fill 0.2s;
+    cursor: pointer;
+}
+
+.chartBar:hover {
+    fill: #ca8a04;
+}
+
+.chartLine {
+    fill: none;
+    stroke: #ca8a04;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.chartDot {
+    fill: #ca8a04;
+    transition: r 0.2s;
+    cursor: pointer;
+}
+
+.chartDot:hover {
+    r: 6;
+}
+
+.chartArea {
+    fill: url(#goldGradient);
+    opacity: 0.3;
+}
+
+.chartLabel {
+    fill: #78350f;
+    font-size: 11px;
+    font-weight: 600;
+    text-anchor: middle;
+}
+
+.chartValueLabel {
+    fill: #ca8a04;
+    font-size: 10px;
+    font-weight: 700;
+    text-anchor: middle;
+}
+
+.gridLine {
+    stroke: #f3f4f6;
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+}
+
+.axisLabel {
+    fill: #9ca3af;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* ── 요약 통계 카드 ── */
+.summaryGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.summaryCard {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(234, 179, 8, 0.12);
+    text-align: center;
+}
+
+.summaryLabel {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #78350f;
+    margin-bottom: 6px;
+}
+
+.summaryValue {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #ca8a04;
+}
+
+.summaryChange {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.changeUp {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.changeDown {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 768px) {
+    .summaryGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .chartWrapper {
+        height: 220px;
+    }
+}

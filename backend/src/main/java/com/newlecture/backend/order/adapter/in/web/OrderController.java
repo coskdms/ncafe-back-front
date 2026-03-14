@@ -51,10 +51,15 @@ public class OrderController {
     @GetMapping("/{paymentId}")
     public ResponseEntity<?> getOrder(@PathVariable String paymentId) {
         try {
-            // 로컬 테스트 환경에서는 웹훅이 도달하지 않을 수 있으므로, 
-            // 성공 페이지 진입 시점에 주문 완료 처리를 한 번 더 시도합니다.
-            orderService.completeOrder(paymentId);
-            return ResponseEntity.ok(orderService.getOrderByPaymentId(paymentId));
+            // PENDING 상태인 경우에만 completeOrder를 시도합니다.
+            // (이미 PAID/PREPARING/COMPLETED인 주문을 다시 PAID로 되돌리지 않도록)
+            var order = orderService.getOrderByPaymentId(paymentId);
+            if (order.getStatus() == com.newlecture.backend.order.domain.OrderStatus.PENDING) {
+                orderService.completeOrder(paymentId);
+                // completeOrder 후 갱신된 데이터를 다시 조회
+                order = orderService.getOrderByPaymentId(paymentId);
+            }
+            return ResponseEntity.ok(order);
         } catch (Exception e) {
             return ResponseEntity.status(404).body(Map.of("message", e.getMessage()));
         }

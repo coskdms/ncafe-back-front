@@ -17,4 +17,4 @@ ENV TZ=Asia/Seoul
 EXPOSE 8032
 RUN mkdir -p /app/upload
 VOLUME /app/upload
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]

@@ -45,6 +45,8 @@ public class SecurityConfig {
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                                 // 인증 관련 API는 누구나 접근 가능
                                                 .requestMatchers("/auth/**").permitAll()
+                                                // SSE 실시간 알림은 누구나 접근 가능 (인증은 구독 시 처리)
+                                                .requestMatchers("/sse/**").permitAll()
                                                 // 관리자 API는 ADMIN 권한 필요
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                                 // 나머지는 누구나 접근 가능 (기존 설정)

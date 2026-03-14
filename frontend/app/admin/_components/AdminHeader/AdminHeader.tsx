@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { Bell, ChevronDown } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useNotificationStore } from '@/stores/notificationStore';
 import ProfileDropdown from './ProfileDropdown';
 import NotificationPanel from './NotificationPanel';
+import { toast } from '@/stores/toastStore';
 import styles from './AdminHeader.module.css';
 
 const getPageTitle = (pathname: string | null) => {
@@ -20,6 +21,7 @@ const getPageTitle = (pathname: string | null) => {
     }
     if (pathname === '/admin/categories') return '카테고리 관리';
     if (pathname === '/admin/orders') return '주문 관리';
+    if (pathname === '/admin/analytics') return '매출 분석';
     if (pathname === '/admin/settings') return '설정';
     if (pathname === '/admin/rag') return 'RAG 관리';
     return 'NCafe Admin';
@@ -33,18 +35,74 @@ export default function AdminHeader() {
 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isNotifOpen, setIsNotifOpen] = useState(false);
+    const latestNotifIdRef = useRef<number>(0);
+    const isFirstLoadRef = useRef(true);
 
-    // 컴포넌트 마운트 시 알림 개수 로드
+    // 10초마다 알림 체크 — 새 알림 감지 시 토스트 표시
     useEffect(() => {
-        fetchUnreadCount();
+        const checkNotifications = async () => {
+            await fetchUnreadCount();
+            await fetchNotifications();
 
-        // 30초마다 읽지 않은 알림 수만 폴링 (서버 부하 감소)
-        const interval = setInterval(() => {
-            fetchUnreadCount();
-        }, 30000);
+            const { notifications } = useNotificationStore.getState();
+            if (notifications.length > 0) {
+                const latestId = notifications[0]?.id ?? 0;
 
+                // 최초 로드가 아닌데 새 알림이 감지되면 토스트
+                if (!isFirstLoadRef.current && latestId > latestNotifIdRef.current) {
+                    const newNotifs = notifications.filter(n => n.id > latestNotifIdRef.current);
+                    for (const n of newNotifs) {
+                        toast.success(`🐤 ${n.title}: ${n.message}`);
+                    }
+                }
+                latestNotifIdRef.current = latestId;
+            }
+            isFirstLoadRef.current = false;
+        };
+
+        checkNotifications();
+        const interval = setInterval(checkNotifications, 10000);
         return () => clearInterval(interval);
-    }, [fetchUnreadCount]);
+    }, [fetchUnreadCount, fetchNotifications]);
+
+    // SSE 실시간 구독 (보조 - 관리자 새 주문 토스트)
+    const eventSourceRef = useRef<EventSource | null>(null);
+    useEffect(() => {
+        let es: EventSource;
+        try {
+            es = new EventSource('/api/sse/admin');
+            eventSourceRef.current = es;
+
+            es.addEventListener('new_order', (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    toast.success(data.message || '새 주문이 들어왔다덕! 🐤');
+                    // 즉시 갱신
+                    fetchUnreadCount();
+                    fetchNotifications().then(() => {
+                        const { notifications } = useNotificationStore.getState();
+                        if (notifications.length > 0) {
+                            latestNotifIdRef.current = notifications[0].id;
+                        }
+                    });
+                } catch (e) {
+                    console.error('SSE parse error:', e);
+                }
+            });
+
+            es.onerror = () => {};
+        } catch {
+            // SSE 미지원
+        }
+
+        return () => {
+            if (eventSourceRef.current) {
+                eventSourceRef.current.close();
+                eventSourceRef.current = null;
+            }
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // 알림 패널이 열릴 때 목록을 새로고침
     useEffect(() => {

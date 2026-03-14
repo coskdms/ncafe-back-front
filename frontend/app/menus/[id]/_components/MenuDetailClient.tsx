@@ -1,13 +1,14 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
+import { useFavoriteStore } from '@/stores/favoriteStore';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
-import { ChevronLeft, ShoppingCart, CreditCard, X } from 'lucide-react';
+import { ChevronLeft, ShoppingCart, CreditCard, X, Heart } from 'lucide-react';
 import styles from '../MenuDetail.module.css';
 import { useMenuDetail } from './useMenuDetail';
 import { toast } from '@/stores/toastStore';
@@ -26,6 +27,30 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
     const [selectedOptions, setSelectedOptions] = useState<Record<string, string[]>>({});
     const router = useRouter();
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+    const { isFavorited, toggleFavorite, loadFavorites, isLoaded } = useFavoriteStore();
+
+    useEffect(() => {
+        if (isAuthenticated && !isLoaded) {
+            loadFavorites();
+        }
+    }, [isAuthenticated, isLoaded, loadFavorites]);
+
+    const menuId = menu ? menu.id : 0;
+    const favorited = isFavorited(menuId);
+
+    const handleFavoriteClick = async () => {
+        if (!isAuthenticated) {
+            toast.info('로그인 후 찜할 수 있습니다! 🐤');
+            return;
+        }
+        if (!menu) return;
+        const result = await toggleFavorite(menu.id);
+        if (result) {
+            toast.success(`${menu.korName} 찜 완료! ❤️`);
+        } else {
+            toast.info(`${menu.korName} 찜 해제 🤍`);
+        }
+    };
 
     const formatPrice = (price?: number) => {
         if (price === undefined || price === null) return '';
@@ -255,8 +280,22 @@ export default function MenuDetailClient({ params }: MenuDetailClientProps) {
                             {menu.description || '정말 맛있는 고라파덕 카페의 자랑, 스페셜 메뉴입니다! 한 입 먹으면 기분이 좋아져요.'}
                         </p>
 
-                        <div className={styles.price}>
-                            {formatPrice(menu.price)}
+                        <div className={styles.priceRow}>
+                            <div className={styles.price}>
+                                {formatPrice(menu.price)}
+                            </div>
+                            <button
+                                className={`${styles.heartBtnDetail} ${favorited ? styles.heartBtnActive : ''}`}
+                                onClick={handleFavoriteClick}
+                                aria-label={favorited ? '찜 해제' : '찜하기'}
+                            >
+                                <Heart
+                                    size={22}
+                                    fill={favorited ? '#ef4444' : 'none'}
+                                    color={favorited ? '#ef4444' : '#a3a3a3'}
+                                />
+                                <span>{favorited ? '찜해제' : '찜하기'}</span>
+                            </button>
                         </div>
 
                         {/* 주문 액션 버튼들 */}

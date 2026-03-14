@@ -98,3 +98,17 @@ export const memberAPI = {
             body: JSON.stringify({ currentPassword, newPassword }),
         }),
 };
+
+// 찜하기 관련 API
+export const favoriteAPI = {
+    /** 찜 토글 (이미 찜→해제, 안 찜→추가) */
+    toggle: (menuId: number) =>
+        fetchAPI(`/favorites/${menuId}`, { method: 'POST' }),
+    /** 찜 해제 */
+    remove: (menuId: number) =>
+        fetchAPI(`/favorites/${menuId}`, { method: 'DELETE' }),
+    /** 내 찜 메뉴 ID 목록 조회 */
+    getIds: () => fetchAPI('/favorites/ids'),
+    /** 특정 메뉴 찜 여부 확인 */
+    check: (menuId: number) => fetchAPI(`/favorites/check/${menuId}`),
+};

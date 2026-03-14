@@ -44,6 +44,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     logout: async () => {
         await authAPI.logout();
         set({ user: null, isAuthenticated: false, isLoading: false });
+        // 찜 스토어 초기화
+        const { useFavoriteStore } = await import('@/stores/favoriteStore');
+        useFavoriteStore.getState().reset();
         window.dispatchEvent(new Event('logout'));
     },
 

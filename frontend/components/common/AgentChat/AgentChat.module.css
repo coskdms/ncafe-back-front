@@ -374,6 +374,37 @@
     transform: scale(0.97);
 }
 
+/* 음성 인식 버튼 */
+.voiceBtn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.voiceBtn:hover {
+    background: rgba(248, 208, 48, 0.2);
+}
+
+.voiceBtnActive {
+    background: rgba(239, 68, 68, 0.15);
+    animation: voicePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes voicePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+}
+
 /* ===== Menu Card in Chat ===== */
 .menuCard {
     background: var(--agent-white);

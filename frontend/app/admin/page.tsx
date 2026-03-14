@@ -97,6 +97,7 @@ export default function AdminDashboard() {
                 <div className={styles.linkGrid}>
                     <a href="/admin/orders" className={styles.linkCard}>📋 주문 관리 바로가기</a>
                     <a href="/admin/menus" className={styles.linkCard}>☕️ 메뉴 관리 바로가기</a>
+                    <a href="/admin/analytics" className={styles.linkCard}>📊 매출 분석 바로가기</a>
                     <a href="/admin/settings" className={styles.linkCard}>⚙️ 환경 설정 바로가기</a>
                 </div>
             </section>

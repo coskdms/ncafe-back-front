@@ -108,3 +108,76 @@ def get_shop_info() -> dict:
     except Exception as e:
         return {"error": f"매장 정보를 가져오는 데 실패했다덕: {str(e)}"}
 
+
+# ═══════════════════════════════════════
+# 관리자 전용 API
+# ═══════════════════════════════════════
+
+def get_all_orders(auth_token: str = None, status: str = None) -> dict:
+    """
+    전체 주문 목록을 조회합니다 (관리자 전용).
+    """
+    if not auth_token:
+        return {"error": "관리자 인증이 필요한 기능이다덕!"}
+    
+    try:
+        headers = {"Authorization": auth_token}
+        params = {}
+        if status:
+            params["status"] = status
+        response = requests.get(f"{BACKEND_URL}/admin/orders", headers=headers, params=params)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        return {"error": f"주문 목록을 가져오는 데 실패했다덕: {str(e)}"}
+
+def update_order_status(auth_token: str, payment_id: str, new_status: str) -> dict:
+    """
+    특정 주문의 상태를 변경합니다 (관리자 전용).
+    paymentId 기반, PATCH 메서드 사용.
+    """
+    if not auth_token:
+        return {"error": "관리자 인증이 필요한 기능이다덕!"}
+    
+    try:
+        headers = {"Authorization": auth_token}
+        response = requests.patch(
+            f"{BACKEND_URL}/admin/orders/{payment_id}/status",
+            headers=headers,
+            json={"status": new_status}
+        )
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        return {"error": f"주문 상태 변경에 실패했다덕: {str(e)}"}
+
+def get_sales_summary(auth_token: str, period: str = "today") -> dict:
+    """
+    대시보드 통계 (오늘 주문 수, 메뉴 수, 품절 수, 오늘 매출)를 조회합니다 (관리자 전용).
+    """
+    if not auth_token:
+        return {"error": "관리자 인증이 필요한 기능이다덕!"}
+    
+    try:
+        headers = {"Authorization": auth_token}
+        response = requests.get(f"{BACKEND_URL}/admin/dashboard/stats", headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        return {"error": f"매출 정보를 가져오는 데 실패했다덕: {str(e)}"}
+
+
+def get_my_favorites(auth_token: str) -> list:
+    """
+    회원의 찜한 메뉴 ID 목록을 조회합니다.
+    """
+    if not auth_token:
+        return {"error": "로그인이 필요한 기능이다덕!"}
+    
+    try:
+        headers = {"Authorization": auth_token}
+        response = requests.get(f"{BACKEND_URL}/favorites/ids", headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        return {"error": f"찜 목록을 가져오는 데 실패했다덕: {str(e)}"}

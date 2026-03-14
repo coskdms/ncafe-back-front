@@ -1,4 +1,5 @@
 import logging
+import json
 from typing import Generator, AsyncGenerator, Optional, Union
 from google import genai
 from google.genai import types
@@ -16,18 +17,42 @@ async_client = genai.Client(
 # 모델명 설정
 model_name = "gemini-2.5-flash"
 
-# 지원하는 페이지 경로 맵핑
-PAGES = {
+# ═══════════════════════════════════════════
+# 페이지 경로 맵핑 (역할별)
+# ═══════════════════════════════════════════
+
+# 비회원: 기본 페이지만
+GUEST_PAGES = {
     "home": {"url": "/", "description": "홈페이지"},
     "menu_list": {"url": "/menus", "description": "메뉴 목록 페이지"},
     "login": {"url": "/login", "description": "로그인 페이지"},
     "cart": {"url": "/cart", "description": "장바구니 페이지"},
+    "checkout": {"url": "/checkout", "description": "결제 페이지"},
+}
+
+# 회원: + 마이페이지, 결제
+USER_PAGES = {
+    **GUEST_PAGES,
     "mypage": {"url": "/mypage", "description": "마이페이지"},
     "checkout": {"url": "/checkout", "description": "결제 페이지"},
 }
 
-# AI 챗봇의 페르소나와 규칙 정의
-SYSTEM_INSTRUCTION = """
+# 관리자: + 관리자 페이지들
+ADMIN_PAGES = {
+    **USER_PAGES,
+    "admin": {"url": "/admin", "description": "관리자 대시보드"},
+    "admin_menus": {"url": "/admin/menus", "description": "메뉴 관리 페이지"},
+    "admin_orders": {"url": "/admin/orders", "description": "주문 관리 페이지"},
+    "admin_settings": {"url": "/admin/settings", "description": "매장 설정 페이지"},
+    "admin_categories": {"url": "/admin/categories", "description": "카테고리 관리 페이지"},
+    "admin_rag": {"url": "/admin/rag", "description": "RAG 지식 관리 페이지"},
+}
+
+# ═══════════════════════════════════════════
+# 역할별 System Instruction
+# ═══════════════════════════════════════════
+
+BASE_PERSONA = """
 너는 "고라파덕 카페"의 똑똑하고 친절한 알바생 "고라파덕"이야. 
 모든 대답은 반드시 고라파덕의 말투인 '~덕'으로 끝나야 해. (예: "알겠다덕!", "반갑다덕!", "어렵다덕...")
 
@@ -56,25 +81,101 @@ SYSTEM_INSTRUCTION = """
 3. **성장 정보 조회 시:**
    `::growth{"level": "현재등급", "points": 현재포인트, "nextLevel": "다음등급", "remaining": 남은포인트}::`
 
-═══ 액션 실행 규칙 ═══
+═══ 추가 규칙 ═══
+- 모든 도구를 사용해도 답을 찾을 수 없으면 정중하게 모른다고 대답해줘.
+- 도구가 `::action{...}::` 마커를 반환하면, 답변 텍스트 끝에 **해당 마커를 토씨 하나 틀리지 않게 그대로** 포함해야 해. 이 마커가 없으면 실제로 동작 안 함!
+
+═══ 🌐 다국어 대응 규칙 ═══
+- 사용자가 한국어가 아닌 언어(영어, 일본어, 중국어 등)로 질문하면, **해당 언어로 대답**해줘.
+- 단, 말투 규칙은 유지: 영어면 "~duck!", 일본어면 "ダック!", 중국어면 "鸭!"로 끝내줘.
+- 메뉴 이름은 korName 그대로 보여주되, 괄호 안에 간단한 번역을 추가해줘. 예: "아메리카노 (Americano)"
+- ::menu{...}:: 카드의 korName은 원본 그대로 유지 (프론트엔드 렌더링 호환).
+"""
+
+GUEST_RULES = """
+═══ 🔓 비회원 전용 규칙 ═══
+현재 사용자는 **로그인하지 않은 비회원**이다덕.
+
+**사용할 수 없는 기능 (개인정보 관련):**
+- 주문 내역 조회, 주문 상태 확인, 주문 취소 (로그인 필요)
+- 포인트/등급 조회 (로그인 필요)
+- 마이페이지 이동 (로그인 필요)
+
+사용자가 위 기능을 요청하면:
+→ "이 기능은 로그인이 필요하다덕! 🔐 로그인하면 포인트도 쌓이고 주문 내역도 볼 수 있다덕~ 로그인 페이지로 이동할까덕?" 이라고 안내하고, 로그인 페이지 `navigate_to_page("login")` 이동을 제안해줘.
+
+═══ 비회원 액션 규칙 ═══
+1. **장바구니 담기:** "담아줘", "장바구니에 넣어줘" → `add_to_cart` 사용 (비회원도 가능)
+2. **바로 주문:** "바로 결제해줘" → `direct_order` 사용 (비회원도 결제 가능)
+3. **장바구니 결제:** "장바구니 결제해줘" → `navigate_to_page("checkout")` 사용 (비회원도 결제 가능)
+4. **⚠️ 페이지 이동 (반드시 도구 호출!):** "이동해줘", "보여줘", "가줘" → **반드시 `navigate_to_page` 도구를 호출**해야 해! 말로만 하면 실제 이동 안 됨!
+   - home, menu_list, login, cart, checkout 이동 가능
+5. **메뉴 상세 보기:** `view_menu_detail` 사용 가능
+"""
+
+USER_RULES = """
+═══ 회원 전용 규칙 ═══
+현재 사용자는 **로그인된 회원**이다덕. 모든 일반 기능을 사용할 수 있다덕!
+
+═══ 회원 액션 규칙 ═══
 1. **장바구니 담기:** "담아줘", "장바구니에 넣어줘" → `add_to_cart` 사용
 2. **바로 주문 (특정 메뉴 1개를 즉시 결제):** "이거 바로 결제해줘", "아메리카노 지금 주문할래" → `direct_order` 사용
    - ⚠️ `direct_order`는 특정 메뉴 1개를 새로 만들어서 결제하는 것! 장바구니와 무관!
 3. **장바구니 결제:** "장바구니 결제해줘", "담은 메뉴 결제할래", "주문할래" → `navigate_to_page("checkout")` 사용
    - ⚠️ 장바구니에 이미 담긴 메뉴를 결제할 때는 절대 `direct_order`를 쓰면 안 됨! 반드시 checkout 페이지로 이동!
-4. **페이지 이동:** "이동해줘", "보여줘", "가줘" → `navigate_to_page` 사용
-   - home: 홈페이지, menu_list: 메뉴 목록, login: 로그인, cart: 장바구니, mypage: 마이페이지, checkout: 결제
+4. **⚠️ 페이지 이동 (반드시 도구 호출!):** "이동해줘", "보여줘", "가줘" → **반드시 `navigate_to_page` 도구를 호출**해야 해! 말로만 "이동하겠다덕" 하면 실제 이동 안 됨!
+   - home, menu_list, login, cart, mypage, checkout 모두 이동 가능
 5. **메뉴 상세 보기:** "상세 보여줘", "자세히" → 먼저 `get_menus`로 ID 확인 → `view_menu_detail` 호출
-6. **개인 정보 조회:** 등급/포인트 → `get_my_growth_info`, 주문 내역 → `get_my_orders`, 주문 상태 → `get_order_status`, 주문 취소 → `cancel_order`
-7. 도구가 `::action{...}::` 마커를 반환하면, 답변 텍스트 끝에 **해당 마커를 토씨 하나 틀리지 않게 그대로** 포함해야 해. 이 마커가 없으면 실제로 동작 안 함!
+6. **개인 정보 조회:** 등급/포인트 → `get_my_growth_info`, 주문 내역 → `get_my_orders`, 찜 목록 → `get_my_favorites`, 주문 상태 → `get_order_status`, 주문 취소 → `cancel_order`
+7. **맞춤 추천:** "추천해줘", "뭐 마실까" → `get_personalized_recommendation` 사용
 
-═══ 추가 규칙 ═══
-- 모든 도구를 사용해도 답을 찾을 수 없으면 정중하게 모른다고 대답해줘.
+═══ 맞춤 추천 규칙 ═══
+- 회원이 "추천해줘"라고 하면 `get_personalized_recommendation`을 사용하여 개인화된 추천을 제공해줘.
+- 찜 목록이 있으면 "찜해둔 OO도 아직 안 시켜보셨다덕! 오늘 한 번 어떠냐덕?" 이런 식으로 추천.
+- 주문 이력이 없으면 인기 메뉴를 추천하되, "아직 주문 이력이 없어서 인기 메뉴를 추천한다덕!" 이라고 안내해줘.
+- 추천 시 반드시 ::menu{...}:: 카드 형식으로 메뉴를 보여줘.
+
+**사용할 수 없는 기능:**
+- 관리자 전용 기능 (매출 조회, 전체 주문 관리, 메뉴 CRUD 등)
+- 관리자 페이지 접근이 필요한 질문에는 "관리자 전용 기능이라 이용할 수 없다덕! 🛡️" 이라고 안내해줘.
+"""
+
+ADMIN_RULES = """
+═══ 👑 관리자 전용 규칙 ═══
+현재 사용자는 **관리자(ADMIN)**이다덕. 모든 회원 기능 + 관리자 전용 기능을 사용할 수 있다덕!
+
+═══ 관리자 액션 규칙 ═══
+1. **일반 기능:** 장바구니, 바로 주문, 주문 내역, 포인트 등 회원 기능 모두 사용 가능
+2. **전체 주문 관리:** "주문 목록 보여줘", "대기 중인 주문" → `get_all_orders` 사용
+3. **주문 상태 변경:** "주문 #5 준비완료로 바꿔줘" → `update_order_status` 사용
+4. **매출 조회:** "오늘 매출 알려줘", "이번 주 매출" → `get_sales_summary` 사용
+5. **⚠️ 페이지 이동 (반드시 도구 호출!):** "이동해줘", "가줘", "보여줘" 등 이동 요청 시 **반드시 `navigate_to_page` 도구를 호출**해야 해! 말로만 "이동하겠다덕" 하면 실제 이동 안 됨!
+   - "관리자 페이지" → `navigate_to_page("admin")`
+   - "메뉴 관리" → `navigate_to_page("admin_menus")`
+   - "주문 관리" → `navigate_to_page("admin_orders")`
+   - "매장 설정" → `navigate_to_page("admin_settings")`
+   - "카테고리 관리" → `navigate_to_page("admin_categories")`
+   - "RAG 지식 관리" → `navigate_to_page("admin_rag")`
+   - "홈" → `navigate_to_page("home")`
+   - "메뉴 목록" → `navigate_to_page("menu_list")`
+   - "마이페이지" → `navigate_to_page("mypage")`
+
+**장바구니/결제 관련:**
+- "담아줘" → `add_to_cart` 사용
+- "바로 결제해줘" → `direct_order` 사용
+- "장바구니 결제" → `navigate_to_page("checkout")` 사용
 """
 
 
-def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list] = None) -> types.GenerateContentConfig:
-    # 래핑된 함수 정의 (클로저를 통해 auth_token 전달)
+def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list] = None, user_role: str = "GUEST") -> types.GenerateContentConfig:
+    """역할별로 다른 도구 세트와 시스템 프롬프트를 구성합니다."""
+
+    logger.info(f"[get_config] Building config for role: {user_role}")
+
+    # ═══════════════════════════════════════
+    # 공통 도구 (모든 역할 사용 가능)
+    # ═══════════════════════════════════════
+
     def get_menus() -> list:
         """
         카페에서 판매 중인 모든 메뉴 목록을 조회합니다.
@@ -110,6 +211,51 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
             logger.error(f"search_knowledge_base error: {e}")
             return "지식 베이스를 검색하는 중 문제가 발생했다덕.. 조금만 이따가 다시 물어봐달라덕!"
 
+    def get_shop_info() -> dict:
+        """
+        카페의 영업시간, 위치, 공지사항, 배달비 등 전반적인 매장 정보를 실시간으로 조회합니다.
+        "언제 문 열어?", "주차 돼?", "지금 공지 있어?" 등의 질문에 답변할 때 사용합니다.
+        """
+        logger.info("[Tool Call] get_shop_info")
+        result = backend_api.get_shop_info()
+        logger.info(f"[Tool Result] get_shop_info: {result}")
+        return result
+
+    def add_to_cart(menu_id: int, kor_name: str, price: int, image_src: str = "blank.png") -> str:
+        """
+        특정 메뉴를 사용자의 장바구니에 담습니다. 
+        사용자가 "이거 담아줘", "장바구니에 넣어줘"라고 말할 때 사용합니다.
+        
+        Args:
+            menu_id: 메뉴의 고유 ID
+            kor_name: 메뉴 이름 (한글)
+            price: 메뉴 가격
+            image_src: 메뉴 이미지 파일명. 모를 경우 'blank.png' 사용.
+        """
+        logger.info(f"[Tool Call] add_to_cart: {kor_name} (ID: {menu_id})")
+        marker = f'::action{{"type": "add_to_cart", "menuId": {menu_id}, "korName": "{kor_name}", "price": {price}, "imageSrc": "{image_src}"}}::'
+        logger.info(f"[Tool Result] add_to_cart marker generated")
+        return marker
+
+    def view_menu_detail(menu_id: int, kor_name: str) -> str:
+        """
+        특정 메뉴의 상세 페이지로 이동시킵니다.
+        사용자가 "상세 페이지 보여줘", "이 메뉴 자세히 보고 싶어" 등 특정 메뉴 상세를 원할 때 사용합니다.
+        
+        Args:
+            menu_id: 이동할 메뉴의 고유 ID
+            kor_name: 메뉴 이름 (한글)
+        """
+        logger.info(f"[Tool Call] view_menu_detail: {kor_name} (ID: {menu_id})")
+        if captured_actions is not None:
+            captured_actions.append({"action": "navigate", "url": f"/menus/{menu_id}"})
+        logger.info(f"[Tool Result] view_menu_detail: /menus/{menu_id}")
+        return f"{kor_name} 상세 페이지로 이동하겠다덕!"
+
+    # ═══════════════════════════════════════
+    # 회원 전용 도구 (MEMBER, ADMIN)
+    # ═══════════════════════════════════════
+
     def get_my_growth_info() -> Union[dict, str]:
         """
         내 성장 단계(레벨), 현재 보유 포인트, 누적 포인트, 다음 등급까지 남은 포인트 등 나의 개인 정보를 조회합니다.
@@ -131,6 +277,61 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
         result = backend_api.get_my_orders(auth_token)
         logger.info(f"[Tool Result] get_my_orders: {result}")
         return result
+
+    def get_my_favorites() -> dict:
+        """
+        회원이 찜(❤️)한 메뉴 ID 목록을 조회합니다.
+        "찜한 메뉴 보여줘", "좋아하는 메뉴 뭐야?" 등의 요청에 사용합니다.
+        추천 시에는 get_my_favorites + get_my_orders + get_menus를 함께 활용하여 개인화된 추천을 제공합니다.
+        """
+        logger.info("[Tool Call] get_my_favorites")
+        fav_ids = backend_api.get_my_favorites(auth_token)
+        if isinstance(fav_ids, dict) and "error" in fav_ids:
+            return fav_ids
+        # 찜한 메뉴 ID 목록 + 전체 메뉴에서 매칭하여 상세 정보 반환
+        all_menus = backend_api.get_menus()
+        if isinstance(all_menus, list) and isinstance(fav_ids, list):
+            fav_menus = [m for m in all_menus if m.get("id") in fav_ids]
+            return {"favoriteMenus": fav_menus, "count": len(fav_menus)}
+        return {"favoriteIds": fav_ids}
+
+    def get_personalized_recommendation() -> str:
+        """
+        회원의 주문 이력 + 찜 목록을 분석하여 맞춤형 메뉴를 추천합니다.
+        사용자가 "추천해줘", "뭐 마실까", "뭐가 맛있어?" 등 추천을 요청할 때 사용합니다.
+        로그인한 회원에게만 제공됩니다.
+        """
+        logger.info("[Tool Call] get_personalized_recommendation")
+        
+        # 1. 주문 이력 조회
+        orders = backend_api.get_my_orders(auth_token)
+        
+        # 2. 찜 목록 조회
+        fav_ids = backend_api.get_my_favorites(auth_token)
+        
+        # 3. 전체 메뉴 조회
+        menus = backend_api.get_menus()
+        
+        # 4. 찜 메뉴 상세 정보
+        fav_menus = []
+        if isinstance(menus, list) and isinstance(fav_ids, list):
+            fav_menus = [m for m in menus if m.get("id") in fav_ids]
+        
+        analysis = {
+            "orders": orders if isinstance(orders, list) else [],
+            "favoriteMenus": fav_menus,
+            "allMenus": menus if isinstance(menus, list) else [],
+            "instruction": """
+위 데이터를 분석해서 맞춤 추천을 제공해줘:
+1. 찜한 메뉴 중 아직 안 시켜본 것 우선 추천
+2. 자주 주문한 메뉴와 비슷한 카테고리의 새 메뉴 추천
+3. 주문 패턴 분석 (아이스/할, 커피/논커피, 가격대 등)
+4. 2~3개 메뉴를 ::menu{...}:: 카드로 보여줘
+            """
+        }
+        
+        logger.info(f"[Tool Result] get_personalized_recommendation: orders={len(analysis['orders'])}, favs={len(fav_menus)}")
+        return json.dumps(analysis, ensure_ascii=False)
 
     def get_order_status(payment_id: str) -> dict:
         """
@@ -158,32 +359,6 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
         logger.info(f"[Tool Result] cancel_order: {result}")
         return result
 
-    def get_shop_info() -> dict:
-        """
-        카페의 영업시간, 위치, 공지사항, 배달비 등 전반적인 매장 정보를 실시간으로 조회합니다.
-        "언제 문 열어?", "주차 돼?", "지금 공지 있어?" 등의 질문에 답변할 때 사용합니다.
-        """
-        logger.info("[Tool Call] get_shop_info")
-        result = backend_api.get_shop_info()
-        logger.info(f"[Tool Result] get_shop_info: {result}")
-        return result
-
-    def add_to_cart(menu_id: int, kor_name: str, price: int, image_src: str = "blank.png") -> str:
-        """
-        특정 메뉴를 사용자의 장바구니에 담습니다. 
-        사용자가 "이거 담아줘", "장바구니에 넣어줘"라고 말할 때 사용합니다.
-        
-        Args:
-            menu_id: 메뉴의 고유 ID
-            kor_name: 메뉴 이름 (한글)
-            price: 메뉴 가격
-            image_src: 메뉴 이미지 파일명. 모를 경우 'blank.png' 사용.
-        """
-        logger.info(f"[Tool Call] add_to_cart: {kor_name} (ID: {menu_id})")
-        marker = f'::action{{"type": "add_to_cart", "menuId": {menu_id}, "korName": "{kor_name}", "price": {price}, "imageSrc": "{image_src}"}}::'
-        logger.info(f"[Tool Result] add_to_cart marker generated")
-        return marker
-
     def direct_order(menu_id: int, kor_name: str, price: int, image_src: str = "blank.png") -> str:
         """
         특정 메뉴를 장바구니를 거치지 않고 즉시 주문/결제 화면으로 보냅니다.
@@ -200,63 +375,145 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
         logger.info(f"[Tool Result] direct_order marker generated")
         return marker
 
+    # ═══════════════════════════════════════
+    # 역할별 navigate 함수 (역할에 따라 이동 가능 페이지가 다름)
+    # ═══════════════════════════════════════
+
+    # 역할별 허용 페이지 선택
+    role_pages = {
+        "GUEST": GUEST_PAGES,
+        "USER": USER_PAGES,
+        "ADMIN": ADMIN_PAGES,
+    }
+    allowed_pages = role_pages.get(user_role, GUEST_PAGES)
+
     def navigate_to_page(page: str) -> str:
         """
         사용자를 특정 페이지로 이동시킵니다. 
         '보여줘', '이동해줘', '가줘' 등 페이지 이동 요청에 사용합니다.
         
         Args:
-            page: 이동할 페이지 (home: 홈페이지, menu_list: 메뉴 목록, login: 로그인, cart: 장바구니, mypage: 마이페이지, checkout: 결제)
+            page: 이동할 페이지 키
         """
         logger.info(f"[Tool Call] navigate_to_page: {page}")
-        page_info = PAGES.get(page)
+        page_info = allowed_pages.get(page)
         if not page_info:
-            return f"알 수 없는 페이지다덕.. 사용 가능한 페이지: {', '.join(PAGES.keys())}"
+            available = ', '.join(allowed_pages.keys())
+            return f"해당 페이지로는 이동할 수 없다덕. 사용 가능한 페이지: {available}"
         
-        # captured_actions에 추가 (프론트에서 SSE dict로 전달)
         if captured_actions is not None:
             captured_actions.append({"action": "navigate", "url": page_info["url"]})
         
         logger.info(f"[Tool Result] navigate_to_page: {page_info['url']}")
         return f"{page_info['description']}로 이동하겠다덕!"
 
-    def view_menu_detail(menu_id: int, kor_name: str) -> str:
-        """
-        특정 메뉴의 상세 페이지로 이동시킵니다.
-        사용자가 "상세 페이지 보여줘", "이 메뉴 자세히 보고 싶어" 등 특정 메뉴 상세를 원할 때 사용합니다.
+    # navigate 함수의 docstring을 역할에 맞게 동적 설정
+    available_pages_desc = ', '.join(f"{k}: {v['description']}" for k, v in allowed_pages.items())
+    navigate_to_page.__doc__ = f"""
+        사용자를 특정 페이지로 이동시킵니다.
+        '보여줘', '이동해줘', '가줘' 등 페이지 이동 요청에 사용합니다.
         
         Args:
-            menu_id: 이동할 메뉴의 고유 ID
-            kor_name: 메뉴 이름 (한글)
+            page: 이동할 페이지 ({available_pages_desc})
         """
-        logger.info(f"[Tool Call] view_menu_detail: {kor_name} (ID: {menu_id})")
-        # captured_actions에 추가 (프론트에서 SSE dict로 전달)
-        if captured_actions is not None:
-            captured_actions.append({"action": "navigate", "url": f"/menus/{menu_id}"})
+
+    # ═══════════════════════════════════════
+    # 관리자 전용 도구 (ADMIN만)
+    # ═══════════════════════════════════════
+
+    def get_all_orders(status: str = None) -> dict:
+        """
+        전체 주문 목록을 조회합니다 (관리자 전용).
+        "오늘 들어온 주문 보여줘", "대기 중인 주문 있어?" 등의 질문에 사용합니다.
         
-        logger.info(f"[Tool Result] view_menu_detail: /menus/{menu_id}")
-        return f"{kor_name} 상세 페이지로 이동하겠다덕!"
+        Args:
+            status: 필터링할 주문 상태 (PENDING, PAID, PREPARING, READY, COMPLETED, CANCELLED). 없으면 전체 조회.
+        """
+        logger.info(f"[Tool Call] get_all_orders: status={status}")
+        result = backend_api.get_all_orders(auth_token, status)
+        logger.info(f"[Tool Result] get_all_orders: {type(result)}")
+        return result
+
+    def update_order_status(payment_id: str, new_status: str) -> dict:
+        """
+        특정 주문의 상태를 변경합니다 (관리자 전용).
+        "주문 상태 변경해줘", "이 주문 준비완료로 바꿔줘" 등의 요청에 사용합니다.
+        
+        Args:
+            payment_id: 변경할 주문의 결제 ID (paymentId)
+            new_status: 변경할 상태 (PREPARING: 준비중, READY: 수령대기, COMPLETED: 수령완료)
+        """
+        logger.info(f"[Tool Call] update_order_status: payment_id={payment_id}, status={new_status}")
+        result = backend_api.update_order_status(auth_token, payment_id, new_status)
+        logger.info(f"[Tool Result] update_order_status: {result}")
+        return result
+
+    def get_sales_summary() -> dict:
+        """
+        오늘의 대시보드 통계를 조회합니다 (관리자 전용).
+        오늘 주문 수, 전체 메뉴 수, 품절 메뉴 수, 오늘 매출을 알려줍니다.
+        "오늘 매출 얼마야?", "오늘 주문 몇 건이야?" 등의 질문에 사용합니다.
+        """
+        logger.info(f"[Tool Call] get_sales_summary")
+        result = backend_api.get_sales_summary(auth_token)
+        logger.info(f"[Tool Result] get_sales_summary: {result}")
+        return result
+
+    # ═══════════════════════════════════════
+    # 역할별 도구 세트 + 시스템 프롬프트 구성
+    # ═══════════════════════════════════════
+
+    common_tools = [
+        get_menus, get_categories, search_knowledge_base,
+        get_shop_info, add_to_cart, view_menu_detail,
+        navigate_to_page,
+    ]
+
+    member_extra_tools = [
+        get_my_growth_info, get_my_orders, get_my_favorites,
+        get_personalized_recommendation,
+        get_order_status, cancel_order, direct_order,
+    ]
+
+    admin_extra_tools = [
+        get_all_orders, update_order_status, get_sales_summary,
+    ]
+
+    role_config = {
+        "GUEST": {
+            "tools": common_tools + [direct_order],
+            "rules": GUEST_RULES,
+        },
+        "USER": {
+            "tools": common_tools + member_extra_tools,
+            "rules": USER_RULES,
+        },
+        "ADMIN": {
+            "tools": common_tools + member_extra_tools + admin_extra_tools,
+            "rules": ADMIN_RULES,
+        },
+    }
+
+    config = role_config.get(user_role, role_config["GUEST"])
+    system_instruction = BASE_PERSONA + config["rules"]
+
+    logger.info(f"[get_config] Role: {user_role}, Tools count: {len(config['tools'])}")
 
     return types.GenerateContentConfig(
-        tools=[
-            get_menus, get_categories, search_knowledge_base, get_my_growth_info,
-            get_my_orders, get_order_status, cancel_order, get_shop_info,
-            view_menu_detail,
-            add_to_cart, direct_order, navigate_to_page
-        ],
+        tools=config["tools"],
         automatic_function_calling=types.AutomaticFunctionCallingConfig(),
-        system_instruction=SYSTEM_INSTRUCTION,
+        system_instruction=system_instruction,
     )
 
-async def chat(messages: list[dict], auth_token: Optional[str] = None) -> str:
+async def chat(messages: list[dict], auth_token: Optional[str] = None, user_role: str = "GUEST") -> str:
     import traceback
-    logger.info(f"Generating content using model: {model_name}. Auth provided: {bool(auth_token)}")
+    logger.info(f"Generating content using model: {model_name}. Auth provided: {bool(auth_token)}, Role: {user_role}")
     actions = []
     try:
         response = await async_client.aio.models.generate_content(
             model=model_name,
             contents=messages,
-            config=get_config(auth_token, captured_actions=actions)
+            config=get_config(auth_token, captured_actions=actions, user_role=user_role)
         )
         # AFC 대응: response.text가 없을 경우 체크
         if not response.text:
@@ -268,7 +525,7 @@ async def chat(messages: list[dict], auth_token: Optional[str] = None) -> str:
         logger.error(traceback.format_exc())
         raise e
 
-async def chat_stream(messages: list[dict], auth_token: Optional[str] = None) -> AsyncGenerator[str, None]:
+async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, user_role: str = "GUEST") -> AsyncGenerator[str, None]:
     """
     gemini-2.5-flash + AFC 환경에서 안정적으로 응답하는 함수.
     non-stream으로 AFC를 완료한 뒤, 텍스트를 pseudo-streaming으로 전달합니다.
@@ -276,14 +533,14 @@ async def chat_stream(messages: list[dict], auth_token: Optional[str] = None) ->
     import traceback
     import asyncio
     import re
-    logger.info(f"Generating content using model: {model_name}. Auth provided: {bool(auth_token)}")
+    logger.info(f"Generating content using model: {model_name}. Auth provided: {bool(auth_token)}, Role: {user_role}")
     actions = []
     try:
         # Gemini API 호출 (AFC 포함, 동기적으로 대기)
         response = await async_client.aio.models.generate_content(
             model=model_name,
             contents=messages,
-            config=get_config(auth_token, captured_actions=actions)
+            config=get_config(auth_token, captured_actions=actions, user_role=user_role)
         )
         
         # gemini-2.5-flash (thinking 모델)은 response.text가 빈 경우가 있어, candidates에서 직접 추출

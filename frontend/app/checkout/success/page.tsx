@@ -132,6 +132,13 @@ function SuccessContent() {
             </div>
 
             <div className={styles.buttonGroup}>
+                <button 
+                    className={styles.homeBtn} 
+                    onClick={() => router.push(`/orders/${paymentId}`)}
+                    style={{ background: '#ca8a04', color: 'white', border: 'none', fontWeight: 800 }}
+                >
+                    📱 주문 현황 보기
+                </button>
                 <button className={styles.homeBtn} onClick={() => router.push('/')}>
                     홈으로 이동
                 </button>

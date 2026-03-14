@@ -37,13 +37,17 @@ export default function AgentChat() {
     const [lastAddedMenu, setLastAddedMenu] = useState<any>(null);
 
     const addItem = useCartStore((state) => state.addItem);
-    const { isAuthenticated } = useAuthStore();
+    const { isAuthenticated, user } = useAuthStore();
     const router = useRouter();
     const pathname = usePathname();
 
     const bodyRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const recognitionRef = useRef<any>(null);
     let msgIdCounter = useRef(0);
+
+    // 음성 인식 상태
+    const [isListening, setIsListening] = useState(false);
 
 
     /**
@@ -185,10 +189,24 @@ export default function AgentChat() {
         if (willOpen && isFirstOpen) {
             setIsFirstOpen(false);
             const welcomeId = ++msgIdCounter.current;
-            setMessages([{ id: welcomeId, text: '쿠웨에엑! 고라파덕 카페에 온 걸 환영한다덕! 🎉\n무엇을 도와줄까덕?', sender: 'bot' }]);
-            setTimeout(() => {
-                setQuickReplies(['메뉴 보여줘', '추천해줘', '디저트 뭐 있어?']);
-            }, 400);
+            const role = user?.role;
+
+            if (role === 'ADMIN') {
+                setMessages([{ id: welcomeId, text: '관리자님 안녕하다덕! 🛡️\n무엇을 도와줄까덕?', sender: 'bot' }]);
+                setTimeout(() => {
+                    setQuickReplies(['오늘 매출 알려줘', '대기 중 주문 보여줘', '메뉴 목록']);
+                }, 400);
+            } else if (isAuthenticated) {
+                setMessages([{ id: welcomeId, text: '쿠웨에엑! 반갑다덕! 🎉\n무엇을 도와줄까덕?', sender: 'bot' }]);
+                setTimeout(() => {
+                    setQuickReplies(['메뉴 보여줘', '내 포인트 확인', '주문 내역']);
+                }, 400);
+            } else {
+                setMessages([{ id: welcomeId, text: '쿠웨에엑! 고라파덕 카페에 온 걸 환영한다덕! 🎉\n무엇을 도와줄까덕?', sender: 'bot' }]);
+                setTimeout(() => {
+                    setQuickReplies(['메뉴 보여줘', '추천해줘', '디저트 뭐 있어?']);
+                }, 400);
+            }
         }
 
         if (willOpen) {
@@ -197,6 +215,45 @@ export default function AgentChat() {
     };
 
     // 사용자 입력 처리
+    // 음성 인식 시작/중지
+    const toggleVoice = () => {
+        if (isListening) {
+            recognitionRef.current?.stop();
+            setIsListening(false);
+            return;
+        }
+
+        const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (!SpeechRecognitionAPI) {
+            alert('이 브라우저에서는 음성 인식을 지원하지 않습니다. Chrome 또는 Edge를 사용해주세요.');
+            return;
+        }
+
+        const recognition = new SpeechRecognitionAPI();
+        recognition.lang = 'ko-KR';
+        recognition.interimResults = true;
+        recognition.continuous = false;
+
+        recognition.onresult = (event: any) => {
+            const transcript = Array.from(event.results)
+                .map((result: any) => result[0].transcript)
+                .join('');
+            setInputValue(transcript);
+
+            if (event.results[0].isFinal) {
+                handleSend(transcript);
+                setIsListening(false);
+            }
+        };
+
+        recognition.onend = () => setIsListening(false);
+        recognition.onerror = () => setIsListening(false);
+
+        recognitionRef.current = recognition;
+        recognition.start();
+        setIsListening(true);
+    };
+
     const handleSend = async (text: string) => {
         const trimmed = text.trim();
         if (!trimmed) return;
@@ -387,9 +444,9 @@ export default function AgentChat() {
         }
     };
 
-    // 하이드레이션 전이거나 관리자 페이지면 렌더링하지 않음
+    // 하이드레이션 전이면 렌더링하지 않음
     // 모든 Hook은 이 위에서 호출되어야 함
-    if (!isMounted || !pathname || pathname.startsWith('/admin')) {
+    if (!isMounted || !pathname) {
         return null;
     }
 
@@ -475,7 +532,7 @@ export default function AgentChat() {
                     <input
                         ref={inputRef}
                         type="text"
-                        placeholder="파덕이에게 물어보세요..."
+                        placeholder={isListening ? "듣고 있다덕... 🎙️" : "파덕이에게 물어보세요..."}
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={(e) => {
@@ -484,6 +541,13 @@ export default function AgentChat() {
                             }
                         }}
                     />
+                    <button
+                        className={`${styles.voiceBtn} ${isListening ? styles.voiceBtnActive : ''}`}
+                        onClick={toggleVoice}
+                        title="음성으로 말하기"
+                    >
+                        {isListening ? '⏹️' : '🎤'}
+                    </button>
                     <button className={styles.sendBtn} onClick={() => handleSend(inputValue)}>전송</button>
                 </div>
             </div>

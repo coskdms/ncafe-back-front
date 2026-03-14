@@ -1,0 +1,454 @@
+/* ===== 주문 현황 트래커 ===== */
+.main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #fffdf0;
+}
+
+.container {
+    flex: 1;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 120px 24px 80px;
+    width: 100%;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #ca8a04;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 28px;
+    font-size: 0.95rem;
+    transition: opacity 0.2s;
+}
+
+.backLink:hover {
+    opacity: 0.7;
+}
+
+/* ── 헤더 카드 ── */
+.headerCard {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 24px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 32px;
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    box-shadow: 0 8px 24px rgba(234, 179, 8, 0.12);
+}
+
+.duckEmoji {
+    font-size: 56px;
+    margin-bottom: 12px;
+    display: block;
+    animation: duckBob 2s ease-in-out infinite;
+}
+
+@keyframes duckBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.headerTitle {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #451a03;
+    margin-bottom: 6px;
+}
+
+.headerSub {
+    font-size: 0.95rem;
+    color: #92400e;
+    font-weight: 600;
+}
+
+.orderId {
+    display: inline-block;
+    margin-top: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #78350f;
+}
+
+/* ── 프로그레스 트래커 ── */
+.tracker {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 40px 32px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(234, 179, 8, 0.15);
+    margin-bottom: 24px;
+}
+
+.steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    padding: 0 12px;
+}
+
+/* 연결 라인 (배경) */
+.steps::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 40px;
+    right: 40px;
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    z-index: 0;
+}
+
+/* 연결 라인 (진행) */
+.progressLine {
+    position: absolute;
+    top: 28px;
+    left: 40px;
+    height: 4px;
+    background: linear-gradient(90deg, #ca8a04 0%, #eab308 100%);
+    border-radius: 2px;
+    z-index: 1;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+
+.stepCircle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 12px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 3px solid transparent;
+}
+
+.stepInactive {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+}
+
+.stepActive {
+    background: linear-gradient(135deg, #fde047 0%, #eab308 100%);
+    border-color: #ca8a04;
+    box-shadow: 0 0 0 6px rgba(234, 179, 8, 0.2);
+    animation: stepPulse 2s ease-in-out infinite;
+}
+
+.stepCompleted {
+    background: #ca8a04;
+    border-color: #a16207;
+}
+
+.stepCancelled {
+    background: #fecaca;
+    border-color: #f87171;
+}
+
+@keyframes stepPulse {
+    0%, 100% { box-shadow: 0 0 0 6px rgba(234, 179, 8, 0.2); }
+    50% { box-shadow: 0 0 0 12px rgba(234, 179, 8, 0.1); }
+}
+
+.stepLabel {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #9ca3af;
+    text-align: center;
+    transition: color 0.3s;
+}
+
+.stepLabelActive {
+    color: #ca8a04;
+}
+
+.stepLabelCompleted {
+    color: #451a03;
+}
+
+.stepTime {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+/* ── 상태 메시지 카드 ── */
+.statusMessage {
+    background: #fefce8;
+    border: 2px dashed #fde047;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 24px;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.statusEmoji {
+    font-size: 40px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.statusText {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #78350f;
+    line-height: 1.6;
+}
+
+.estimatedTime {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ca8a04;
+}
+
+/* ── 주문 상세 카드 ── */
+.detailCard {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(234, 179, 8, 0.12);
+    margin-bottom: 24px;
+}
+
+.detailTitle {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #451a03;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.itemList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #fafaf9;
+    border-radius: 12px;
+}
+
+.itemInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.itemName {
+    font-weight: 700;
+    color: #451a03;
+    font-size: 0.95rem;
+}
+
+.itemOptions {
+    font-size: 0.8rem;
+    color: #78350f;
+}
+
+.itemPrice {
+    font-weight: 800;
+    color: #ca8a04;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.totalRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 2px solid #fef3c7;
+}
+
+.totalLabel {
+    font-weight: 800;
+    color: #451a03;
+    font-size: 1.1rem;
+}
+
+.totalValue {
+    font-weight: 900;
+    color: #ca8a04;
+    font-size: 1.4rem;
+}
+
+/* ── 버튼 그룹 ── */
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+.primaryBtn {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #ca8a04;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.primaryBtn:hover {
+    background: #a16207;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(202, 138, 4, 0.3);
+}
+
+.secondaryBtn {
+    flex: 1;
+    padding: 16px;
+    border: 2px solid #fde047;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fefce8;
+    color: #854d0e;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.secondaryBtn:hover {
+    background: #fef08a;
+    transform: translateY(-2px);
+}
+
+/* ── 로딩/에러 ── */
+.loadingState {
+    text-align: center;
+    padding: 100px 24px;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #fef08a;
+    border-top-color: #ca8a04;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loadingText {
+    font-weight: 700;
+    color: #78350f;
+    font-size: 1.1rem;
+}
+
+/* ── 취소 상태 ── */
+.cancelledBanner {
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.cancelledText {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #991b1b;
+}
+
+/* ── 모바일 반응형 ── */
+@media (max-width: 640px) {
+    .container {
+        padding: 100px 16px 60px;
+    }
+
+    .headerCard {
+        padding: 24px;
+    }
+
+    .headerTitle {
+        font-size: 1.3rem;
+    }
+
+    .tracker {
+        padding: 28px 16px;
+    }
+
+    .stepCircle {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+    }
+
+    .steps::before {
+        left: 28px;
+        right: 28px;
+        top: 22px;
+    }
+
+    .progressLine {
+        left: 28px;
+        top: 22px;
+    }
+
+    .stepLabel {
+        font-size: 0.75rem;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+}

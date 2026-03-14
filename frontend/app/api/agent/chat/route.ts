@@ -17,8 +17,9 @@ export async function POST(req: NextRequest) {
         // Spring Boot JWT를 Authorization 헤더로 전달해줍니다.
         // ──────────────────────────────────────────
         const session = await getSession();
-        const apiAuthToken = session.token; 
-        console.log('[AgentChat API] Auth token present:', !!apiAuthToken);
+        const apiAuthToken = session.token;
+        const userRole = session.user?.role || 'GUEST';
+        console.log('[AgentChat API] Auth token present:', !!apiAuthToken, 'Role:', userRole);
 
         const agentUrl = new URL(`${AGENT_BASE}/chat`);
         console.log('[AgentChat API] Target:', agentUrl.toString());
@@ -29,6 +30,7 @@ export async function POST(req: NextRequest) {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
+                    'X-User-Role': userRole,
                     ...(apiAuthToken ? { 'Authorization': `Bearer ${apiAuthToken}` } : {})
                 },
                 body: payload,
@@ -59,6 +61,7 @@ export async function POST(req: NextRequest) {
                     headers: {
                         'Content-Type': 'application/json',
                         'Content-Length': Buffer.byteLength(payload),
+                        'X-User-Role': userRole,
                         ...(apiAuthToken ? { 'Authorization': `Bearer ${apiAuthToken}` } : {})
                     },
                 },

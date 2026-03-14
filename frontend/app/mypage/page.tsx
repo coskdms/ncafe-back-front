@@ -3,15 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import styles from './MyPage.module.css';
 import { useAuthStore } from '@/stores/authStore';
-import { Bell, ChevronDown, Sparkles } from 'lucide-react';
+import { Bell, ChevronDown, Sparkles, Heart, Trash2 } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
-import { memberAPI, orderAPI, fetchAPI } from '@/app/lib/api';
+import { memberAPI, orderAPI, fetchAPI, favoriteAPI } from '@/app/lib/api';
 import { toast } from '@/stores/toastStore';
 import { isValidPhone, isValidAddress, validatePassword } from '@/utils/validators';
 import { openAddressSearch } from '@/utils/addressSearch';
+import { useFavoriteStore } from '@/stores/favoriteStore';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Script from 'next/script';
 
 declare global {
@@ -60,8 +62,11 @@ export default function MyPage() {
     const [shopSettings, setShopSettings] = useState<any>(null);
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'orders' | 'settings'>('orders');
+    const [activeTab, setActiveTab] = useState<'orders' | 'favorites' | 'settings'>('orders');
     const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
+    const [favoriteMenus, setFavoriteMenus] = useState<any[]>([]);
+    const [isFavLoading, setIsFavLoading] = useState(false);
+    const { loadFavorites, toggleFavorite } = useFavoriteStore();
 
     // 결제 선택 모달 관련 상태
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -419,6 +424,26 @@ export default function MyPage() {
                         주문 내역
                     </div>
                     <div 
+                        className={`${styles.tab} ${activeTab === 'favorites' ? styles.activeTab : ''}`}
+                        onClick={async () => {
+                            setActiveTab('favorites');
+                            setIsFavLoading(true);
+                            try {
+                                const ids: number[] = await favoriteAPI.getIds();
+                                if (ids && ids.length > 0) {
+                                    const menusRes = await fetchAPI('/menus');
+                                    const allMenus = menusRes?.menus || [];
+                                    setFavoriteMenus(allMenus.filter((m: any) => ids.includes(m.id)));
+                                } else {
+                                    setFavoriteMenus([]);
+                                }
+                            } catch { setFavoriteMenus([]); }
+                            setIsFavLoading(false);
+                        }}
+                    >
+                        ❤️ 찜 목록
+                    </div>
+                    <div 
                         className={`${styles.tab} ${activeTab === 'settings' ? styles.activeTab : ''}`}
                         onClick={() => setActiveTab('settings')}
                     >
@@ -426,7 +451,62 @@ export default function MyPage() {
                     </div>
                 </div>
 
-                {activeTab === 'orders' ? (
+                {activeTab === 'favorites' ? (
+                    <section>
+                        {isFavLoading ? (
+                            <div className={styles.emptyState}>불러오는 중... 🐤</div>
+                        ) : favoriteMenus.length === 0 ? (
+                            <div className={styles.emptyState}>
+                                아직 찜한 메뉴가 없어요! <br/>
+                                메뉴를 둘러보면서 ❤️를 눌러보세요 🐤
+                                <br/><br/>
+                                <Link href="/menus" style={{
+                                    display: 'inline-block',
+                                    padding: '12px 28px',
+                                    background: '#f59e0b',
+                                    color: '#fff',
+                                    borderRadius: '999px',
+                                    fontWeight: 700,
+                                    textDecoration: 'none'
+                                }}>메뉴 보러가기</Link>
+                            </div>
+                        ) : (
+                            <div className={styles.favoriteGrid}>
+                                {favoriteMenus.map((menu: any) => {
+                                    const firstImage = menu.imagesSrc
+                                        ? menu.imagesSrc.split(',')[0].trim()
+                                        : 'blank.png';
+                                    return (
+                                        <div key={menu.id} className={styles.favoriteCard}>
+                                            <Link href={`/menus/${menu.id}`} className={styles.favLink}>
+                                                <img
+                                                    src={`/images/${firstImage}`}
+                                                    alt={menu.korName}
+                                                    className={styles.favImage}
+                                                    onError={(e) => { (e.target as HTMLImageElement).src = '/images/blank.png'; }}
+                                                />
+                                                <div className={styles.favInfo}>
+                                                    <h4 className={styles.favName}>{menu.korName}</h4>
+                                                    <span className={styles.favPrice}>{menu.price?.toLocaleString()}원</span>
+                                                </div>
+                                            </Link>
+                                            <button
+                                                className={styles.favRemoveBtn}
+                                                onClick={async () => {
+                                                    await toggleFavorite(menu.id);
+                                                    setFavoriteMenus(prev => prev.filter(m => m.id !== menu.id));
+                                                    toast.info(`${menu.korName} 찜 해제 🤍`);
+                                                }}
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </section>
+                ) : activeTab === 'orders' ? (
                     <section>
                         {orders.length === 0 ? (
                             <div className={styles.emptyState}>
@@ -509,6 +589,15 @@ export default function MyPage() {
                                                 >
                                                     재주문
                                                 </button>
+                                                {(order.status === 'PAID' || order.status === 'PREPARING') && (
+                                                    <button 
+                                                        className={styles.reorderBtn}
+                                                        style={{ background: '#ca8a04', color: 'white', borderColor: '#ca8a04' }}
+                                                        onClick={() => router.push(`/orders/${order.paymentId}`)}
+                                                    >
+                                                        📱 현황 보기
+                                                    </button>
+                                                )}
                                                 {order.status === 'PAID' && 
                                                  (new Date().getTime() - new Date(order.createdAt).getTime() < 24 * 60 * 60 * 1000) && (
                                                     <button 

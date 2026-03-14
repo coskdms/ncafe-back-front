@@ -759,3 +759,87 @@
     transform: translateY(-2px);
 }
 
+/* ❤️ 찜 목록 */
+.favoriteGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-4);
+}
+
+.favoriteCard {
+    background: white;
+    border-radius: 20px;
+    border: 2px solid #fef3c7;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.favoriteCard:hover {
+    border-color: #fbbf24;
+    box-shadow: 0 8px 20px rgba(251, 191, 36, 0.15);
+    transform: translateY(-4px);
+}
+
+.favLink {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.favImage {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.favInfo {
+    padding: var(--space-3) var(--space-4);
+}
+
+.favName {
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: #451a03;
+    margin-bottom: 4px;
+}
+
+.favPrice {
+    font-size: var(--text-sm);
+    font-weight: 800;
+    color: #b45309;
+}
+
+.favRemoveBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ef4444;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.favRemoveBtn:hover {
+    background: #fee2e2;
+    transform: scale(1.1);
+}
+
+@media (max-width: 640px) {
+    .favoriteGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+    }
+    .favImage {
+        height: 120px;
+    }
+}

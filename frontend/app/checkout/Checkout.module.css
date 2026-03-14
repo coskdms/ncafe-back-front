@@ -243,7 +243,8 @@
 /* 오른쪽: 결제 요약 카드 */
 .summaryCard {
     position: sticky;
-    top: 100px;
+    top: 90px;
+    align-self: start;
 }
 
 .summaryRow {

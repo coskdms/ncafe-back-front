@@ -6,6 +6,8 @@ import Footer from '@/components/landing/Footer';
 import { Search } from 'lucide-react';
 import CategoryTabs from './_components/CategoryTabs/CategoryTabs';
 import MenuList from './_components/MenuList/MenuList';
+import { useAuthStore } from '@/stores/authStore';
+import { useFavoriteStore } from '@/stores/favoriteStore';
 import styles from './menus.module.css';
 
 const PsyduckIcon = () => (
@@ -36,6 +38,15 @@ export default function MenusPage() {
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [searchInput, setSearchInput] = useState('');
     const [appliedSearchQuery, setAppliedSearchQuery] = useState('');
+    const { isAuthenticated } = useAuthStore();
+    const { loadFavorites, isLoaded } = useFavoriteStore();
+
+    // 로그인 상태면 찜 목록 로드
+    useEffect(() => {
+        if (isAuthenticated && !isLoaded) {
+            loadFavorites();
+        }
+    }, [isAuthenticated, isLoaded, loadFavorites]);
 
     // 입력할 때마다 검색되도록 디바운스 적용 (300ms)
     useEffect(() => {

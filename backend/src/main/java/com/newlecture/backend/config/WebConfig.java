@@ -1,10 +1,11 @@
 package com.newlecture.backend.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-// CORS 설정을 위한 configuration
+// CORS 설정 + SSE 비동기 지원을 위한 configuration
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
@@ -20,5 +21,14 @@ public class WebConfig implements WebMvcConfigurer {
             org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:./upload/images/");
+    }
+
+    /**
+     * SSE를 위한 비동기 요청 타임아웃 설정 (10분)
+     * 기본값 30초로는 SSE 연결이 너무 빨리 끊김
+     */
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+        configurer.setDefaultTimeout(600000); // 10분
     }
 }

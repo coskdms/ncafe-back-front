@@ -5,6 +5,7 @@ import com.newlecture.backend.auth.application.port.out.MemberRepository;
 import com.newlecture.backend.auth.domain.Member;
 import com.newlecture.backend.auth.application.service.MemberService;
 import com.newlecture.backend.admin.notification.application.service.NotificationService;
+import com.newlecture.backend.admin.notification.application.service.SseNotificationService;
 
 import com.newlecture.backend.order.adapter.in.web.dto.OrderCreateRequest;
 import com.newlecture.backend.order.adapter.out.persistence.entity.OrderJpaEntity;
@@ -34,6 +35,7 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final NotificationService notificationService;
+    private final SseNotificationService sseNotificationService;
     private final PortOneService portOneService;
 
     private final ObjectMapper objectMapper;
@@ -58,7 +60,8 @@ public class OrderService {
         OrderJpaEntity order = orderRepository.findByPaymentId(paymentId)
                 .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
 
-        if (order.getStatus() == OrderStatus.PAID) return; // 이미 처리됨
+        // PENDING → PAID 전환만 허용. 이미 PAID/PREPARING/COMPLETED/CANCELLED라면 아무것도 하지 않음.
+        if (order.getStatus() != OrderStatus.PENDING) return;
 
         order.setStatus(OrderStatus.PAID);
         orderRepository.save(order);
@@ -75,6 +78,18 @@ public class OrderService {
             orderSummary + " / ₩" + String.format("%,d", order.getTotalPrice()), 
             "/admin/orders"
         );
+
+        // SSE: 관리자들에게 실시간 알림 📡
+        try {
+            sseNotificationService.notifyAdmins("new_order", java.util.Map.of(
+                "paymentId", paymentId,
+                "summary", orderSummary,
+                "totalPrice", order.getTotalPrice(),
+                "message", "새 주문이 들어왔다덕! 🐤 " + orderSummary
+            ));
+        } catch (Exception e) {
+            // SSE 실패는 주문 처리에 영향 없음
+        }
     }
 
 
