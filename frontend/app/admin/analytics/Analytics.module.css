@@ -44,12 +44,66 @@
     transition: all 0.2s;
     background: transparent;
     color: #78350f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
 .periodTabActive {
     background: #ca8a04;
     color: white;
     box-shadow: 0 2px 8px rgba(202, 138, 4, 0.3);
+}
+
+/* ── 커스텀 날짜 선택 ── */
+.customDateRange {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: #fefce8;
+    border-radius: 12px;
+    border: 1px solid #fde68a;
+}
+
+.dateField {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.dateField label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #78350f;
+}
+
+.dateInput {
+    padding: 8px 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #451a03;
+    background: white;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+.dateInput:focus {
+    border-color: #ca8a04;
+    box-shadow: 0 0 0 3px rgba(202, 138, 4, 0.1);
+}
+
+.dateSeparator {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #78350f;
+    padding-bottom: 8px;
 }
 
 /* ── 인기 메뉴 리스트 ── */

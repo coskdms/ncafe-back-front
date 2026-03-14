@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { TrendingUp, BarChart3, Award, ShoppingBag } from 'lucide-react';
+import { TrendingUp, BarChart3, Award, ShoppingBag, Calendar } from 'lucide-react';
 import { fetchAPI } from '@/app/lib/api';
 import styles from './Analytics.module.css';
+import common from '../common.module.css';
 
 interface OrderItem {
     id: number;
@@ -23,12 +24,18 @@ interface Order {
     items: OrderItem[];
 }
 
-type Period = '7days' | '30days' | 'all';
+type Period = '7days' | '30days' | 'all' | 'custom';
 
 export default function AnalyticsPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [period, setPeriod] = useState<Period>('7days');
+    
+    // 커스텀 날짜
+    const today = new Date().toISOString().split('T')[0];
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const [customStart, setCustomStart] = useState(weekAgo);
+    const [customEnd, setCustomEnd] = useState(today);
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -54,6 +61,8 @@ export default function AnalyticsPage() {
     const filteredOrders = useMemo(() => {
         const now = new Date();
         let cutoff: Date;
+        let endDate: Date | null = null;
+        
         switch (period) {
             case '7days':
                 cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -61,21 +70,41 @@ export default function AnalyticsPage() {
             case '30days':
                 cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
                 break;
+            case 'custom':
+                cutoff = new Date(customStart + 'T00:00:00');
+                endDate = new Date(customEnd + 'T23:59:59');
+                break;
             default:
                 cutoff = new Date(0);
         }
-        return validOrders.filter(o => new Date(o.createdAt) >= cutoff);
-    }, [validOrders, period]);
+        return validOrders.filter(o => {
+            const d = new Date(o.createdAt);
+            return d >= cutoff && (endDate ? d <= endDate : true);
+        });
+    }, [validOrders, period, customStart, customEnd]);
 
     // ── 일별 매출 집계 ──
     const dailySales = useMemo(() => {
         const map = new Map<string, { date: string; sales: number; count: number }>();
-        const days = period === '7days' ? 7 : period === '30days' ? 30 : 14;
+        
+        let days: number;
+        let startDate: Date;
+        
+        if (period === 'custom') {
+            const start = new Date(customStart);
+            const end = new Date(customEnd);
+            days = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1);
+            startDate = start;
+        } else {
+            days = period === '7days' ? 7 : period === '30days' ? 30 : 14;
+            startDate = new Date();
+            startDate.setDate(startDate.getDate() - (days - 1));
+        }
 
         // 빈 날짜 채우기
-        for (let i = days - 1; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
+        for (let i = 0; i < days; i++) {
+            const d = new Date(startDate);
+            d.setDate(d.getDate() + i);
             const key = d.toISOString().split('T')[0];
             map.set(key, { date: key, sales: 0, count: 0 });
         }
@@ -90,7 +119,7 @@ export default function AnalyticsPage() {
         }
 
         return Array.from(map.values());
-    }, [filteredOrders, period]);
+    }, [filteredOrders, period, customStart, customEnd]);
 
     // ── 인기 메뉴 TOP 5 ──
     const topMenus = useMemo(() => {
@@ -155,14 +184,12 @@ export default function AnalyticsPage() {
     }));
 
     return (
-        <div style={{ maxWidth: '900px' }}>
-            <header style={{ marginBottom: '28px' }}>
-                <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#451a03', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <BarChart3 size={28} /> 매출 분석 대시보드
-                </h1>
-                <p style={{ color: '#78350f', fontWeight: 600, marginTop: '4px' }}>
-                    파덕이가 매출 데이터를 분석해 드린다덕! 🐤
-                </p>
+        <div className={common.pageContainer}>
+            <header className={common.pageHeader}>
+                <div className={common.pageHeaderTitle}>
+                    <h1>매출 분석</h1>
+                    <p>기간별 매출 데이터를 한눈에 확인하세요 📊</p>
+                </div>
             </header>
 
             {/* 기간 선택 */}
@@ -171,16 +198,46 @@ export default function AnalyticsPage() {
                     { key: '7days' as Period, label: '최근 7일' },
                     { key: '30days' as Period, label: '최근 30일' },
                     { key: 'all' as Period, label: '전체' },
+                    { key: 'custom' as Period, label: '직접 설정' },
                 ]).map(tab => (
                     <button
                         key={tab.key}
                         className={`${styles.periodTab} ${period === tab.key ? styles.periodTabActive : ''}`}
                         onClick={() => setPeriod(tab.key)}
                     >
+                        {tab.key === 'custom' && <Calendar size={14} />}
                         {tab.label}
                     </button>
                 ))}
             </div>
+
+            {/* 커스텀 날짜 선택 */}
+            {period === 'custom' && (
+                <div className={styles.customDateRange}>
+                    <div className={styles.dateField}>
+                        <label>시작일</label>
+                        <input
+                            type="date"
+                            value={customStart}
+                            max={customEnd}
+                            onChange={e => setCustomStart(e.target.value)}
+                            className={styles.dateInput}
+                        />
+                    </div>
+                    <span className={styles.dateSeparator}>~</span>
+                    <div className={styles.dateField}>
+                        <label>종료일</label>
+                        <input
+                            type="date"
+                            value={customEnd}
+                            min={customStart}
+                            max={today}
+                            onChange={e => setCustomEnd(e.target.value)}
+                            className={styles.dateInput}
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* 요약 통계 */}
             <div className={styles.summaryGrid}>

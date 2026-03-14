@@ -4,8 +4,16 @@ import { useState } from 'react';
 import styles from './SignupForm.module.css';
 import { validateNickname, validatePassword, getPasswordStrength } from '@/utils/validators';
 
+const SECURITY_QUESTIONS = [
+    '처음 키운 반려동물의 이름은?',
+    '졸업한 초등학교 이름은?',
+    '어릴 때 별명은?',
+    '가장 좋아하는 음식은?',
+    '태어난 도시는?',
+];
+
 interface SignupFormProps {
-    onSignup: (nickname: string, password: string) => void;
+    onSignup: (nickname: string, password: string, phone: string, securityQuestion: string, securityAnswer: string) => void;
     error?: string;
     isLoading?: boolean;
 }
@@ -14,22 +22,39 @@ export default function SignupForm({ onSignup, error, isLoading }: SignupFormPro
     const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
+    const [phone, setPhone] = useState('');
+    const [securityQuestion, setSecurityQuestion] = useState('');
+    const [securityAnswer, setSecurityAnswer] = useState('');
 
     const nicknameValidation = nickname.length > 0 ? validateNickname(nickname) : null;
     const passwordValidation = password.length > 0 ? validatePassword(password) : null;
     const passwordStrength = getPasswordStrength(password);
     const passwordMismatch = passwordConfirm.length > 0 && password !== passwordConfirm;
 
+    const phoneValid = /^01[016789]\d{7,8}$/.test(phone.replace(/-/g, ''));
+
     const isFormValid = 
         nicknameValidation?.isValid && 
         passwordValidation?.isValid && 
         !passwordMismatch && 
-        passwordConfirm.length > 0;
+        passwordConfirm.length > 0 &&
+        phoneValid &&
+        securityQuestion.length > 0 &&
+        securityAnswer.trim().length > 0;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!isFormValid) return;
-        onSignup(nickname, password);
+        const cleanPhone = phone.replace(/-/g, '');
+        onSignup(nickname, password, cleanPhone, securityQuestion, securityAnswer.trim());
+    };
+
+    // 전화번호 자동 하이픈
+    const handlePhoneChange = (value: string) => {
+        const nums = value.replace(/[^\d]/g, '').slice(0, 11);
+        if (nums.length <= 3) setPhone(nums);
+        else if (nums.length <= 7) setPhone(`${nums.slice(0, 3)}-${nums.slice(3)}`);
+        else setPhone(`${nums.slice(0, 3)}-${nums.slice(3, 7)}-${nums.slice(7)}`);
     };
 
     return (
@@ -95,6 +120,50 @@ export default function SignupForm({ onSignup, error, isLoading }: SignupFormPro
                     <span className={styles.fieldError}>비밀번호가 일치하지 않습니다</span>
                 )}
             </div>
+            <div className={styles.inputGroup}>
+                <label htmlFor="signup-phone" className={styles.label}>전화번호</label>
+                <input
+                    id="signup-phone"
+                    type="tel"
+                    className={`${styles.input} ${phone.length > 0 && !phoneValid ? styles.inputError : ''}`}
+                    value={phone}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="010-1234-5678"
+                    required
+                />
+                {phone.length > 0 && !phoneValid && (
+                    <span className={styles.fieldError}>올바른 전화번호를 입력해주세요</span>
+                )}
+            </div>
+            <div className={styles.inputGroup}>
+                <label htmlFor="signup-security-q" className={styles.label}>보안 질문</label>
+                <select
+                    id="signup-security-q"
+                    className={styles.input}
+                    value={securityQuestion}
+                    onChange={(e) => setSecurityQuestion(e.target.value)}
+                    required
+                >
+                    <option value="">보안 질문을 선택하세요</option>
+                    {SECURITY_QUESTIONS.map(q => (
+                        <option key={q} value={q}>{q}</option>
+                    ))}
+                </select>
+            </div>
+            {securityQuestion && (
+                <div className={styles.inputGroup}>
+                    <label htmlFor="signup-security-a" className={styles.label}>보안 질문 답변</label>
+                    <input
+                        id="signup-security-a"
+                        type="text"
+                        className={styles.input}
+                        value={securityAnswer}
+                        onChange={(e) => setSecurityAnswer(e.target.value)}
+                        placeholder="답변을 입력하세요"
+                        required
+                    />
+                </div>
+            )}
             {error && <p className={styles.error}>{error}</p>}
             <button type="submit" className={styles.button} disabled={isLoading || !isFormValid}>
                 {isLoading ? '가입 중...' : '회원가입'}

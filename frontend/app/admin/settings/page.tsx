@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Truck, Coins, ShieldCheck, Info } from 'lucide-react';
 import styles from './Settings.module.css';
+import common from '../common.module.css';
 import { fetchAPI } from '@/app/lib/api';
 import Button from '@/components/common/Button/Button';
 import { toast } from '@/stores/toastStore';
@@ -101,17 +102,16 @@ export default function AdminSettingsPage() {
     if (!settings) return null;
 
     return (
-        <main className={styles.container}>
-            <header className={styles.header}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div>
-                        <h1>관리자 설정 🐤⚙️</h1>
-                        <p>매장의 기본 정보와 운영 정책을 관리하세요.</p>
-                    </div>
+        <main className={common.pageContainer}>
+            <header className={common.pageHeader}>
+                <div className={common.pageHeaderTitle}>
+                    <h1>관리자 설정</h1>
+                    <p>매장의 기본 정보와 운영 정책을 관리하세요 ⚙️</p>
+                </div>
+                <div className={common.pageHeaderActions}>
                     <button 
                         onClick={() => handleSave()} 
-                        className={styles.saveBtn}
-                        style={{ padding: '0.6rem 1.2rem', fontSize: '0.9rem' }}
+                        className={common.primaryButton}
                         disabled={isSaving}
                     >
                         <Save size={18} />

@@ -6,21 +6,21 @@ import { Plus, Search } from 'lucide-react';
 import MenuList from './_components/MenuList/MenuList';
 import CategoryTabs from '../_components/category/CategoryTabs/CategoryTabs';
 import styles from './page.module.css';
+import common from '../common.module.css';
 
 export default function MenusPage() {
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
 
     return (
-        <main className={styles.container}>
-            {/* 헤더 섹션: 카테고리 관리와 동일한 스타일 */}
-            <header className={styles.header}>
-                <div className={styles.titleSection}>
+        <main className={common.pageContainer}>
+            <header className={common.pageHeader}>
+                <div className={common.pageHeaderTitle}>
                     <h1>메뉴 관리</h1>
-                    <p>맛있는 메뉴를 등록하고 관리하세요. 🍔🍰☕</p>
+                    <p>맛있는 메뉴를 등록하고 관리하세요 🍰☕</p>
                 </div>
-                <div className={styles.actionButtons}>
-                    <Link href="/admin/menus/new" className={styles.addButton}>
+                <div className={common.pageHeaderActions}>
+                    <Link href="/admin/menus/new" className={common.primaryButton}>
                         <Plus size={20} />
                         새 메뉴 추가
                     </Link>

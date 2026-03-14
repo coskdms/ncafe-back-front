@@ -39,6 +39,8 @@ public class JdbcMemberRepository implements MemberRepository {
             .socialId(rs.getString("social_id"))
             .address(rs.getString("address"))
             .phone(rs.getString("phone"))
+            .securityQuestion(rs.getString("security_question"))
+            .securityAnswer(rs.getString("security_answer"))
             .createdAt(rs.getTimestamp("created_at") != null
                     ? rs.getTimestamp("created_at").toLocalDateTime()
                     : null)
@@ -76,8 +78,9 @@ public class JdbcMemberRepository implements MemberRepository {
                                  last_order_date, growth_level,
                                  social_provider, social_id,
                                  address, phone,
+                                 security_question, security_answer,
                                  created_at, updated_at)
-                VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT (id) DO UPDATE SET
                     current_points = EXCLUDED.current_points,
                     total_accumulated_points = EXCLUDED.total_accumulated_points,
@@ -85,6 +88,8 @@ public class JdbcMemberRepository implements MemberRepository {
                     growth_level = EXCLUDED.growth_level,
                     address = EXCLUDED.address,
                     phone = EXCLUDED.phone,
+                    security_question = EXCLUDED.security_question,
+                    security_answer = EXCLUDED.security_answer,
                     updated_at = CURRENT_TIMESTAMP
                 """;
         
@@ -103,6 +108,8 @@ public class JdbcMemberRepository implements MemberRepository {
                 member.getSocialId(),
                 member.getAddress(),
                 member.getPhone(),
+                member.getSecurityQuestion(),
+                member.getSecurityAnswer(),
                 member.getCreatedAt() != null ? member.getCreatedAt() : LocalDateTime.now(),
                 member.getUpdatedAt() != null ? member.getUpdatedAt() : LocalDateTime.now());
 
@@ -115,5 +122,12 @@ public class JdbcMemberRepository implements MemberRepository {
         String sql = "SELECT COUNT(*) FROM users WHERE nickname = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, nickname);
         return count != null && count > 0;
+    }
+
+    @Override
+    public Optional<Member> findByPhone(String phone) {
+        String sql = "SELECT * FROM users WHERE phone = ? AND social_provider = 'LOCAL'";
+        List<Member> members = jdbcTemplate.query(sql, memberRowMapper, phone);
+        return members.stream().findFirst();
     }
 }

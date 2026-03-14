@@ -1,0 +1,98 @@
+/* ================================================
+   공통 Admin 페이지 헤더 & 레이아웃 스타일
+   모든 관리자 페이지에서 import하여 통일감 유지
+   ================================================ */
+
+.pageContainer {
+    padding: var(--space-6);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ── 페이지 헤더 ── */
+.pageHeader {
+    margin-bottom: var(--space-8);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-4);
+}
+
+.pageHeaderTitle h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1a1a1b;
+    margin-bottom: 4px;
+}
+
+.pageHeaderTitle p {
+    font-size: 0.9rem;
+    color: #78716c;
+    font-weight: 500;
+}
+
+/* ── 헤더 액션 버튼 ── */
+.pageHeaderActions {
+    display: flex;
+    gap: var(--space-3);
+    flex-shrink: 0;
+}
+
+.primaryButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ca8a04;
+    color: white;
+    padding: 0.65rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(202, 138, 4, 0.2);
+    text-decoration: none;
+}
+
+.primaryButton:hover {
+    background: #a16207;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(202, 138, 4, 0.3);
+}
+
+.secondaryButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    color: #ca8a04;
+    padding: 0.65rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: 2px solid #ca8a04;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.secondaryButton:hover {
+    background: #fefce8;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 640px) {
+    .pageHeader {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pageHeaderActions {
+        justify-content: flex-end;
+    }
+
+    .pageHeaderTitle h1 {
+        font-size: 1.5rem;
+    }
+}

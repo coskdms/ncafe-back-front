@@ -85,4 +85,63 @@ public class AuthService implements AuthUseCase {
                     return memberRepository.save(newMember);
                 });
     }
+
+    /**
+     * 전화번호로 아이디 찾기 → 마스킹된 닉네임 반환
+     */
+    public String findIdByPhone(String phone) {
+        Member member = memberRepository.findByPhone(phone)
+                .orElseThrow(() -> new IllegalArgumentException("등록된 전화번호가 없습니다."));
+        return maskNickname(member.getNickname());
+    }
+
+    /**
+     * 비밀번호 찾기 1단계: 닉네임 + 전화번호 → 보안질문 반환
+     */
+    public String getSecurityQuestion(String nickname, String phone) {
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+
+        if (member.getPhone() == null || !member.getPhone().equals(phone)) {
+            throw new IllegalArgumentException("등록된 전화번호와 일치하지 않습니다.");
+        }
+
+        if (member.getSecurityQuestion() == null) {
+            throw new IllegalArgumentException("보안 질문이 설정되지 않은 계정입니다.");
+        }
+
+        return member.getSecurityQuestion();
+    }
+
+    /**
+     * 비밀번호 찾기 2단계: 보안질문 답변 검증 + 비밀번호 재설정
+     */
+    public void resetPassword(String nickname, String phone, String securityAnswer, String newPassword) {
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+
+        if (member.getPhone() == null || !member.getPhone().equals(phone)) {
+            throw new IllegalArgumentException("등록된 전화번호와 일치하지 않습니다.");
+        }
+
+        if (member.getSecurityAnswer() == null || !member.getSecurityAnswer().equals(securityAnswer)) {
+            throw new IllegalArgumentException("보안 질문 답변이 일치하지 않습니다.");
+        }
+
+        member.setPassword(passwordEncoder.encode(newPassword));
+        member.setUpdatedAt(LocalDateTime.now());
+        memberRepository.save(member);
+    }
+
+    /**
+     * 닉네임 마스킹: chaena → ch***a
+     */
+    private String maskNickname(String nickname) {
+        if (nickname == null || nickname.length() <= 2) return nickname;
+        int len = nickname.length();
+        int show = Math.max(2, len / 3);
+        String start = nickname.substring(0, show);
+        String end = nickname.substring(len - 1);
+        return start + "*".repeat(len - show - 1) + end;
+    }
 }

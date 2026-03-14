@@ -38,6 +38,9 @@ public class Member {
     private String address;
     private String phone;
     
+    private String securityQuestion;
+    private String securityAnswer;
+    
     @Builder.Default
     private Boolean isActive = true;
 

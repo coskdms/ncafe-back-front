@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import LoginForm from './_components/LoginForm/LoginForm';
 import SignupForm from './_components/SignupForm/SignupForm';
 import styles from './page.module.css';
+import Link from 'next/link';
 
 type Tab = 'login' | 'signup';
 
@@ -36,7 +37,7 @@ function LoginContent() {
         }
     };
 
-    const handleSignup = async (nickname: string, password: string) => {
+    const handleSignup = async (nickname: string, password: string, phone: string, securityQuestion: string, securityAnswer: string) => {
         setError('');
         setIsLoading(true);
 
@@ -44,7 +45,7 @@ function LoginContent() {
             const res = await fetch('/api/auth/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nickname, password }),
+                body: JSON.stringify({ nickname, password, phone, securityQuestion, securityAnswer }),
             });
 
             if (!res.ok) {
@@ -121,6 +122,11 @@ function LoginContent() {
                             </svg>
                             카카오 로그인
                         </button>
+                        <div className={styles.findLinks}>
+                            <Link href="/login/find-id">아이디 찾기</Link>
+                            <span>|</span>
+                            <Link href="/login/find-password">비밀번호 찾기</Link>
+                        </div>
                     </>
                 ) : (
                     <SignupForm onSignup={handleSignup} error={error} isLoading={isLoading} />

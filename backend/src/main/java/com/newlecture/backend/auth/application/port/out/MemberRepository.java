@@ -28,4 +28,9 @@ public interface MemberRepository {
      */
     Optional<Member> findBySocialId(String provider, String socialId);
 
+    /**
+     * 전화번호로 회원 조회 (아이디 찾기용)
+     */
+    Optional<Member> findByPhone(String phone);
+
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FileText, Upload, Plus, Loader2, BookOpen, Edit2, Trash2, Eye, RotateCcw, X } from 'lucide-react';
 import styles from './page.module.css';
+import common from '../common.module.css';
 import { toast } from '@/stores/toastStore';
 import { extractErrorMessage } from '@/utils/errorMessage';
 
@@ -236,8 +237,13 @@ export default function RagManagementPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>RAG 문서 관리</h1>
+    <div className={common.pageContainer}>
+      <header className={common.pageHeader}>
+        <div className={common.pageHeaderTitle}>
+          <h1>RAG 문서 관리</h1>
+          <p>AI 에이전트가 참조할 지식 문서를 관리하세요 📚</p>
+        </div>
+      </header>
 
       <div className={styles.layout}>
         {/* List Section */}

@@ -18,6 +18,7 @@ import {
     RefreshCw
 } from 'lucide-react';
 import styles from './Orders.module.css';
+import common from '../common.module.css';
 import { fetchAPI } from '@/app/lib/api';
 import Button from '@/components/common/Button/Button';
 import { toast } from '@/stores/toastStore';
@@ -173,17 +174,19 @@ export default function AdminOrdersPage() {
     const pendingOrders = orders.filter(o => o.status === 'PAID' || o.status === 'PREPARING').length;
 
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <div className={styles.titleSection}>
-                    <h1>주문 관리 🐤📋</h1>
-                    <p>우리 매장의 실시간 주문 현황을 확인하고 관리하세요.</p>
+        <div className={common.pageContainer}>
+            <header className={common.pageHeader}>
+                <div className={common.pageHeaderTitle}>
+                    <h1>주문 관리</h1>
+                    <p>실시간 주문 현황을 확인하고 관리하세요 📋</p>
                 </div>
-                <Button variant="outline" onClick={() => fetchOrders()}>
-                    <RefreshCw size={18} style={{ marginRight: '8px' }} />
-                    새로고침
-                </Button>
-            </div>
+                <div className={common.pageHeaderActions}>
+                    <button className={common.secondaryButton} onClick={() => fetchOrders()}>
+                        <RefreshCw size={18} />
+                        새로고침
+                    </button>
+                </div>
+            </header>
 
             <div className={styles.statsGrid}>
                 <div className={styles.statCard}>

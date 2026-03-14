@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Plus, Edit2, Trash2, GripVertical, Save, X } from 'lucide-react';
 import styles from './Categories.module.css';
+import common from '../common.module.css';
 import { toast } from '@/stores/toastStore';
 import { extractErrorMessage } from '@/utils/errorMessage';
 
@@ -174,14 +175,14 @@ export default function CategoriesPage() {
     };
 
     return (
-        <div className={styles.container}>
-            <header className={styles.header}>
-                <div className={styles.titleSection}>
+        <div className={common.pageContainer}>
+            <header className={common.pageHeader}>
+                <div className={common.pageHeaderTitle}>
                     <h1>카테고리 관리</h1>
-                    <p>메뉴 테마와 카테고리를 자유롭게 구성하세요. ☕</p>
+                    <p>메뉴 테마와 카테고리를 자유롭게 구성하세요 ☕</p>
                 </div>
-                <div className={styles.actionButtons}>
-                    <button className={styles.addButton} onClick={openAddModal}>
+                <div className={common.pageHeaderActions}>
+                    <button className={common.primaryButton} onClick={openAddModal}>
                         <Plus size={20} />
                         추가하기
                     </button>

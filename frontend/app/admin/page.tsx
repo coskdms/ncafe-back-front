@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
+import common from './common.module.css';
 import { fetchAPI } from '@/app/lib/api';
 import { ShoppingBag, Utensils, AlertTriangle, TrendingUp } from 'lucide-react';
 
@@ -42,11 +43,11 @@ export default function AdminDashboard() {
     }
 
     return (
-        <main className={styles.container}>
-            <header className={styles.header}>
-                <div className={styles.welcome}>
-                    <h2>안녕하세요, 사장님! 👋</h2>
-                    <p>오늘도 파덕이와 함께 번창하세요.</p>
+        <main className={common.pageContainer}>
+            <header className={common.pageHeader}>
+                <div className={common.pageHeaderTitle}>
+                    <h1>대시보드</h1>
+                    <p>안녕하세요, 사장님! 오늘도 파덕이와 함께 번창하세요 👋</p>
                 </div>
             </header>
 

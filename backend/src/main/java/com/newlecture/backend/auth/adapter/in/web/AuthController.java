@@ -4,6 +4,7 @@ import com.newlecture.backend.auth.adapter.in.web.dto.LoginRequest;
 import com.newlecture.backend.auth.adapter.in.web.dto.SignupRequest;
 import com.newlecture.backend.auth.domain.Member;
 import com.newlecture.backend.auth.application.port.in.AuthUseCase;
+import com.newlecture.backend.auth.application.AuthService;
 import com.newlecture.backend.config.JwtProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,22 +14,17 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-/**
- * JWT 기반 인증 컨트롤러 (BFF 패턴용)
- *
- * ★ 변경점: JWT를 쿠키가 아닌 JSON body로 반환
- * → Next.js BFF 서버가 JWT를 받아서 iron-session으로 암호화 관리
- * → 브라우저에는 JWT가 절대 노출되지 않음!
- */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     private final AuthUseCase authUseCase;
+    private final AuthService authService;
     private final JwtProvider jwtProvider;
 
-    public AuthController(AuthUseCase authUseCase, JwtProvider jwtProvider) {
+    public AuthController(AuthUseCase authUseCase, AuthService authService, JwtProvider jwtProvider) {
         this.authUseCase = authUseCase;
+        this.authService = authService;
         this.jwtProvider = jwtProvider;
     }
 
@@ -112,6 +108,9 @@ public class AuthController {
             Member member = Member.builder()
                     .nickname(request.getNickname())
                     .password(request.getPassword())
+                    .phone(request.getPhone())
+                    .securityQuestion(request.getSecurityQuestion())
+                    .securityAnswer(request.getSecurityAnswer())
                     .build();
 
             Member created = authUseCase.signup(member);
@@ -139,5 +138,53 @@ public class AuthController {
     public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
         boolean duplicated = authUseCase.isNicknameDuplicated(nickname);
         return ResponseEntity.ok(Map.of("duplicated", duplicated));
+    }
+
+    /**
+     * GET /v1/auth/find-id?phone=010...
+     * 전화번호로 아이디 찾기
+     */
+    @GetMapping("/find-id")
+    public ResponseEntity<?> findId(@RequestParam String phone) {
+        try {
+            String maskedNickname = authService.findIdByPhone(phone);
+            return ResponseEntity.ok(Map.of("found", true, "nickname", maskedNickname));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.ok(Map.of("found", false, "message", e.getMessage()));
+        }
+    }
+
+    /**
+     * POST /v1/auth/find-password/verify
+     * 닉네임 + 전화번호 검증 → 보안질문 반환
+     */
+    @PostMapping("/find-password/verify")
+    public ResponseEntity<?> findPasswordVerify(@RequestBody Map<String, String> request) {
+        try {
+            String nickname = request.get("nickname");
+            String phone = request.get("phone");
+            String question = authService.getSecurityQuestion(nickname, phone);
+            return ResponseEntity.ok(Map.of("verified", true, "question", question));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("verified", false, "message", e.getMessage()));
+        }
+    }
+
+    /**
+     * POST /v1/auth/find-password/reset
+     * 보안질문 답변 검증 + 비밀번호 재설정
+     */
+    @PostMapping("/find-password/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        try {
+            String nickname = request.get("nickname");
+            String phone = request.get("phone");
+            String securityAnswer = request.get("securityAnswer");
+            String newPassword = request.get("newPassword");
+            authService.resetPassword(nickname, phone, securityAnswer, newPassword);
+            return ResponseEntity.ok(Map.of("success", true, "message", "비밀번호가 변경되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
     }
 }

@@ -287,6 +287,8 @@ public class DataInitializer implements ApplicationRunner {
                 try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS social_provider VARCHAR(20) DEFAULT 'LOCAL'"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS social_id VARCHAR(100)"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS security_question VARCHAR(200)"); } catch (Exception e) {}
+                try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS security_answer VARCHAR(200)"); } catch (Exception e) {}
 
                 // 소셜 로그인 검색용 인덱스
                 try { jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS idx_users_social ON users (social_provider, social_id)"); } catch (Exception e) {}
