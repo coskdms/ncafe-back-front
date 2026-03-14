@@ -4,6 +4,7 @@ import com.newlecture.backend.auth.application.port.out.MemberRepository;
 import com.newlecture.backend.auth.domain.Member;
 import com.newlecture.backend.favorite.adapter.out.persistence.entity.FavoriteJpaEntity;
 import com.newlecture.backend.favorite.adapter.out.persistence.repository.FavoriteJpaRepository;
+import com.newlecture.backend.favorite.application.port.in.FavoriteUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class FavoriteService {
+public class FavoriteService implements FavoriteUseCase {
 
     private final FavoriteJpaRepository favoriteRepository;
     private final MemberRepository memberRepository;

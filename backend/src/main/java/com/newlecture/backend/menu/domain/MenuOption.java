@@ -1,4 +1,4 @@
-package com.newlecture.backend.entity;
+package com.newlecture.backend.menu.domain;
 
 import java.util.List;
 

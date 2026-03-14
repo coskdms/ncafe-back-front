@@ -1,7 +1,7 @@
 package com.newlecture.backend.admin.dashboard.adapter.in.web;
 
 import com.newlecture.backend.admin.dashboard.application.service.DashboardService;
-import com.newlecture.backend.admin.dashboard.dto.DashboardStatsResponse;
+import com.newlecture.backend.admin.dashboard.adapter.in.web.dto.DashboardStatsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.newlecture.backend.admin.dashboard.dto;
+package com.newlecture.backend.admin.dashboard.adapter.in.web.dto;
 
 import lombok.Builder;
 import lombok.Getter;

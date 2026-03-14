@@ -5,6 +5,7 @@ import com.newlecture.backend.auth.domain.Member;
 import com.newlecture.backend.cart.adapter.in.web.dto.CartItemAddRequest;
 import com.newlecture.backend.cart.adapter.out.persistence.entity.CartItemJpaEntity;
 import com.newlecture.backend.cart.adapter.out.persistence.repository.CartItemJpaRepository;
+import com.newlecture.backend.cart.application.port.in.CartUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CartService {
+public class CartService implements CartUseCase {
 
     private final CartItemJpaRepository cartItemRepository;
     private final MemberRepository memberRepository;

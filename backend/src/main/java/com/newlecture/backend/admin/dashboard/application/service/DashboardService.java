@@ -1,6 +1,6 @@
 package com.newlecture.backend.admin.dashboard.application.service;
 
-import com.newlecture.backend.admin.dashboard.dto.DashboardStatsResponse;
+import com.newlecture.backend.admin.dashboard.adapter.in.web.dto.DashboardStatsResponse;
 import com.newlecture.backend.admin.menu.adapter.out.persistence.repository.AdminMenuJpaRepository;
 import com.newlecture.backend.order.adapter.out.persistence.entity.OrderJpaEntity;
 import com.newlecture.backend.order.adapter.out.persistence.repository.OrderJpaRepository;
