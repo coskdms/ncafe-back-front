@@ -47,8 +47,10 @@ export default function AdminSidebar() {
         <>
             {/* Mobile Top Bar */}
             <div className={styles.mobileBar}>
-                <Link href="/admin" className={styles.mobileLogoLink}>
+                <Link href="/" className={styles.mobileLogoLink}>
                     <span className={styles.logoText}>NCafe</span>
+                </Link>
+                <Link href="/admin" className={styles.mobileLogoLink}>
                     <span className={styles.logoSub}>Admin</span>
                 </Link>
                 <button
@@ -66,8 +68,10 @@ export default function AdminSidebar() {
             {/* Sidebar */}
             <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
                 <div className={styles.logo}>
-                    <Link href="/admin">
+                    <Link href="/">
                         <span className={styles.logoText}>NCafe</span>
+                    </Link>
+                    <Link href="/admin">
                         <span className={styles.logoSub}>Admin</span>
                     </Link>
                 </div>
