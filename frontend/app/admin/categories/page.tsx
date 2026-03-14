@@ -24,6 +24,7 @@ export default function CategoriesPage() {
     const [dragIndex, setDragIndex] = useState<number | null>(null);
     const [overIndex, setOverIndex] = useState<number | null>(null);
     const dragNodeRef = useRef<HTMLDivElement | null>(null);
+    const mouseDownOnOverlayRef = useRef(false);
 
     const fetchCategories = async () => {
         try {
@@ -236,8 +237,21 @@ export default function CategoriesPage() {
 
             {/* Modal */}
             {isModalOpen && (
-                <div className={styles.modalOverlay} onClick={() => !isSaving && setIsModalOpen(false)}>
-                    <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+                <div 
+                    className={styles.modalOverlay} 
+                    onMouseDown={(e) => {
+                        // 오버레이 자체에서 mousedown이 시작된 경우만 기록
+                        if (e.target === e.currentTarget) mouseDownOnOverlayRef.current = true;
+                    }}
+                    onMouseUp={(e) => {
+                        // 오버레이에서 mousedown 시작 + 오버레이에서 mouseup → 닫기
+                        if (mouseDownOnOverlayRef.current && e.target === e.currentTarget && !isSaving) {
+                            setIsModalOpen(false);
+                        }
+                        mouseDownOnOverlayRef.current = false;
+                    }}
+                >
+                    <div className={styles.modalContent}>
                         <div className={styles.modalHeader}>
                             <h2>{editingCategory ? '카테고리 수정' : '새 카테고리 추가'}</h2>
                         </div>
