@@ -254,15 +254,30 @@ export default function CategoriesPage() {
                                 />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>아이콘 (이모지)</label>
-                                <input 
-                                    type="text" 
-                                    value={formData.icon}
-                                    onChange={e => setFormData({ ...formData, icon: e.target.value })}
-                                    placeholder="예: ☕, 🥤, 🍰"
-                                    required
-                                    disabled={isSaving}
-                                />
+                                <label>아이콘 선택</label>
+                                <div className={styles.selectedEmoji}>
+                                    <span className={styles.emojiPreview}>{formData.icon}</span>
+                                    <span className={styles.emojiLabel}>선택된 아이콘</span>
+                                </div>
+                                <div className={styles.emojiGrid}>
+                                    {['☕', '🥤', '🧋', '🍵', '🫖', '🥛', '🧃', '🍺',
+                                      '🍰', '🧁', '🍩', '🍪', '🥐', '🥖', '🥪', '🥞',
+                                      '🍦', '🍨', '🎂', '🍮', '🍫', '🍿', '🥜', '🌰',
+                                      '🍓', '🍊', '🍋', '🍑', '🥝', '🍇', '🫐', '🥑',
+                                      '🌿', '🌸', '🍃', '✨', '💎', '🔥', '⭐', '🐤',
+                                      '🎯', '🎁', '🏷️', '📦', '🛒', '💰', '🆕', '❤️'
+                                    ].map(emoji => (
+                                        <button
+                                            key={emoji}
+                                            type="button"
+                                            className={`${styles.emojiOption} ${formData.icon === emoji ? styles.emojiSelected : ''}`}
+                                            onClick={() => setFormData({ ...formData, icon: emoji })}
+                                            disabled={isSaving}
+                                        >
+                                            {emoji}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                             <div className={styles.modalFooter}>
                                 <button 
