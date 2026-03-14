@@ -1,7 +1,9 @@
 package com.newlecture.backend.admin.category.adapter.in.web;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,14 +47,34 @@ public class AdminCategoryController {
 
     // 카테고리 생성
     @PostMapping
-    public Category newCategory(@RequestBody Category category) {
-        return adminCategoryUseCase.create(category);
+    public ResponseEntity<?> newCategory(@RequestBody Category category) {
+        if (!isValidEmoji(category.getIcon())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "아이콘은 이모지만 사용할 수 있습니다."));
+        }
+        return ResponseEntity.ok(adminCategoryUseCase.create(category));
     }
 
     // 카테고리 수정
     @PutMapping("/{id}")
-    public Category editCategory(@PathVariable Integer id, @RequestBody Category category) {
-        return adminCategoryUseCase.update(id, category);
+    public ResponseEntity<?> editCategory(@PathVariable Integer id, @RequestBody Category category) {
+        if (!isValidEmoji(category.getIcon())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "아이콘은 이모지만 사용할 수 있습니다."));
+        }
+        return ResponseEntity.ok(adminCategoryUseCase.update(id, category));
+    }
+
+    /**
+     * 문자열이 이모지인지 검증
+     * - null/빈문자열 거부
+     * - 일반 ASCII 텍스트 거부 (숫자, 영문, 한글 등)
+     * - 이모지만 허용
+     */
+    private boolean isValidEmoji(String icon) {
+        if (icon == null || icon.isBlank()) return false;
+        // 일반 텍스트(ASCII 영숫자, 한글, 공백 등)가 포함되면 거부
+        return !icon.matches(".*[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\\s].*");
     }
 
     // 카테고리 삭제
