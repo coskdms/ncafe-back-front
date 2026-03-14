@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
@@ -10,6 +10,20 @@ import styles from './Navbar.module.css';
 
 export default function Navbar() {
     const router = useRouter();
+    const pathname = usePathname();
+
+    // 앵커 스크롤 핸들러 — 같은 페이지에서 반복 클릭해도 항상 스크롤
+    const scrollToSection = (sectionId: string) => {
+        if (pathname !== '/') {
+            // 다른 페이지에 있으면 홈으로 이동 후 hash 설정
+            router.push(`/#${sectionId}`);
+            return;
+        }
+        const el = document.getElementById(sectionId);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
@@ -47,9 +61,9 @@ export default function Navbar() {
                 <div className={styles.inner}>
                     <Link href="/" className={styles.logo}>🐤 고라파덕 카페</Link>
                     <div className={styles.desktopLinks}>
-                        <Link href="/#about">카페 소개</Link>
+                        <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>카페 소개</a>
                         <Link href="/menus">특별 메뉴</Link>
-                        <Link href="/#location">매장 안내</Link>
+                        <a href="#location" onClick={(e) => { e.preventDefault(); scrollToSection('location'); }}>매장 안내</a>
                         
                         {/* 장바구니 아이콘 추가 */}
                         <Link href="/cart" className={styles.cartIcon} title="장바구니">
@@ -85,9 +99,9 @@ export default function Navbar() {
                     <button className={styles.closeBtn} onClick={() => setIsOpen(false)} aria-label="닫기">
                         ✕
                     </button>
-                    <Link href="/#about" onClick={() => setIsOpen(false)}>카페 소개</Link>
+                    <a href="#about" onClick={(e) => { e.preventDefault(); setIsOpen(false); scrollToSection('about'); }}>카페 소개</a>
                     <Link href="/menus" onClick={() => setIsOpen(false)}>특별 메뉴</Link>
-                    <Link href="/#location" onClick={() => setIsOpen(false)}>매장 안내</Link>
+                    <a href="#location" onClick={(e) => { e.preventDefault(); setIsOpen(false); scrollToSection('location'); }}>매장 안내</a>
                     
                     {/* 모바일 장바구니 링크 */}
                     <Link href="/cart" onClick={() => setIsOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
