@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { FileText, Upload, Plus, Loader2, BookOpen, Edit2, Trash2, Eye, RotateCcw, X } from 'lucide-react';
 import styles from './page.module.css';
 import { toast } from '@/stores/toastStore';
+import { extractErrorMessage } from '@/utils/errorMessage';
 
 interface RagDocument {
   id: number;
@@ -68,11 +69,11 @@ export default function RagManagementPage() {
         toast.success(editingId ? '문서가 성공적으로 수정되었습니다.' : '문서가 성공적으로 저장되었습니다.');
         fetchDocuments();
       } else {
-        toast.error('저장 중 오류가 발생했습니다.');
+        toast.error(await extractErrorMessage(res, 'RAG 문서 저장에 실패했습니다.'));
       }
     } catch (error) {
       console.error('Save error:', error);
-      toast.error('통신 중 오류가 발생했습니다.');
+      toast.error('서버와 통신할 수 없습니다. 네트워크를 확인해주세요.');
     } finally {
       setLoading(false);
     }
@@ -102,11 +103,11 @@ export default function RagManagementPage() {
         // 모달이 열려있는 문서를 삭제한 경우 모달도 닫기
         if (viewingDoc?.id === id) closeModal();
       } else {
-        toast.error('삭제 중 오류가 발생했습니다.');
+        toast.error(await extractErrorMessage(res, 'RAG 문서 삭제에 실패했습니다.'));
       }
     } catch (error) {
       console.error('Delete error:', error);
-      toast.error('통신 중 오류가 발생했습니다.');
+      toast.error('서버와 통신할 수 없습니다. 네트워크를 확인해주세요.');
     } finally {
       setLoading(false);
     }
@@ -165,11 +166,11 @@ export default function RagManagementPage() {
         setModalEditing(false);
         fetchDocuments();
       } else {
-        toast.error('저장 중 오류가 발생했습니다.');
+        toast.error(await extractErrorMessage(res, '문서 수정에 실패했습니다.'));
       }
     } catch (error) {
       console.error('Save error:', error);
-      toast.error('통신 중 오류가 발생했습니다.');
+      toast.error('서버와 통신할 수 없습니다. 네트워크를 확인해주세요.');
     } finally {
       setLoading(false);
     }

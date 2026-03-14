@@ -6,6 +6,7 @@ import styles from './Settings.module.css';
 import { fetchAPI } from '@/app/lib/api';
 import Button from '@/components/common/Button/Button';
 import { toast } from '@/stores/toastStore';
+import { getErrorMessage } from '@/utils/errorMessage';
 
 interface ShopSettings {
     shopName: string;
@@ -80,7 +81,7 @@ export default function AdminSettingsPage() {
             setTimeout(() => setSaveMessage(''), 3000);
         } catch (error) {
             console.error('Failed to save settings:', error);
-            toast.error('설정 저장 중 오류가 발생했습니다.');
+            toast.error(getErrorMessage(error, '설정 저장 중 오류가 발생했습니다.'));
         } finally {
             setIsSaving(false);
         }

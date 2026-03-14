@@ -9,6 +9,7 @@ import styles from './MenuList.module.css';
 import { useMenus, MenuListParams, MenuResponse } from './useMenus';
 import { fetchAPI } from '@/app/lib/api';
 import { toast } from '@/stores/toastStore';
+import { getErrorMessage } from '@/utils/errorMessage';
 import {
     DndContext,
     closestCenter,
@@ -117,7 +118,7 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
             setMenus(prev => prev.map(m =>
                 m.id === id ? { ...m, isAvailable: menu.isAvailable } : m
             ));
-            toast.error('품절 상태를 변경하는 중 오류가 발생했습니다.');
+            toast.error(getErrorMessage(err, '품절 상태를 변경하는 중 오류가 발생했습니다.'));
         }
     };
 
@@ -144,7 +145,7 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
         } catch (err) {
             console.error('순서 변경 실패:', err);
             refetch();
-            toast.error('메뉴 순서를 변경하는 중 오류가 발생했습니다.');
+            toast.error(getErrorMessage(err, '메뉴 순서를 변경하는 중 오류가 발생했습니다.'));
         }
     };
 
@@ -157,7 +158,7 @@ export default function MenuList({ selectedCategory, searchQuery }: { selectedCa
                 refetch();
             } catch (error) {
                 console.error('삭제 오류:', error);
-                toast.error('메뉴를 삭제하는 중 오류가 발생했습니다.');
+                toast.error(getErrorMessage(error, '메뉴를 삭제하는 중 오류가 발생했습니다.'));
             }
         }
     };

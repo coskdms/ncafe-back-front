@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Plus, Edit2, Trash2, GripVertical, Save, X } from 'lucide-react';
 import styles from './Categories.module.css';
 import { toast } from '@/stores/toastStore';
+import { extractErrorMessage } from '@/utils/errorMessage';
 
 interface Category {
     id: number;
@@ -77,7 +78,8 @@ export default function CategoriesPage() {
                 fetchCategories();
                 toast.success(editingCategory ? '카테고리가 수정되었습니다.' : '카테고리가 추가되었습니다.');
             } else {
-                toast.error('저장에 실패했습니다.');
+                const msg = await extractErrorMessage(res, '카테고리 저장에 실패했습니다.');
+                toast.error(msg);
             }
         } catch (error) {
             console.error('Error saving category:', error);
@@ -95,7 +97,8 @@ export default function CategoriesPage() {
                 fetchCategories();
                 toast.success('카테고리가 삭제되었습니다.');
             } else {
-                toast.error('삭제에 실패했습니다.');
+                const msg = await extractErrorMessage(res, '카테고리 삭제에 실패했습니다.');
+                toast.error(msg);
             }
         } catch (error) {
             console.error('Error deleting category:', error);

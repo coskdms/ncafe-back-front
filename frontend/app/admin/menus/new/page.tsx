@@ -5,6 +5,7 @@ import { fetchAPI } from '@/app/lib/api';
 import MenuForm, { MenuFormData } from '../_components/MenuForm/MenuForm';
 import styles from './page.module.css';
 import { toast } from '@/stores/toastStore';
+import { getErrorMessage } from '@/utils/errorMessage';
 
 export default function NewMenuPage() {
     const router = useRouter();
@@ -32,7 +33,7 @@ export default function NewMenuPage() {
             newMenuId = response.id;
         } catch (error) {
             console.error(error);
-            toast.error('메뉴 등록 중 오류가 발생했습니다.');
+            toast.error(getErrorMessage(error, '메뉴 등록 중 오류가 발생했습니다.'));
             return;
         }
 

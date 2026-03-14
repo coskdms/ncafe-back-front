@@ -6,6 +6,7 @@ import MenuForm, { MenuFormData } from '../../_components/MenuForm/MenuForm';
 import styles from './page.module.css';
 import { fetchAPI } from '@/app/lib/api';
 import { toast } from '@/stores/toastStore';
+import { getErrorMessage } from '@/utils/errorMessage';
 
 export default function EditMenuPage() {
     const router = useRouter();
@@ -46,7 +47,7 @@ export default function EditMenuPage() {
                 }
             } catch (error) {
                 console.error(error);
-                toast.error('메뉴 데이터를 불러오는 중 오류가 발생했습니다.');
+                toast.error(getErrorMessage(error, '메뉴 데이터를 불러오는 중 오류가 발생했습니다.'));
                 router.push('/admin/menus');
             }
         };
@@ -103,7 +104,7 @@ export default function EditMenuPage() {
             router.push(`/admin/menus/${id}`);
         } catch (e) {
             console.error(e);
-            toast.error('수정 중 오류가 발생했습니다.');
+            toast.error(getErrorMessage(e, '메뉴 수정 중 오류가 발생했습니다.'));
         }
     };
 

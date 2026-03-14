@@ -21,6 +21,7 @@ import styles from './Orders.module.css';
 import { fetchAPI } from '@/app/lib/api';
 import Button from '@/components/common/Button/Button';
 import { toast } from '@/stores/toastStore';
+import { getErrorMessage } from '@/utils/errorMessage';
 
 interface OrderItem {
     id: number;
@@ -103,7 +104,7 @@ export default function AdminOrdersPage() {
             setOrders(prev => prev.map(o => o.paymentId === paymentId ? { ...o, status: newStatus as any } : o));
         } catch (error) {
             console.error('Failed to update status:', error);
-            toast.error('상태 변경에 실패했습니다.');
+            toast.error(getErrorMessage(error, '상태 변경에 실패했습니다.'));
         }
     };
 
@@ -117,7 +118,7 @@ export default function AdminOrdersPage() {
             toast.success('주문이 취소되었습니다.');
         } catch (error) {
             console.error('Failed to cancel order:', error);
-            toast.error('주문 취소에 실패했습니다.');
+            toast.error(getErrorMessage(error, '주문 취소에 실패했습니다.'));
         }
     };
 
