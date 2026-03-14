@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { FileText, Upload, Plus, Loader2, BookOpen, Edit2, Trash2, XCircle, RotateCcw } from 'lucide-react';
+import { FileText, Upload, Plus, Loader2, BookOpen, Edit2, Trash2, Eye, RotateCcw, X } from 'lucide-react';
 import styles from './page.module.css';
 import { toast } from '@/stores/toastStore';
 
@@ -21,6 +21,12 @@ export default function RagManagementPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 모달 상태
+  const [viewingDoc, setViewingDoc] = useState<RagDocument | null>(null);
+  const [modalEditing, setModalEditing] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalContent, setModalContent] = useState('');
 
   // Fetch documents on load
   const fetchDocuments = async () => {
@@ -93,6 +99,8 @@ export default function RagManagementPage() {
         toast.success('문서가 삭제되었습니다.');
         fetchDocuments();
         if (editingId === id) handleCancel();
+        // 모달이 열려있는 문서를 삭제한 경우 모달도 닫기
+        if (viewingDoc?.id === id) closeModal();
       } else {
         toast.error('삭제 중 오류가 발생했습니다.');
       }
@@ -109,6 +117,79 @@ export default function RagManagementPage() {
     setTitle('');
     setContent('');
   };
+
+  // ========= 모달 관련 =========
+  const openModal = (doc: RagDocument) => {
+    setViewingDoc(doc);
+    setModalEditing(false);
+    setModalTitle(doc.title);
+    setModalContent(doc.content);
+  };
+
+  const closeModal = () => {
+    setViewingDoc(null);
+    setModalEditing(false);
+    setModalTitle('');
+    setModalContent('');
+  };
+
+  const startModalEdit = () => {
+    if (!viewingDoc) return;
+    setModalEditing(true);
+    setModalTitle(viewingDoc.title);
+    setModalContent(viewingDoc.content);
+  };
+
+  const cancelModalEdit = () => {
+    if (!viewingDoc) return;
+    setModalEditing(false);
+    setModalTitle(viewingDoc.title);
+    setModalContent(viewingDoc.content);
+  };
+
+  const saveModalEdit = async () => {
+    if (!viewingDoc || !modalTitle || !modalContent) return;
+
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/agent/rag/${viewingDoc.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: modalTitle, content: modalContent }),
+      });
+
+      if (res.ok) {
+        toast.success('문서가 성공적으로 수정되었습니다.');
+        const updatedDoc = { ...viewingDoc, title: modalTitle, content: modalContent };
+        setViewingDoc(updatedDoc);
+        setModalEditing(false);
+        fetchDocuments();
+      } else {
+        toast.error('저장 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+      toast.error('통신 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleModalDelete = () => {
+    if (!viewingDoc) return;
+    handleDelete(viewingDoc.id);
+  };
+
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && viewingDoc) {
+        closeModal();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [viewingDoc]);
 
   const processFile = (file: File) => {
     if (file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
@@ -177,20 +258,32 @@ export default function RagManagementPage() {
               </div>
             ) : (
               documents.map((doc) => (
-                <div key={doc.id} className={`${styles.listItem} ${editingId === doc.id ? styles.active : ''}`}>
+                <div 
+                  key={doc.id} 
+                  className={`${styles.listItem} ${editingId === doc.id ? styles.active : ''}`}
+                  onClick={() => openModal(doc)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className={styles.itemHeader}>
                     <div className={styles.itemTitle}>{doc.title}</div>
                     <div className={styles.itemActions}>
                       <button 
+                        className={`${styles.actionBtn} ${styles.viewBtn}`}
+                        onClick={(e) => { e.stopPropagation(); openModal(doc); }}
+                        title="조회"
+                      >
+                        <Eye size={16} />
+                      </button>
+                      <button 
                         className={`${styles.actionBtn} ${styles.editBtn}`}
-                        onClick={() => handleEdit(doc)}
+                        onClick={(e) => { e.stopPropagation(); handleEdit(doc); }}
                         title="수정"
                       >
                         <Edit2 size={16} />
                       </button>
                       <button 
                         className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                        onClick={() => handleDelete(doc.id)}
+                        onClick={(e) => { e.stopPropagation(); handleDelete(doc.id); }}
                         title="삭제"
                       >
                         <Trash2 size={16} />
@@ -281,6 +374,93 @@ export default function RagManagementPage() {
           </form>
         </section>
       </div>
+
+      {/* ========= 문서 조회 모달 ========= */}
+      {viewingDoc && (
+        <div className={styles.modalOverlay} onClick={closeModal}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            {/* 모달 헤더 */}
+            <div className={styles.modalHeader}>
+              {modalEditing ? (
+                <input
+                  className={styles.modalTitleInput}
+                  value={modalTitle}
+                  onChange={(e) => setModalTitle(e.target.value)}
+                  placeholder="문서 제목"
+                  autoFocus
+                />
+              ) : (
+                <h2 className={styles.modalTitle}>{viewingDoc.title}</h2>
+              )}
+              <button className={styles.modalCloseBtn} onClick={closeModal}>
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* 모달 메타 정보 */}
+            <div className={styles.modalMeta}>
+              📅 {new Date(viewingDoc.created_at).toLocaleString()}
+              <span className={styles.modalMetaDivider}>|</span>
+              📝 {viewingDoc.content.length.toLocaleString()}자
+            </div>
+
+            {/* 모달 본문 */}
+            <div className={styles.modalBody}>
+              {modalEditing ? (
+                <textarea
+                  className={styles.modalTextarea}
+                  value={modalContent}
+                  onChange={(e) => setModalContent(e.target.value)}
+                />
+              ) : (
+                <div className={styles.modalContent}>
+                  {viewingDoc.content}
+                </div>
+              )}
+            </div>
+
+            {/* 모달 하단 버튼 */}
+            <div className={styles.modalFooter}>
+              {modalEditing ? (
+                <>
+                  <button 
+                    className={styles.modalBtnSecondary} 
+                    onClick={cancelModalEdit}
+                  >
+                    <RotateCcw size={16} />
+                    취소
+                  </button>
+                  <button 
+                    className={styles.modalBtnPrimary} 
+                    onClick={saveModalEdit}
+                    disabled={loading || !modalTitle || !modalContent}
+                  >
+                    {loading ? <Loader2 className="animate-spin" size={16} /> : <FileText size={16} />}
+                    저장
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    className={styles.modalBtnDanger} 
+                    onClick={handleModalDelete}
+                  >
+                    <Trash2 size={16} />
+                    삭제
+                  </button>
+                  <button 
+                    className={styles.modalBtnPrimary} 
+                    onClick={startModalEdit}
+                  >
+                    <Edit2 size={16} />
+                    수정
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
