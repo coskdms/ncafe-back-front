@@ -32,12 +32,6 @@ export default function Footer() {
                     <Link href="/menus" style={{ color: 'inherit', textDecoration: 'none' }}>메뉴</Link>
                     <a href="#location" onClick={(e) => { e.preventDefault(); scrollToSection('location'); }}>매장 안내</a>
                 </div>
-                <div className={styles.links}>
-                    <h4>고객 지원</h4>
-                    <a href="#">자주 묻는 질문</a>
-                    <a href="#">예약 문의</a>
-                    <a href="#">이벤트</a>
-                </div>
                 <div className={styles.bottom}>
                     <p>
                         © 2026{' '}
