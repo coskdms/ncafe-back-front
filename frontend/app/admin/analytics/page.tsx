@@ -155,7 +155,7 @@ export default function AnalyticsPage() {
     }));
 
     return (
-        <div>
+        <div style={{ maxWidth: '900px' }}>
             <header style={{ marginBottom: '28px' }}>
                 <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#451a03', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <BarChart3 size={28} /> 매출 분석 대시보드
@@ -205,7 +205,7 @@ export default function AnalyticsPage() {
                     일별 매출 추이
                 </h3>
                 <div className={styles.chartWrapper}>
-                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className={styles.svgChart} preserveAspectRatio="none">
+                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className={styles.svgChart}>
                         <defs>
                             <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="0%" stopColor="#fde047" stopOpacity="0.5" />
@@ -322,7 +322,7 @@ export default function AnalyticsPage() {
                     일별 주문 건수
                 </h3>
                 <div className={styles.chartWrapper}>
-                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className={styles.svgChart} preserveAspectRatio="none">
+                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className={styles.svgChart}>
                         {(() => {
                             const maxCount = Math.max(...dailySales.map(d => d.count), 1);
                             const barWidth = Math.max(plotW / dailySales.length - 4, 8);
