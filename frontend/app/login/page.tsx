@@ -37,7 +37,6 @@ function LoginContent() {
     };
 
     const handleSignup = async (nickname: string, password: string) => {
-        // ... 기존 코드
         setError('');
         setIsLoading(true);
 
@@ -49,8 +48,23 @@ function LoginContent() {
             });
 
             if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.message || '회원가입에 실패했습니다.');
+                // 백엔드가 JSON 대신 HTML을 반환할 수 있으므로 안전하게 파싱
+                let errorMessage = '회원가입에 실패했습니다.';
+                try {
+                    const contentType = res.headers.get('content-type') || '';
+                    if (contentType.includes('application/json')) {
+                        const data = await res.json();
+                        errorMessage = data.message || errorMessage;
+                    } else {
+                        // HTML 응답 등 — 상태 코드에 따른 메시지
+                        if (res.status === 409) errorMessage = '이미 사용 중인 아이디입니다.';
+                        else if (res.status === 400) errorMessage = '입력 정보를 확인해주세요.';
+                        else if (res.status >= 500) errorMessage = '서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+                    }
+                } catch {
+                    // JSON 파싱 실패 시 기본 메시지 사용
+                }
+                throw new Error(errorMessage);
             }
 
             // 회원가입 성공 시 바로 로그인 실행

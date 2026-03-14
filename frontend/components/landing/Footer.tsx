@@ -11,9 +11,9 @@ export default function Footer() {
                 </div>
                 <div className={styles.links}>
                     <h4>고라파덕 카페</h4>
-                    <a href="#about">카페 소개</a>
+                    <Link href="/#about" style={{ color: 'inherit', textDecoration: 'none' }}>카페 소개</Link>
                     <Link href="/menus" style={{ color: 'inherit', textDecoration: 'none' }}>메뉴</Link>
-                    <a href="#">매장 안내</a>
+                    <Link href="/#location" style={{ color: 'inherit', textDecoration: 'none' }}>매장 안내</Link>
                 </div>
                 <div className={styles.links}>
                     <h4>고객 지원</h4>
