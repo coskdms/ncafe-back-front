@@ -1,7 +1,7 @@
 services:
   # ── 백엔드 (Spring Boot) ──
   backend:
-    image: ${BACKEND_IMAGE:-ncafe-backend:latest}
+    image: ${BACKEND_IMAGE:-${USER_ID:-newnaeun}-ncafe-backend:latest}
     build:
       context: .
       dockerfile: backend/Dockerfile
@@ -29,7 +29,7 @@ services:
 
   # ── 프론트엔드 (Next.js) ──
   frontend:
-    image: ${FRONTEND_IMAGE:-ncafe-frontend:latest}
+    image: ${FRONTEND_IMAGE:-${USER_ID:-newnaeun}-ncafe-frontend:latest}
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -81,7 +81,7 @@ services:
 
   # ── AI Agent 서버 (FastAPI) ──
   beomini:
-    image: ${BEOMINI_IMAGE:-ncafe-beomini:latest}
+    image: ${BEOMINI_IMAGE:-${USER_ID:-newnaeun}-ncafe-beomini:latest}
     build:
       context: ./beomini-server
       dockerfile: Dockerfile
