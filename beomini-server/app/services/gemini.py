@@ -133,6 +133,8 @@ USER_RULES = """
 5. **메뉴 상세 보기:** "상세 보여줘", "자세히" → 먼저 `get_menus`로 ID 확인 → `view_menu_detail` 호출
 6. **개인 정보 조회:** 등급/포인트 → `get_my_growth_info`, 주문 내역 → `get_my_orders`, 찜 목록 → `get_my_favorites`, 주문 상태 → `get_order_status`, 주문 취소 → `cancel_order`
 7. **맞춤 추천:** "추천해줘", "뭐 마실까" → `get_personalized_recommendation` 사용
+8. **찜 목록 바로 주문:** "찜한 거 주문해줘", "찜 목록 결제" → `order_favorites` 사용
+   - ⚠️ 장바구니와 무관하게 찜 목록의 메뉴를 직접 결제 페이지로 보냄!
 
 ═══ 맞춤 추천 규칙 ═══
 - 회원이 "추천해줘"라고 하면 `get_personalized_recommendation`을 사용하여 개인화된 추천을 제공해줘.
@@ -309,6 +311,44 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
             fav_menus = [m for m in all_menus if m.get("id") in fav_ids]
             return {"favoriteMenus": fav_menus, "count": len(fav_menus)}
         return {"favoriteIds": fav_ids}
+
+    def order_favorites() -> str:
+        """
+        찜(❤️) 목록에 있는 메뉴를 바로 주문(결제)합니다.
+        "찜한 메뉴 주문해줘", "찜 목록 바로 결제", "찜해둔 거 주문할래" 등의 요청에 사용합니다.
+        장바구니와 무관하게 찜 목록의 메뉴를 직접 결제 페이지로 보냅니다.
+        """
+        logger.info("[Tool Call] order_favorites")
+        fav_ids = backend_api.get_my_favorites(auth_token)
+        if isinstance(fav_ids, dict) and "error" in fav_ids:
+            return "찜 목록을 조회할 수 없다덕! 로그인이 필요하다덕 🔐"
+        if not fav_ids or (isinstance(fav_ids, list) and len(fav_ids) == 0):
+            return "찜 목록이 비어있다덕! 먼저 마음에 드는 메뉴를 찜해달라덕 💛"
+        
+        all_menus = backend_api.get_menus()
+        if not isinstance(all_menus, list):
+            return "메뉴 정보를 가져오는 데 실패했다덕..."
+        
+        fav_menus = [m for m in all_menus if m.get("id") in fav_ids]
+        if len(fav_menus) == 0:
+            return "찜한 메뉴를 찾을 수 없다덕!"
+        
+        import json
+        items = []
+        for m in fav_menus:
+            first_image = m.get("imagesSrc", "blank.png").split(",")[0].strip() if m.get("imagesSrc") else "blank.png"
+            items.append({
+                "menuId": m["id"],
+                "korName": m.get("korName", ""),
+                "price": m.get("price", 0),
+                "imageSrc": first_image
+            })
+        
+        marker = f'::action{json.dumps({"type": "order_favorites", "items": items}, ensure_ascii=False)}::'
+        logger.info(f"[Tool Result] order_favorites: {len(items)} items")
+        
+        menu_names = ", ".join([m.get("korName", "") for m in fav_menus])
+        return f"찜한 메뉴 ({menu_names})를 결제 페이지로 보내겠다덕! 🐤💳 {marker}"
 
     def get_personalized_recommendation() -> str:
         """
@@ -489,7 +529,7 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
 
     member_extra_tools = [
         get_my_growth_info, get_my_orders, get_my_favorites,
-        get_personalized_recommendation,
+        get_personalized_recommendation, order_favorites,
         get_order_status, cancel_order, direct_order,
     ]
 

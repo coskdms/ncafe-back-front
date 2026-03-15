@@ -144,13 +144,13 @@ export default function AnalyticsPage() {
             .slice(0, 5);
     }, [filteredOrders]);
 
-    // ── 요약 통계 ──
     const summary = useMemo(() => {
         const totalSales = filteredOrders.reduce((s, o) => s + o.totalPrice, 0);
         const totalOrders = filteredOrders.length;
-        const avgOrderPrice = totalOrders > 0 ? Math.round(totalSales / totalOrders) : 0;
-        return { totalSales, totalOrders, avgOrderPrice };
-    }, [filteredOrders]);
+        const totalDays = dailySales.length || 1;
+        const avgDailySales = Math.round(totalSales / totalDays);
+        return { totalSales, totalOrders, avgDailySales };
+    }, [filteredOrders, dailySales]);
 
     if (isLoading) {
         return (
@@ -250,8 +250,8 @@ export default function AnalyticsPage() {
                     <span className={styles.summaryValue}>{summary.totalOrders}건</span>
                 </div>
                 <div className={styles.summaryCard}>
-                    <span className={styles.summaryLabel}>📊 평균 단가</span>
-                    <span className={styles.summaryValue}>₩{summary.avgOrderPrice.toLocaleString()}</span>
+                    <span className={styles.summaryLabel}>📊 1일 평균 매출</span>
+                    <span className={styles.summaryValue}>₩{summary.avgDailySales.toLocaleString()}</span>
                 </div>
             </div>
 

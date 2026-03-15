@@ -733,3 +733,178 @@
     border-radius: 3px;
     transition: width 1s ease-out;
 }
+
+/* ===== Option Selection Modal ===== */
+.optionModal {
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.optionModalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, var(--agent-main) 0%, #FFE066 100%);
+    border-radius: 20px 20px 0 0;
+}
+
+.optionModalHeader h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--agent-accent);
+}
+
+.optionModalMenuInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: #FFFDF7;
+    border-bottom: 1px solid #f3edd6;
+}
+
+.optionMenuName {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--agent-accent);
+}
+
+.optionMenuPrice {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #e53e3e;
+}
+
+.optionModalBody {
+    padding: 16px 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.optionGroup {
+    margin-bottom: 16px;
+}
+
+.optionGroup:last-child {
+    margin-bottom: 0;
+}
+
+.optionGroupHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.optionGroupName {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--agent-accent);
+}
+
+.optionBadge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.requiredBadge {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.optionalBadge {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.optionList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.optionItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px solid #eee;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.88rem;
+}
+
+.optionItem:hover {
+    border-color: var(--agent-main);
+    background: #FFFDF7;
+}
+
+.optionItemSelected {
+    border-color: var(--agent-main) !important;
+    background: #FFF9E6 !important;
+    box-shadow: 0 0 0 1px var(--agent-main);
+}
+
+.optionItem input[type="radio"],
+.optionItem input[type="checkbox"] {
+    accent-color: var(--agent-main-dark);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.optionName {
+    flex: 1;
+    color: #333;
+    font-weight: 500;
+}
+
+.optionPrice {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #e53e3e;
+    white-space: nowrap;
+}
+
+.optionModalFooter {
+    padding: 14px 20px;
+    border-top: 1px solid #f3edd6;
+    background: #FFFDF7;
+    border-radius: 0 0 20px 20px;
+}
+
+.optionTotalPrice {
+    text-align: right;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--agent-accent);
+    margin-bottom: 12px;
+}
+
+.optionModalBtns {
+    display: flex;
+    gap: 10px;
+}
+
+.optionModalBtns button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}

@@ -18,6 +18,31 @@ interface ChatMessage {
     sender: 'bot' | 'user';
 }
 
+interface OptionDetail {
+    id?: number;
+    name: string;
+    additionalPrice: number;
+    sortOrder: number;
+}
+
+interface OptionGroup {
+    id?: number;
+    name: string;
+    isRequired: boolean;
+    isMultiple: boolean;
+    sortOrder: number;
+    optionDetails: OptionDetail[];
+}
+
+interface OptionModalData {
+    menuId: number;
+    korName: string;
+    price: number;
+    imageSrc: string;
+    optionGroups: OptionGroup[];
+    mode: 'cart' | 'direct_order';
+}
+
 // ===== 3. 유틸리티 함수 =====
 const formatPrice = (price?: number) => {
     if (price === undefined || price === null) return '';
@@ -35,6 +60,10 @@ export default function AgentChat() {
     const [isFirstOpen, setIsFirstOpen] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [lastAddedMenu, setLastAddedMenu] = useState<any>(null);
+
+    // 옵션 선택 모달
+    const [optionModal, setOptionModal] = useState<OptionModalData | null>(null);
+    const [selectedOptions, setSelectedOptions] = useState<Record<string, string[]>>({});
 
     const addItem = useCartStore((state) => state.addItem);
     const { isAuthenticated, user } = useAuthStore();
@@ -73,6 +102,28 @@ export default function AgentChat() {
 
                     const handleCartClick = async (e: React.MouseEvent) => {
                         e.preventDefault();
+                        // 옵션이 있는 메뉴인지 확인
+                        try {
+                            const res = await fetch(`/api/menus/${menu.id}`);
+                            if (res.ok) {
+                                const detail = await res.json();
+                                if (detail.optionGroups && detail.optionGroups.length > 0) {
+                                    setOptionModal({
+                                        menuId: menu.id,
+                                        korName: menu.korName || menu.name,
+                                        price: menu.price,
+                                        imageSrc: firstImage,
+                                        optionGroups: detail.optionGroups,
+                                        mode: 'cart'
+                                    });
+                                    setSelectedOptions({});
+                                    return;
+                                }
+                            }
+                        } catch (err) {
+                            console.error('Menu detail fetch failed:', err);
+                        }
+                        // 옵션 없으면 바로 담기
                         await addItem({
                             menuId: menu.id,
                             korName: menu.korName || menu.name,
@@ -372,27 +423,65 @@ export default function AgentChat() {
                     const action = JSON.parse(actionMatch[1]);
                     console.log('[AgentChat] Executing Action:', action);
                     
-                    if (action.type === 'add_to_cart') {
-                        await addItem({
-                            menuId: action.menuId,
-                            korName: action.korName,
-                            price: action.price,
-                            imageSrc: action.imageSrc || 'blank.png'
-                        });
-                        setLastAddedMenu(action);
-                        setIsModalOpen(true);
-                    } else if (action.type === 'direct_order') {
-                        const directItem = {
-                            menuId: action.menuId,
-                            korName: action.korName,
-                            price: action.price,
-                            imageSrc: action.imageSrc || 'blank.png',
+                    if (action.type === 'add_to_cart' || action.type === 'direct_order') {
+                        // 옵션이 있는 메뉴인지 먼저 확인
+                        let hasOptions = false;
+                        try {
+                            const detailRes = await fetch(`/api/menus/${action.menuId}`);
+                            if (detailRes.ok) {
+                                const detail = await detailRes.json();
+                                if (detail.optionGroups && detail.optionGroups.length > 0) {
+                                    hasOptions = true;
+                                    setOptionModal({
+                                        menuId: action.menuId,
+                                        korName: action.korName,
+                                        price: action.price,
+                                        imageSrc: action.imageSrc || 'blank.png',
+                                        optionGroups: detail.optionGroups,
+                                        mode: action.type === 'direct_order' ? 'direct_order' : 'cart'
+                                    });
+                                    setSelectedOptions({});
+                                }
+                            }
+                        } catch (err) {
+                            console.error('Menu detail fetch for options failed:', err);
+                        }
+                        
+                        if (!hasOptions && action.type === 'add_to_cart') {
+                            await addItem({
+                                menuId: action.menuId,
+                                korName: action.korName,
+                                price: action.price,
+                                imageSrc: action.imageSrc || 'blank.png'
+                            });
+                            setLastAddedMenu(action);
+                            setIsModalOpen(true);
+                        } else if (!hasOptions && action.type === 'direct_order') {
+                            const directItem = {
+                                menuId: action.menuId,
+                                korName: action.korName,
+                                price: action.price,
+                                imageSrc: action.imageSrc || 'blank.png',
+                                options: {},
+                                id: Date.now(),
+                                quantity: 1
+                            };
+                            useCartStore.getState().setCheckoutItems([directItem]);
+                            router.push('/checkout');
+                        }
+                    } else if (action.type === 'order_favorites' && action.items) {
+                        // 찜 목록 바로 주문
+                        const checkoutItems = action.items.map((item: any, idx: number) => ({
+                            menuId: item.menuId,
+                            korName: item.korName,
+                            price: item.price,
+                            imageSrc: item.imageSrc || 'blank.png',
                             options: {},
-                            id: Date.now(),
+                            id: Date.now() + idx,
                             quantity: 1
-                        };
-                        useCartStore.getState().setCheckoutItems([directItem]);
-                        router.push('/checkout');
+                        }));
+                        useCartStore.getState().setCheckoutItems(checkoutItems);
+                        setTimeout(() => router.push('/checkout'), 1500);
                     } else if (action.type === 'navigate' && action.url) {
                         // 정상 형식: {"type":"navigate","url":"/login"}
                         console.log('[AgentChat] 🚀 Navigating to:', action.url);
@@ -586,6 +675,142 @@ export default function AgentChat() {
                             >
                                 쇼핑 계속하기
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 옵션 선택 모달 */}
+            {optionModal && (
+                <div className={styles.modalOverlay} onClick={() => setOptionModal(null)}>
+                    <div className={styles.optionModal} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.optionModalHeader}>
+                            <h3>🐤 옵션 선택</h3>
+                            <button className={styles.closeBtn} onClick={() => setOptionModal(null)}>✕</button>
+                        </div>
+                        <div className={styles.optionModalMenuInfo}>
+                            <span className={styles.optionMenuName}>{optionModal.korName}</span>
+                            <span className={styles.optionMenuPrice}>{optionModal.price.toLocaleString()}원</span>
+                        </div>
+                        <div className={styles.optionModalBody}>
+                            {optionModal.optionGroups.map((group) => (
+                                <div key={group.name} className={styles.optionGroup}>
+                                    <div className={styles.optionGroupHeader}>
+                                        <span className={styles.optionGroupName}>{group.name}</span>
+                                        <span className={`${styles.optionBadge} ${group.isRequired ? styles.requiredBadge : styles.optionalBadge}`}>
+                                            {group.isRequired ? '필수' : '선택'}
+                                        </span>
+                                    </div>
+                                    <div className={styles.optionList}>
+                                        {group.optionDetails.map((opt) => {
+                                            const isSelected = (selectedOptions[group.name] || []).includes(opt.name);
+                                            return (
+                                                <label key={opt.name} className={`${styles.optionItem} ${isSelected ? styles.optionItemSelected : ''}`}>
+                                                    <input
+                                                        type={group.isMultiple ? 'checkbox' : 'radio'}
+                                                        name={`option-${group.name}`}
+                                                        checked={isSelected}
+                                                        onChange={() => {
+                                                            setSelectedOptions(prev => {
+                                                                if (group.isMultiple) {
+                                                                    const current = prev[group.name] || [];
+                                                                    return {
+                                                                        ...prev,
+                                                                        [group.name]: isSelected
+                                                                            ? current.filter(n => n !== opt.name)
+                                                                            : [...current, opt.name]
+                                                                    };
+                                                                } else {
+                                                                    return { ...prev, [group.name]: [opt.name] };
+                                                                }
+                                                            });
+                                                        }}
+                                                    />
+                                                    <span className={styles.optionName}>{opt.name}</span>
+                                                    {opt.additionalPrice > 0 && (
+                                                        <span className={styles.optionPrice}>+{opt.additionalPrice.toLocaleString()}원</span>
+                                                    )}
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className={styles.optionModalFooter}>
+                            <div className={styles.optionTotalPrice}>
+                                합계: {(() => {
+                                    let total = optionModal.price;
+                                    optionModal.optionGroups.forEach(g => {
+                                        (selectedOptions[g.name] || []).forEach(name => {
+                                            const opt = g.optionDetails.find(d => d.name === name);
+                                            if (opt) total += opt.additionalPrice || 0;
+                                        });
+                                    });
+                                    return total.toLocaleString();
+                                })()}원
+                            </div>
+                            <div className={styles.optionModalBtns}>
+                                <button
+                                    className={styles.modalBtnSecondary}
+                                    onClick={() => setOptionModal(null)}
+                                >
+                                    취소
+                                </button>
+                                <button
+                                    className={styles.modalBtnPrimary}
+                                    onClick={async () => {
+                                        // 필수 옵션 체크
+                                        const missing = optionModal.optionGroups.filter(
+                                            g => g.isRequired && (!selectedOptions[g.name] || selectedOptions[g.name].length === 0)
+                                        );
+                                        if (missing.length > 0) {
+                                            alert(`필수 옵션을 선택해주세요: ${missing.map(g => g.name).join(', ')}`);
+                                            return;
+                                        }
+
+                                        // 옵션 기반 가격 계산
+                                        let totalPrice = optionModal.price;
+                                        const optionsObj: Record<string, string> = {};
+                                        optionModal.optionGroups.forEach(g => {
+                                            (selectedOptions[g.name] || []).forEach(name => {
+                                                const opt = g.optionDetails.find(d => d.name === name);
+                                                if (opt) totalPrice += opt.additionalPrice || 0;
+                                                optionsObj[g.name] = (selectedOptions[g.name] || []).join(', ');
+                                            });
+                                        });
+
+                                        if (optionModal.mode === 'cart') {
+                                            await addItem({
+                                                menuId: optionModal.menuId,
+                                                korName: optionModal.korName,
+                                                price: totalPrice,
+                                                imageSrc: optionModal.imageSrc,
+                                                options: optionsObj
+                                            });
+                                            setOptionModal(null);
+                                            setLastAddedMenu({ korName: optionModal.korName });
+                                            setIsModalOpen(true);
+                                        } else {
+                                            // 바로결제
+                                            const directItem = {
+                                                menuId: optionModal.menuId,
+                                                korName: optionModal.korName,
+                                                price: totalPrice,
+                                                imageSrc: optionModal.imageSrc,
+                                                options: optionsObj,
+                                                id: Date.now(),
+                                                quantity: 1
+                                            };
+                                            useCartStore.getState().setCheckoutItems([directItem]);
+                                            setOptionModal(null);
+                                            router.push('/checkout');
+                                        }
+                                    }}
+                                >
+                                    {optionModal.mode === 'cart' ? '🛒 담기' : '💳 바로 결제'}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
