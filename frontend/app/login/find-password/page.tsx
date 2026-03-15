@@ -155,6 +155,7 @@ export default function FindPasswordPage() {
                                 placeholder="아이디를 입력하세요"
                                 style={inputStyle}
                                 required
+                                maxLength={20}
                             />
                         </div>
                         <div>
@@ -191,6 +192,7 @@ export default function FindPasswordPage() {
                                 placeholder="보안 질문의 답변을 입력하세요"
                                 style={inputStyle}
                                 required
+                                maxLength={100}
                             />
                         </div>
                         <div>
@@ -205,6 +207,7 @@ export default function FindPasswordPage() {
                                     borderColor: passwordValidation && !passwordValidation.isValid ? '#ef4444' : '#e5e0d5',
                                 }}
                                 required
+                                maxLength={100}
                             />
                             {newPassword.length > 0 && (
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
@@ -235,6 +238,7 @@ export default function FindPasswordPage() {
                                     borderColor: passwordMismatch ? '#ef4444' : '#e5e0d5',
                                 }}
                                 required
+                                maxLength={100}
                             />
                             {passwordMismatch && (
                                 <span style={{ fontSize: '0.8rem', color: '#ef4444', fontWeight: 600 }}>비밀번호가 일치하지 않습니다</span>

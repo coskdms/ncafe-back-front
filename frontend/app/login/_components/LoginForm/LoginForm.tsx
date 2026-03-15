@@ -49,6 +49,7 @@ export default function LoginForm({ onLogin, error, isLoading }: LoginFormProps)
                     onChange={(e) => setNickname(e.target.value)}
                     placeholder="아이디를 입력하세요"
                     required
+                    maxLength={20}
                 />
                 {nicknameValidation && !nicknameValidation.isValid && (
                     <span className={styles.fieldError}>{nicknameValidation.message}</span>
@@ -64,6 +65,7 @@ export default function LoginForm({ onLogin, error, isLoading }: LoginFormProps)
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="비밀번호를 입력하세요"
                     required
+                    maxLength={100}
                 />
             </div>
             {error && <p className={styles.error}>{error}</p>}

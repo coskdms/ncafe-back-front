@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './MyPage.module.css';
 import { useAuthStore } from '@/stores/authStore';
-import { Bell, ChevronDown, Sparkles, Heart, Trash2 } from 'lucide-react';
+import { Bell, ChevronDown, Sparkles, Heart, Trash2, ShoppingCart } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { memberAPI, orderAPI, fetchAPI, favoriteAPI } from '@/app/lib/api';
 import { toast } from '@/stores/toastStore';
@@ -67,6 +67,7 @@ export default function MyPage() {
     const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
     const [favoriteMenus, setFavoriteMenus] = useState<any[]>([]);
     const [isFavLoading, setIsFavLoading] = useState(false);
+    const [selectedFavorites, setSelectedFavorites] = useState<Set<number>>(new Set());
     const { loadFavorites, toggleFavorite } = useFavoriteStore();
 
     // 결제 선택 모달 관련 상태
@@ -471,39 +472,125 @@ export default function MyPage() {
                                 }}>메뉴 보러가기</Link>
                             </div>
                         ) : (
-                            <div className={styles.favoriteGrid}>
-                                {favoriteMenus.map((menu: any) => {
-                                    const firstImage = menu.imagesSrc
-                                        ? menu.imagesSrc.split(',')[0].trim()
-                                        : 'blank.png';
-                                    return (
-                                        <div key={menu.id} className={styles.favoriteCard}>
-                                            <Link href={`/menus/${menu.id}`} className={styles.favLink}>
-                                                <img
-                                                    src={`/images/${firstImage}`}
-                                                    alt={menu.korName}
-                                                    className={styles.favImage}
-                                                    onError={(e) => { (e.target as HTMLImageElement).src = '/images/blank.png'; }}
-                                                />
-                                                <div className={styles.favInfo}>
-                                                    <h4 className={styles.favName}>{menu.korName}</h4>
-                                                    <span className={styles.favPrice}>{menu.price?.toLocaleString()}원</span>
-                                                </div>
-                                            </Link>
-                                            <button
-                                                className={styles.favRemoveBtn}
-                                                onClick={async () => {
-                                                    await toggleFavorite(menu.id);
-                                                    setFavoriteMenus(prev => prev.filter(m => m.id !== menu.id));
-                                                    toast.info(`${menu.korName} 찜 해제 🤍`);
-                                                }}
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                            <>
+                                {/* 찜 목록 액션 바 */}
+                                <div className={styles.favActionBar}>
+                                    <label className={styles.favSelectAll}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedFavorites.size === favoriteMenus.length && favoriteMenus.length > 0}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setSelectedFavorites(new Set(favoriteMenus.map((m: any) => m.id)));
+                                                } else {
+                                                    setSelectedFavorites(new Set());
+                                                }
+                                            }}
+                                        />
+                                        전체 선택 ({selectedFavorites.size}/{favoriteMenus.length})
+                                    </label>
+                                    <div className={styles.favActions}>
+                                        <button
+                                            className={styles.favCartBtn}
+                                            disabled={selectedFavorites.size === 0}
+                                            onClick={async () => {
+                                                const selected = favoriteMenus.filter((m: any) => selectedFavorites.has(m.id));
+                                                let added = 0;
+                                                for (const menu of selected) {
+                                                    const firstImage = menu.imagesSrc ? menu.imagesSrc.split(',')[0].trim() : 'blank.png';
+                                                    await addItem({
+                                                        menuId: menu.id,
+                                                        korName: menu.korName,
+                                                        price: menu.price,
+                                                        imageSrc: firstImage,
+                                                    });
+                                                    added++;
+                                                }
+                                                setSelectedFavorites(new Set());
+                                                toast.success(`${added}개 메뉴를 장바구니에 담았습니다! 🛒`);
+                                            }}
+                                        >
+                                            <ShoppingCart size={16} />
+                                            선택 담기
+                                        </button>
+                                        <button
+                                            className={styles.favCartAllBtn}
+                                            onClick={async () => {
+                                                for (const menu of favoriteMenus) {
+                                                    const firstImage = menu.imagesSrc ? menu.imagesSrc.split(',')[0].trim() : 'blank.png';
+                                                    await addItem({
+                                                        menuId: menu.id,
+                                                        korName: menu.korName,
+                                                        price: menu.price,
+                                                        imageSrc: firstImage,
+                                                    });
+                                                }
+                                                toast.success(`${favoriteMenus.length}개 메뉴를 모두 장바구니에 담았습니다! 🛒`);
+                                            }}
+                                        >
+                                            <ShoppingCart size={16} />
+                                            모두 담기
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className={styles.favoriteGrid}>
+                                    {favoriteMenus.map((menu: any) => {
+                                        const firstImage = menu.imagesSrc
+                                            ? menu.imagesSrc.split(',')[0].trim()
+                                            : 'blank.png';
+                                        const isSelected = selectedFavorites.has(menu.id);
+                                        return (
+                                            <div key={menu.id} className={`${styles.favoriteCard} ${isSelected ? styles.favoriteCardSelected : ''}`}>
+                                                <label className={styles.favCheckbox}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isSelected}
+                                                        onChange={() => {
+                                                            setSelectedFavorites(prev => {
+                                                                const next = new Set(prev);
+                                                                if (next.has(menu.id)) {
+                                                                    next.delete(menu.id);
+                                                                } else {
+                                                                    next.add(menu.id);
+                                                                }
+                                                                return next;
+                                                            });
+                                                        }}
+                                                    />
+                                                </label>
+                                                <Link href={`/menus/${menu.id}`} className={styles.favLink}>
+                                                    <img
+                                                        src={`/images/${firstImage}`}
+                                                        alt={menu.korName}
+                                                        className={styles.favImage}
+                                                        onError={(e) => { (e.target as HTMLImageElement).src = '/images/blank.png'; }}
+                                                    />
+                                                    <div className={styles.favInfo}>
+                                                        <h4 className={styles.favName}>{menu.korName}</h4>
+                                                        <span className={styles.favPrice}>{menu.price?.toLocaleString()}원</span>
+                                                    </div>
+                                                </Link>
+                                                <button
+                                                    className={styles.favRemoveBtn}
+                                                    onClick={async () => {
+                                                        await toggleFavorite(menu.id);
+                                                        setFavoriteMenus(prev => prev.filter(m => m.id !== menu.id));
+                                                        setSelectedFavorites(prev => {
+                                                            const next = new Set(prev);
+                                                            next.delete(menu.id);
+                                                            return next;
+                                                        });
+                                                        toast.info(`${menu.korName} 찜 해제 🤍`);
+                                                    }}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </>
                         )}
                     </section>
                 ) : activeTab === 'orders' ? (
@@ -659,6 +746,7 @@ export default function MyPage() {
                                     value={phone} 
                                     onChange={(e) => setPhone(e.target.value)} 
                                     placeholder="010-0000-0000"
+                                    maxLength={13}
                                 />
                             </div>
                             <button type="submit" className={styles.saveBtn}>정보 저장하기 🐤</button>
@@ -673,6 +761,7 @@ export default function MyPage() {
                                     value={currentPassword} 
                                     onChange={(e) => setCurrentPassword(e.target.value)} 
                                     required
+                                    maxLength={100}
                                 />
                             </div>
                             <div className={styles.inputGroup}>
@@ -682,6 +771,7 @@ export default function MyPage() {
                                     value={newPassword} 
                                     onChange={(e) => setNewPassword(e.target.value)} 
                                     required
+                                    maxLength={100}
                                 />
                             </div>
                             <div className={styles.inputGroup}>
@@ -691,6 +781,7 @@ export default function MyPage() {
                                     value={confirmPassword} 
                                     onChange={(e) => setConfirmPassword(e.target.value)} 
                                     required
+                                    maxLength={100}
                                 />
                             </div>
                             <button type="submit" className={styles.saveBtn}>비밀번호 변경하기 🐥</button>

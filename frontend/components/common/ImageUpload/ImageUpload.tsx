@@ -73,14 +73,16 @@ export default function ImageUpload({ images, onChange, maxFiles = 5 }: ImageUpl
         }
     };
 
+    const isFull = images.length >= maxFiles;
+
     return (
         <div className={styles.container}>
             <div
-                className={`${styles.uploadArea} ${isDragging ? styles.active : ''}`}
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
+                className={`${styles.uploadArea} ${isDragging ? styles.active : ''} ${isFull ? styles.disabled : ''}`}
+                onClick={() => !isFull && fileInputRef.current?.click()}
+                onDragOver={!isFull ? handleDragOver : undefined}
+                onDragLeave={!isFull ? handleDragLeave : undefined}
+                onDrop={!isFull ? handleDrop : undefined}
             >
                 <input
                     type="file"
@@ -89,14 +91,24 @@ export default function ImageUpload({ images, onChange, maxFiles = 5 }: ImageUpl
                     ref={fileInputRef}
                     className={styles.fileInput}
                     onChange={handleFileChange}
+                    disabled={isFull}
                 />
                 <Upload size={32} className={styles.uploadIcon} />
-                <p className={styles.uploadText}>
-                    <strong>클릭하여 업로드</strong> 또는 파일을 여기까지 드래그하세요
-                </p>
-                <p className={styles.uploadText} style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                    (최대 {maxFiles}장)
-                </p>
+                {isFull ? (
+                    <p className={styles.uploadText}>
+                        <strong>이미지가 최대 {maxFiles}장입니다</strong><br />
+                        기존 이미지를 삭제 후 추가해주세요
+                    </p>
+                ) : (
+                    <>
+                        <p className={styles.uploadText}>
+                            <strong>클릭하여 업로드</strong> 또는 파일을 여기까지 드래그하세요
+                        </p>
+                        <p className={styles.uploadText} style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                            ({images.length} / {maxFiles}장)
+                        </p>
+                    </>
+                )}
             </div>
 
             {images.length > 0 && (

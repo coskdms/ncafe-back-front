@@ -93,6 +93,7 @@ export default function SignupForm({ onSignup, error, isLoading }: SignupFormPro
                     onChange={(e) => setNickname(e.target.value)}
                     placeholder="2~20자 영문, 숫자, 한글"
                     required
+                    maxLength={20}
                 />
                 {nicknameValidation && !nicknameValidation.isValid && (
                     <span className={styles.fieldError}>{nicknameValidation.message}</span>
@@ -108,6 +109,7 @@ export default function SignupForm({ onSignup, error, isLoading }: SignupFormPro
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="8자 이상, 영문+숫자+특수문자"
                     required
+                    maxLength={100}
                 />
                 {password.length > 0 && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
@@ -139,6 +141,7 @@ export default function SignupForm({ onSignup, error, isLoading }: SignupFormPro
                     onChange={(e) => setPasswordConfirm(e.target.value)}
                     placeholder="비밀번호를 다시 입력하세요"
                     required
+                    maxLength={100}
                 />
                 {passwordMismatch && (
                     <span className={styles.fieldError}>비밀번호가 일치하지 않습니다</span>
@@ -186,6 +189,7 @@ export default function SignupForm({ onSignup, error, isLoading }: SignupFormPro
                         onChange={(e) => setSecurityAnswer(e.target.value)}
                         placeholder="답변을 입력하세요"
                         required
+                        maxLength={100}
                     />
                 </div>
             )}

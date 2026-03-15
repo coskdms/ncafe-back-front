@@ -97,6 +97,7 @@ export default function OptionManager({ options, onChange }: OptionManagerProps)
                                     onChange={(e) => updateOptionGroup(groupIndex, 'name', e.target.value)}
                                     placeholder="예: 사이즈 선택"
                                     className={styles.input}
+                                    maxLength={30}
                                 />
                             </div>
                             <div className={styles.inputGroup} style={{ flex: 1 }}>
@@ -142,6 +143,7 @@ export default function OptionManager({ options, onChange }: OptionManagerProps)
                                         placeholder="옵션명 (예: Large)"
                                         className={styles.input}
                                         style={{ flex: 2 }}
+                                        maxLength={30}
                                     />
                                     <div className={styles.priceInputWrapper}>
                                         <span className={styles.pricePrefix}>+</span>
@@ -151,6 +153,14 @@ export default function OptionManager({ options, onChange }: OptionManagerProps)
                                             onChange={(e) => updateItem(groupIndex, itemIndex, 'additionalPrice', Number(e.target.value))}
                                             placeholder="추가 금액"
                                             className={styles.priceInput}
+                                            min={0}
+                                            max={999999}
+                                            onInput={(e) => {
+                                                const input = e.target as HTMLInputElement;
+                                                const num = Number(input.value);
+                                                if (num > 999999) input.value = '999999';
+                                                if (num < 0) input.value = '0';
+                                            }}
                                         />
                                     </div>
                                     <button

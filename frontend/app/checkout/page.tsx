@@ -330,6 +330,7 @@ export default function CheckoutPage() {
                                     onChange={handleInputChange}
                                     placeholder={orderType === 'DINE_IN' ? '닉네임을 입력해주세요' : '이름을 입력해주세요'}
                                     className={styles.input}
+                                    maxLength={20}
                                 />
                             </div>
                             {(orderType === 'PICK_UP' || orderType === 'DELIVERY') && (
@@ -343,6 +344,7 @@ export default function CheckoutPage() {
                                         onChange={handleInputChange}
                                         placeholder="010-0000-0000"
                                         className={styles.input}
+                                        maxLength={13}
                                     />
                                 </div>
                             )}
@@ -422,8 +424,8 @@ export default function CheckoutPage() {
                                         placeholder="상세 주소를 입력하세요 (동/호수 등)"
                                         className={styles.input}
                                         style={{ marginTop: '8px' }}
+                                        maxLength={100}
                                         onChange={(e) => {
-                                            // 기존 주소에서 상세 주소 부분만 업데이트
                                             const baseAddress = formData.address.split(' / ')[0];
                                             if (e.target.value) {
                                                 setFormData(prev => ({ ...prev, address: `${baseAddress} / ${e.target.value}` }));
@@ -442,6 +444,7 @@ export default function CheckoutPage() {
                                         placeholder="카페에 전달할 메시지를 적어주세요 (예: 얼음 많이 주세요!)"
                                         className={styles.input}
                                         style={{ height: '80px', resize: 'none' }}
+                                        maxLength={200}
                                     />
                                 </div>
                             </section>
@@ -463,6 +466,14 @@ export default function CheckoutPage() {
                                             onChange={handlePointsChange}
                                             placeholder="사용할 포인트를 입력하세요"
                                             className={styles.pointInput}
+                                            min={0}
+                                            max={availablePoints}
+                                            onInput={(e) => {
+                                                const input = e.target as HTMLInputElement;
+                                                const num = Number(input.value);
+                                                if (num > availablePoints) input.value = String(availablePoints);
+                                                if (num < 0) input.value = '0';
+                                            }}
                                         />
                                         <button 
                                             className={styles.useAllBtn}

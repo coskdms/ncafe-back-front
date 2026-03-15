@@ -269,6 +269,7 @@ export default function CategoriesPage() {
                                     placeholder="예: 커피, 논커피, 디저트 등"
                                     required
                                     disabled={isSaving}
+                                    maxLength={20}
                                 />
                             </div>
                             <div className={styles.formGroup}>

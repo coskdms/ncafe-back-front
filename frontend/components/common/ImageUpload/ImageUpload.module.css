@@ -24,6 +24,18 @@
     background-color: var(--color-primary-50);
 }
 
+.uploadArea.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--color-gray-200);
+    background-color: var(--bg-secondary);
+}
+
+.uploadArea.disabled:hover {
+    border-color: var(--color-gray-200);
+    background-color: var(--bg-secondary);
+}
+
 .uploadIcon {
     color: var(--color-gray-400);
 }

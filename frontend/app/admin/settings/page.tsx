@@ -155,6 +155,7 @@ export default function AdminSettingsPage() {
                                     value={settings.shopName}
                                     onChange={handleInputChange}
                                     placeholder="N-Cafe 우리동네 커피숍"
+                                    maxLength={50}
                                 />
                             </div>
                             <div className={styles.inputGroup}>
@@ -164,6 +165,7 @@ export default function AdminSettingsPage() {
                                     value={settings.businessHours}
                                     onChange={handleInputChange}
                                     placeholder="09:00 - 20:00"
+                                    maxLength={30}
                                 />
                             </div>
                             <div className={styles.inputGroup}>
@@ -173,6 +175,7 @@ export default function AdminSettingsPage() {
                                     value={settings.shopPhone}
                                     onChange={handleInputChange}
                                     placeholder="010-0000-0000"
+                                    maxLength={13}
                                 />
                             </div>
                             <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
@@ -181,6 +184,7 @@ export default function AdminSettingsPage() {
                                     name="shopAddress"
                                     value={settings.shopAddress}
                                     onChange={handleInputChange}
+                                    maxLength={200}
                                 />
                             </div>
                             <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
@@ -190,6 +194,7 @@ export default function AdminSettingsPage() {
                                     value={settings.notice}
                                     onChange={handleInputChange}
                                     rows={4}
+                                    maxLength={500}
                                 />
                             </div>
                         </div>
@@ -206,6 +211,8 @@ export default function AdminSettingsPage() {
                                     name="minOrderAmount"
                                     value={settings.minOrderAmount}
                                     onChange={handleInputChange}
+                                    min={0}
+                                    max={9999999}
                                 />
                             </div>
                             <div className={styles.inputGroup}>
@@ -215,6 +222,8 @@ export default function AdminSettingsPage() {
                                     name="deliveryFee"
                                     value={settings.deliveryFee}
                                     onChange={handleInputChange}
+                                    min={0}
+                                    max={9999999}
                                 />
                             </div>
                             <div className={styles.inputGroup}>
@@ -224,6 +233,7 @@ export default function AdminSettingsPage() {
                                     value={settings.estimatedPrepTime}
                                     onChange={handleInputChange}
                                     placeholder="15분 - 20분"
+                                    maxLength={30}
                                 />
                             </div>
                         </div>

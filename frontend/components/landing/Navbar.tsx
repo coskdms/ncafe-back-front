@@ -64,6 +64,7 @@ export default function Navbar() {
                         <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>카페 소개</a>
                         <Link href="/menus">특별 메뉴</Link>
                         <a href="#location" onClick={(e) => { e.preventDefault(); scrollToSection('location'); }}>매장 안내</a>
+                        <Link href="/orders">주문조회</Link>
                         
                         {/* 장바구니 아이콘 추가 */}
                         <Link href="/cart" className={styles.cartIcon} title="장바구니">
@@ -102,6 +103,7 @@ export default function Navbar() {
                     <a href="#about" onClick={(e) => { e.preventDefault(); setIsOpen(false); scrollToSection('about'); }}>카페 소개</a>
                     <Link href="/menus" onClick={() => setIsOpen(false)}>특별 메뉴</Link>
                     <a href="#location" onClick={(e) => { e.preventDefault(); setIsOpen(false); scrollToSection('location'); }}>매장 안내</a>
+                    <Link href="/orders" onClick={() => setIsOpen(false)}>주문조회</Link>
                     
                     {/* 모바일 장바구니 링크 */}
                     <Link href="/cart" onClick={() => setIsOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

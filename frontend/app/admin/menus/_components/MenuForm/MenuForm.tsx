@@ -55,6 +55,7 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
                                 {...register('korName', { required: '한글 메뉴명을 입력해주세요' })}
                                 className={styles.input}
                                 placeholder="예: 아메리카노"
+                                maxLength={50}
                             />
                             {errors.korName && <span className={styles.errorMsg}>{errors.korName.message}</span>}
                         </div>
@@ -67,6 +68,7 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
                                 {...register('engName')}
                                 className={styles.input}
                                 placeholder="예: Americano"
+                                maxLength={100}
                             />
                         </div>
                     </div>
@@ -159,6 +161,7 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
                         {...register('description')}
                         className={`${styles.input} ${styles.textarea}`}
                         placeholder="메뉴에 대한 설명을 입력해주세요."
+                        maxLength={500}
                     />
                 </div>
             </section>
