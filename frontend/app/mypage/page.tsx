@@ -11,6 +11,7 @@ import { isValidPhone, isValidAddress, validatePassword } from '@/utils/validato
 import { openAddressSearch } from '@/utils/addressSearch';
 import { useFavoriteStore } from '@/stores/favoriteStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { getDefaultOptions } from '@/app/lib/menuOptions';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import { useRouter } from 'next/navigation';
@@ -500,11 +501,13 @@ export default function MyPage() {
                                                 let added = 0;
                                                 for (const menu of selected) {
                                                     const firstImage = menu.imagesSrc ? menu.imagesSrc.split(',')[0].trim() : 'blank.png';
+                                                    const defaults = await getDefaultOptions(menu.id);
                                                     await addItem({
                                                         menuId: menu.id,
                                                         korName: menu.korName,
-                                                        price: menu.price,
+                                                        price: menu.price + (defaults?.additionalPrice || 0),
                                                         imageSrc: firstImage,
+                                                        options: defaults?.options,
                                                     });
                                                     added++;
                                                 }
@@ -520,11 +523,13 @@ export default function MyPage() {
                                             onClick={async () => {
                                                 for (const menu of favoriteMenus) {
                                                     const firstImage = menu.imagesSrc ? menu.imagesSrc.split(',')[0].trim() : 'blank.png';
+                                                    const defaults = await getDefaultOptions(menu.id);
                                                     await addItem({
                                                         menuId: menu.id,
                                                         korName: menu.korName,
-                                                        price: menu.price,
+                                                        price: menu.price + (defaults?.additionalPrice || 0),
                                                         imageSrc: firstImage,
+                                                        options: defaults?.options,
                                                     });
                                                 }
                                                 toast.success(`${favoriteMenus.length}개 메뉴를 모두 장바구니에 담았습니다! 🛒`);

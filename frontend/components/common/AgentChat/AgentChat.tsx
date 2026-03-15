@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useCartStore } from '@/stores/cartStore';
 import { useAuthStore } from '@/stores/authStore';
+import { getDefaultOptions } from '@/app/lib/menuOptions';
 import styles from './AgentChat.module.css';
 
 // 고라파덕 아이콘 경로
@@ -470,16 +471,21 @@ export default function AgentChat() {
                             router.push('/checkout');
                         }
                     } else if (action.type === 'order_favorites' && action.items) {
-                        // 찜 목록 바로 주문
-                        const checkoutItems = action.items.map((item: any, idx: number) => ({
-                            menuId: item.menuId,
-                            korName: item.korName,
-                            price: item.price,
-                            imageSrc: item.imageSrc || 'blank.png',
-                            options: {},
-                            id: Date.now() + idx,
-                            quantity: 1
-                        }));
+                        // 찜 목록 바로 주문 - 디폴트 옵션 적용
+                        const checkoutItems = [];
+                        for (let idx = 0; idx < action.items.length; idx++) {
+                            const item = action.items[idx];
+                            const defaults = await getDefaultOptions(item.menuId);
+                            checkoutItems.push({
+                                menuId: item.menuId,
+                                korName: item.korName,
+                                price: item.price + (defaults?.additionalPrice || 0),
+                                imageSrc: item.imageSrc || 'blank.png',
+                                options: defaults?.options || {},
+                                id: Date.now() + idx,
+                                quantity: 1
+                            });
+                        }
                         useCartStore.getState().setCheckoutItems(checkoutItems);
                         setTimeout(() => router.push('/checkout'), 1500);
                     } else if (action.type === 'navigate' && action.url) {
