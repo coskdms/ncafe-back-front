@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './Cart.module.css';
 import Navbar from '@/components/landing/Navbar';
+import { toast } from '@/stores/toastStore';
 
 export default function CartPage() {
     const router = useRouter();
@@ -19,6 +20,14 @@ export default function CartPage() {
 
     const { items, updateQuantity, removeItem, clearCart, getTotalPrice, getTotalItems } = useCartStore();
     const { isAuthenticated, user } = useAuthStore();
+
+    // 옵션 변경 모달
+    interface OptionDetail { name: string; additionalPrice: number; sortOrder: number; }
+    interface OptionGroup { name: string; isRequired: boolean; isMultiple: boolean; sortOrder: number; optionDetails: OptionDetail[]; }
+    const [editingItemId, setEditingItemId] = useState<number | null>(null);
+    const [editOptionGroups, setEditOptionGroups] = useState<OptionGroup[]>([]);
+    const [editSelectedOptions, setEditSelectedOptions] = useState<Record<string, string[]>>({});
+    const [editBasePrice, setEditBasePrice] = useState(0);
 
     const totalPrice = getTotalPrice();
     const totalItems = getTotalItems();
@@ -89,6 +98,32 @@ export default function CartPage() {
                                                     {group}: {val}
                                                 </span>
                                             ))}
+                                            <button
+                                                className={styles.optionChangeBtn}
+                                                onClick={async () => {
+                                                    try {
+                                                        const res = await fetch(`/api/menus/${item.menuId}`);
+                                                        if (!res.ok) return;
+                                                        const detail = await res.json();
+                                                        if (detail.optionGroups?.length > 0) {
+                                                            setEditingItemId(item.id);
+                                                            setEditOptionGroups(detail.optionGroups);
+                                                            setEditBasePrice(detail.price);
+                                                            const current: Record<string, string[]> = {};
+                                                            if (item.options) {
+                                                                Object.entries(item.options).forEach(([k, v]) => {
+                                                                    current[k] = [v as string];
+                                                                });
+                                                            }
+                                                            setEditSelectedOptions(current);
+                                                        }
+                                                    } catch (err) {
+                                                        console.error('Failed to load options:', err);
+                                                    }
+                                                }}
+                                            >
+                                                변경
+                                            </button>
                                         </div>
                                     )}
                                 </div>
@@ -207,6 +242,120 @@ export default function CartPage() {
                     </aside>
                 </div>
             </main>
+
+            {/* 옵션 변경 모달 */}
+            {editingItemId !== null && (
+                <div className={styles.optionOverlay} onClick={() => setEditingItemId(null)}>
+                    <div className={styles.optionEditModal} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.optionEditHeader}>
+                            <h3>🔧 옵션 변경</h3>
+                            <button onClick={() => setEditingItemId(null)} className={styles.optionCloseBtn}>✕</button>
+                        </div>
+                        <div className={styles.optionEditBody}>
+                            {editOptionGroups.map((group) => (
+                                <div key={group.name} className={styles.optionEditGroup}>
+                                    <div className={styles.optionEditGroupHeader}>
+                                        <span className={styles.optionEditGroupName}>{group.name}</span>
+                                        <span className={group.isRequired ? styles.optionEditRequired : styles.optionEditOptional}>
+                                            {group.isRequired ? '필수' : '선택'}
+                                        </span>
+                                    </div>
+                                    <div className={styles.optionEditList}>
+                                        {group.optionDetails.map((opt) => {
+                                            const isSelected = (editSelectedOptions[group.name] || []).includes(opt.name);
+                                            return (
+                                                <label key={opt.name} className={`${styles.optionEditItem} ${isSelected ? styles.optionEditItemSelected : ''}`}>
+                                                    <input
+                                                        type={group.isMultiple ? 'checkbox' : 'radio'}
+                                                        name={`cart-edit-${group.name}`}
+                                                        checked={isSelected}
+                                                        onChange={() => {
+                                                            setEditSelectedOptions(prev => {
+                                                                if (group.isMultiple) {
+                                                                    const current = prev[group.name] || [];
+                                                                    return {
+                                                                        ...prev,
+                                                                        [group.name]: isSelected
+                                                                            ? current.filter(n => n !== opt.name)
+                                                                            : [...current, opt.name]
+                                                                    };
+                                                                } else {
+                                                                    return { ...prev, [group.name]: [opt.name] };
+                                                                }
+                                                            });
+                                                        }}
+                                                    />
+                                                    <span>{opt.name}</span>
+                                                    {opt.additionalPrice > 0 && (
+                                                        <span className={styles.optionEditPrice}>+{opt.additionalPrice.toLocaleString()}원</span>
+                                                    )}
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className={styles.optionEditFooter}>
+                            <div className={styles.optionEditTotal}>
+                                변경 가격: {(() => {
+                                    let total = editBasePrice;
+                                    editOptionGroups.forEach(g => {
+                                        (editSelectedOptions[g.name] || []).forEach(name => {
+                                            const opt = g.optionDetails.find(d => d.name === name);
+                                            if (opt) total += opt.additionalPrice || 0;
+                                        });
+                                    });
+                                    return total.toLocaleString();
+                                })()}원
+                            </div>
+                            <div className={styles.optionEditBtns}>
+                                <button onClick={() => setEditingItemId(null)} className={styles.optionEditCancelBtn}>
+                                    취소
+                                </button>
+                                <button
+                                    className={styles.optionEditConfirmBtn}
+                                    onClick={() => {
+                                        const missing = editOptionGroups.filter(
+                                            g => g.isRequired && (!editSelectedOptions[g.name] || editSelectedOptions[g.name].length === 0)
+                                        );
+                                        if (missing.length > 0) {
+                                            toast.error(`필수 옵션을 선택해주세요: ${missing.map(g => g.name).join(', ')}`);
+                                            return;
+                                        }
+
+                                        let newPrice = editBasePrice;
+                                        const newOptions: Record<string, string> = {};
+                                        editOptionGroups.forEach(g => {
+                                            const selected = editSelectedOptions[g.name] || [];
+                                            if (selected.length > 0) {
+                                                newOptions[g.name] = selected.join(', ');
+                                            }
+                                            selected.forEach(name => {
+                                                const opt = g.optionDetails.find(d => d.name === name);
+                                                if (opt) newPrice += opt.additionalPrice || 0;
+                                            });
+                                        });
+
+                                        // cartStore의 아이템 업데이트
+                                        const store = useCartStore.getState();
+                                        const updatedItems = store.items.map(it =>
+                                            it.id === editingItemId
+                                                ? { ...it, price: newPrice, options: newOptions }
+                                                : it
+                                        );
+                                        useCartStore.setState({ items: updatedItems });
+                                        setEditingItemId(null);
+                                        toast.success('옵션이 변경되었습니다! ✅');
+                                    }}
+                                >
+                                    확인
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
