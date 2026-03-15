@@ -82,6 +82,7 @@ public class JdbcMemberRepository implements MemberRepository {
                                  created_at, updated_at)
                 VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT (id) DO UPDATE SET
+                    password = EXCLUDED.password,
                     current_points = EXCLUDED.current_points,
                     total_accumulated_points = EXCLUDED.total_accumulated_points,
                     last_order_date = EXCLUDED.last_order_date,

@@ -518,55 +518,102 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
 async def chat(messages: list[dict], auth_token: Optional[str] = None, user_role: str = "GUEST") -> str:
     import traceback
     logger.info(f"Generating content using model: {model_name}. Auth provided: {bool(auth_token)}, Role: {user_role}")
-    actions = []
-    try:
-        response = await async_client.aio.models.generate_content(
-            model=model_name,
-            contents=messages,
-            config=get_config(auth_token, captured_actions=actions, user_role=user_role)
-        )
-        # AFC 대응: response.text가 없을 경우 체크
-        if not response.text:
-            logger.warning("Empty response text from Gemini API")
-            return "앗... 갑자기 할 말이 생각 안 났다덕! 💦 다시 한번 말해줄 수 있냐덕?"
-        return response.text
-    except Exception as e:
-        logger.error(f"Gemini API (generate_content) error: {e}")
-        logger.error(traceback.format_exc())
-        raise e
+    
+    max_retries = 2
+    for attempt in range(max_retries + 1):
+        actions = []
+        try:
+            response = await async_client.aio.models.generate_content(
+                model=model_name,
+                contents=messages,
+                config=get_config(auth_token, captured_actions=actions, user_role=user_role)
+            )
+            # AFC 대응: response.text가 없을 경우 candidates에서 추출
+            result_text = ""
+            try:
+                if response.text:
+                    result_text = response.text
+            except Exception:
+                pass
+            
+            if not result_text and response.candidates:
+                for candidate in response.candidates:
+                    if candidate.content and candidate.content.parts:
+                        for part in candidate.content.parts:
+                            if part.text and not getattr(part, 'thought', False):
+                                result_text += part.text
+            
+            if result_text:
+                if attempt > 0:
+                    logger.info(f"[chat] Retry #{attempt} succeeded!")
+                return result_text
+            
+            # 빈 응답이면 재시도
+            if attempt < max_retries:
+                logger.warning(f"[chat] Empty response (attempt {attempt + 1}/{max_retries + 1}). Retrying...")
+                import asyncio
+                await asyncio.sleep(0.5)
+            else:
+                logger.warning(f"[chat] All {max_retries + 1} attempts returned empty.")
+                return "앗... 갑자기 할 말이 생각 안 났다덕! 💦 다시 한번 말해줄 수 있냐덕?"
+        except Exception as e:
+            logger.error(f"Gemini API (generate_content) error: {e}")
+            logger.error(traceback.format_exc())
+            raise e
 
 async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, user_role: str = "GUEST") -> AsyncGenerator[str, None]:
     """
     gemini-2.5-flash + AFC 환경에서 안정적으로 응답하는 함수.
     non-stream으로 AFC를 완료한 뒤, 텍스트를 pseudo-streaming으로 전달합니다.
+    빈 응답이 올 경우 최대 2번 자동 재시도합니다.
     """
     import traceback
     import asyncio
     import re
     logger.info(f"Generating content using model: {model_name}. Auth provided: {bool(auth_token)}, Role: {user_role}")
+    
+    max_retries = 2
+    full_text = ""
     actions = []
+    
     try:
-        # Gemini API 호출 (AFC 포함, 동기적으로 대기)
-        response = await async_client.aio.models.generate_content(
-            model=model_name,
-            contents=messages,
-            config=get_config(auth_token, captured_actions=actions, user_role=user_role)
-        )
-        
-        # gemini-2.5-flash (thinking 모델)은 response.text가 빈 경우가 있어, candidates에서 직접 추출
-        full_text = ""
-        try:
-            if response.text:
-                full_text = response.text
-        except Exception:
-            pass
-        
-        if not full_text and response.candidates:
-            for candidate in response.candidates:
-                if candidate.content and candidate.content.parts:
-                    for part in candidate.content.parts:
-                        if part.text and not getattr(part, 'thought', False):
-                            full_text += part.text
+        for attempt in range(max_retries + 1):
+            actions = []
+            full_text = ""
+            
+            # Gemini API 호출 (AFC 포함, 동기적으로 대기)
+            response = await async_client.aio.models.generate_content(
+                model=model_name,
+                contents=messages,
+                config=get_config(auth_token, captured_actions=actions, user_role=user_role)
+            )
+            
+            # gemini-2.5-flash (thinking 모델)은 response.text가 빈 경우가 있어, candidates에서 직접 추출
+            try:
+                if response.text:
+                    full_text = response.text
+            except Exception:
+                pass
+            
+            if not full_text and response.candidates:
+                for candidate in response.candidates:
+                    if candidate.content and candidate.content.parts:
+                        for part in candidate.content.parts:
+                            if part.text and not getattr(part, 'thought', False):
+                                full_text += part.text
+            
+            # 텍스트나 액션 중 하나라도 있으면 성공 → 루프 탈출
+            if full_text or actions:
+                if attempt > 0:
+                    logger.info(f"[chat_stream] Retry #{attempt} succeeded!")
+                break
+            
+            # 둘 다 비어있으면 재시도
+            if attempt < max_retries:
+                logger.warning(f"[chat_stream] Empty response (attempt {attempt + 1}/{max_retries + 1}). Retrying...")
+                await asyncio.sleep(0.5)
+            else:
+                logger.warning(f"[chat_stream] All {max_retries + 1} attempts returned empty response.")
         
         logger.info(f"[chat_stream] Response received. Text length: {len(full_text)}, Actions: {len(actions)}")
         
@@ -586,7 +633,7 @@ async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, us
                         yield segment[i:i + chunk_size]
                         await asyncio.sleep(0.02)
         elif not actions:
-            # 텍스트도 액션도 없으면 기본 메시지 전송
+            # 재시도 후에도 텍스트도 액션도 없으면 기본 메시지 전송
             yield "앗... 갑자기 머리가 멍해졌다덕! 💦 다시 한번 말해줄 수 있냐덕?"
         
         for action in actions:
@@ -595,3 +642,4 @@ async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, us
         logger.error(f"Gemini API (chat_stream) error: {e}")
         logger.error(traceback.format_exc())
         yield f"앗... 문제가 생겼다덕! 다시 시도해달라덕! 💦"
+
