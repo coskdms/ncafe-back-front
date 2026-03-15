@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '@/components/common/Button';
 import { useCategories } from '@/app/admin/_components/category/CategoryTabs/useCategories';
@@ -35,6 +36,14 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
 
     const images = watch('images') || [];
     const optionGroups = watch('optionGroups') || [];
+
+    // 가격 콤마 포맷용
+    const [priceDisplay, setPriceDisplay] = useState('');
+    useEffect(() => {
+        if (initialData?.price !== undefined) {
+            setPriceDisplay(Number(initialData.price).toLocaleString());
+        }
+    }, [initialData?.price]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
@@ -97,22 +106,31 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
                                 가격 <span className={styles.required}>*</span>
                             </label>
                             <input
-                                type="number"
+                                type="text"
+                                inputMode="numeric"
+                                value={priceDisplay}
+                                onChange={(e) => {
+                                    const raw = e.target.value.replace(/[^0-9]/g, '');
+                                    if (raw === '') {
+                                        setPriceDisplay('');
+                                        setValue('price', 0 as any);
+                                        return;
+                                    }
+                                    let num = parseInt(raw, 10);
+                                    if (num > 9999999) num = 9999999;
+                                    setPriceDisplay(num.toLocaleString());
+                                    setValue('price', num as any, { shouldValidate: true });
+                                }}
+                                className={styles.input}
+                                placeholder="0"
+                            />
+                            <input
+                                type="hidden"
                                 {...register('price', {
                                     required: '가격을 입력해주세요',
                                     min: { value: 0, message: '가격은 0원 이상이어야 합니다' },
                                     max: { value: 9999999, message: '가격은 9,999,999원 이하로 입력해주세요' }
                                 })}
-                                className={styles.input}
-                                placeholder="0"
-                                min={0}
-                                max={9999999}
-                                onInput={(e) => {
-                                    const input = e.target as HTMLInputElement;
-                                    const num = Number(input.value);
-                                    if (num > 9999999) input.value = '9999999';
-                                    if (num < 0) input.value = '0';
-                                }}
                             />
                             {errors.price && <span className={styles.errorMsg}>{errors.price.message}</span>}
                         </div>
