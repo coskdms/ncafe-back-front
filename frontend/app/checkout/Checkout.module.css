@@ -321,16 +321,16 @@
     margin-bottom: var(--space-4);
     animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55),
                floatDuck 3s ease-in-out 0.8s infinite;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(253, 230, 138, 0.4) 0%, rgba(253, 230, 138, 0) 70%);
 }
 
 .successIconImg {
     width: 85%;
     height: 85%;
-    object-fit: contain;
-    filter: drop-shadow(0 8px 24px rgba(245, 158, 11, 0.35))
-            drop-shadow(0 0 40px rgba(253, 230, 138, 0.3));
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 12px 28px rgba(245, 158, 11, 0.3),
+                0 0 0 10px rgba(253, 230, 138, 0.5), /* 은은한 두꺼운 테두리 효과 */
+                0 0 0 20px rgba(253, 230, 138, 0.2); /* 더 넓은 글로우 효과 */
 }
 
 @keyframes bounceIn {
