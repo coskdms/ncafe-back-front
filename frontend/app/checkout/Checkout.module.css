@@ -302,13 +302,26 @@
 }
 
 .failIconWrapper {
-    width: 160px;
-    height: 160px;
+    width: 180px;
+    height: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 120px;
+    margin-top: 20px;
     margin-bottom: var(--space-4);
+    animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+               floatDuck 3s ease-in-out 0.8s infinite;
+}
+
+.failIconImg {
+    width: 85%;
+    height: 85%;
+    object-fit: cover;
+    border-radius: 50%;
+    /* 실패는 귀여운 살짝 붉은/주황빛 경고 글로우 */
+    box-shadow: 0 12px 28px rgba(239, 68, 68, 0.3),
+                0 0 0 10px rgba(254, 202, 202, 0.5),
+                0 0 0 20px rgba(254, 202, 202, 0.2);
 }
 
 .successIconWrapper {

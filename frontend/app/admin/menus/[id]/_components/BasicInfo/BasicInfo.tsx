@@ -23,7 +23,7 @@ export default function BasicInfo({ id }: { id: number }) {
             {/* 가격 */}
             <div className={styles.infoBlock}>
                 <span className={styles.blockTitle}>가격</span>
-                <span className={styles.price}>₩{menu?.price}</span>
+                <span className={styles.price}>₩{menu?.price?.toLocaleString()}</span>
             </div>
 
             {/* 설명 */}

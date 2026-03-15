@@ -247,7 +247,7 @@ export default function AnalyticsPage() {
                 </div>
                 <div className={styles.summaryCard}>
                     <span className={styles.summaryLabel}>📦 총 주문</span>
-                    <span className={styles.summaryValue}>{summary.totalOrders}건</span>
+                    <span className={styles.summaryValue}>{summary.totalOrders.toLocaleString()}건</span>
                 </div>
                 <div className={styles.summaryCard}>
                     <span className={styles.summaryLabel}>📊 1일 평균 매출</span>

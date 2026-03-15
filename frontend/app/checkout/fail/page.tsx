@@ -16,8 +16,8 @@ function FailContent() {
             <div className={styles.failIconWrapper}>
                 <img 
                     src="/images/fail-duck.png" 
-                    alt="Fail Duck" 
-                    className={styles.successIconImg} 
+                    alt="Fail Duck"
+                    className={styles.failIconImg} 
                 />
             </div>
             <h1 className={styles.resultTitle}>결제에 실패했습니다 🐣</h1>
