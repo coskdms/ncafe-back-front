@@ -98,10 +98,19 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
                                 type="number"
                                 {...register('price', {
                                     required: '가격을 입력해주세요',
-                                    min: { value: 0, message: '가격은 0원 이상이어야 합니다' }
+                                    min: { value: 0, message: '가격은 0원 이상이어야 합니다' },
+                                    max: { value: 9999999, message: '가격은 9,999,999원 이하로 입력해주세요' }
                                 })}
                                 className={styles.input}
                                 placeholder="0"
+                                min={0}
+                                max={9999999}
+                                onInput={(e) => {
+                                    const input = e.target as HTMLInputElement;
+                                    const num = Number(input.value);
+                                    if (num > 9999999) input.value = '9999999';
+                                    if (num < 0) input.value = '0';
+                                }}
                             />
                             {errors.price && <span className={styles.errorMsg}>{errors.price.message}</span>}
                         </div>

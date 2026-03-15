@@ -213,13 +213,17 @@ public class AdminMenuController {
     /**
      * 가격 문자열을 안전하게 Integer로 변환합니다.
      * null, 빈 문자열, 숫자가 아닌 값은 0으로 처리합니다.
+     * Integer 범위를 초과하는 큰 숫자는 최대값(2,147,483,647)으로 제한합니다.
      */
     private Integer parsePrice(String price) {
         if (price == null || price.trim().isEmpty()) {
             return 0;
         }
         try {
-            return Integer.parseInt(price.trim());
+            long parsed = Long.parseLong(price.trim());
+            if (parsed < 0) return 0;
+            if (parsed > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+            return (int) parsed;
         } catch (NumberFormatException e) {
             return 0;
         }
