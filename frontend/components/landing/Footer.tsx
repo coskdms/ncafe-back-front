@@ -25,17 +25,18 @@ export default function Footer() {
                 <div className={styles.brand}>
                     <span className={styles.logo}>🐤 고라파덕 카페</span>
                     <p className={styles.tagline}>세상에서 가장 귀여운 포켓몬 카페</p>
+                    <p className={styles.desc}>커피 한 잔에 담긴 작은 행복,{'\n'}고라파덕과 함께하세요.</p>
                 </div>
                 <div className={styles.links}>
                     <h4>고라파덕 카페</h4>
                     <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>카페 소개</a>
-                    <Link href="/menus" style={{ color: 'inherit', textDecoration: 'none' }}>메뉴</Link>
+                    <Link href="/menus" className={styles.footerLink}>메뉴</Link>
                     <a href="#location" onClick={(e) => { e.preventDefault(); scrollToSection('location'); }}>매장 안내</a>
                 </div>
                 <div className={styles.bottom}>
                     <p>
                         © 2026{' '}
-                        <Link href="/admin" style={{ color: 'inherit', textDecoration: 'none', cursor: 'text' }}>
+                        <Link href="/admin" className={styles.adminLink}>
                             고라파덕 카페
                         </Link>
                         . All rights reserved. 🐤
