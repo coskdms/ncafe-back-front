@@ -134,9 +134,7 @@ public class AdminMenuController {
                 .korName(request.getKorName())
                 .engName(request.getEngName())
                 .description(request.getDescription())
-                .price((request.getPrice() != null && !request.getPrice().isEmpty()) 
-                        ? Integer.parseInt(request.getPrice()) 
-                        : 0)
+                .price(parsePrice(request.getPrice()))
                 .categoryId(request.getCategoryId())
                 .imageSrc(request.getImageSrc())
                 .isAvailable(request.getIsAvailable())
@@ -154,9 +152,7 @@ public class AdminMenuController {
                 .korName(request.getKorName())
                 .engName(request.getEngName())
                 .description(request.getDescription())
-                .price((request.getPrice() != null && !request.getPrice().isEmpty())
-                        ? Integer.parseInt(request.getPrice())
-                        : 0)
+                .price(parsePrice(request.getPrice()))
                 .categoryId(request.getCategoryId())
                 .imageSrc(request.getImageSrc())
                 .isAvailable(request.getIsAvailable())
@@ -212,5 +208,20 @@ public class AdminMenuController {
                                 .build())
                         .toList())
                 .build();
+    }
+
+    /**
+     * 가격 문자열을 안전하게 Integer로 변환합니다.
+     * null, 빈 문자열, 숫자가 아닌 값은 0으로 처리합니다.
+     */
+    private Integer parsePrice(String price) {
+        if (price == null || price.trim().isEmpty()) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(price.trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }

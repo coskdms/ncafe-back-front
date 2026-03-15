@@ -38,8 +38,15 @@ export async function fetchAPI(endpoint: string, options?: RequestInit) {
             error.status = res.status;
             try {
                 const body = await res.json();
-                error.message = (body as { message?: string }).message || error.message;
-            } catch { /* no json body */ }
+                if ((body as { message?: string }).message) {
+                    error.message = (body as { message?: string }).message!;
+                } else {
+                    // 서버에서 메시지가 없으면 상태 코드별 한글 메시지
+                    error.message = getStatusMessage(res.status);
+                }
+            } catch {
+                error.message = getStatusMessage(res.status);
+            }
             throw error;
         }
 
@@ -112,3 +119,20 @@ export const favoriteAPI = {
     /** 특정 메뉴 찜 여부 확인 */
     check: (menuId: number) => fetchAPI(`/favorites/check/${menuId}`),
 };
+
+/**
+ * HTTP 상태 코드별 사용자 친화적 한글 메시지
+ */
+function getStatusMessage(status: number): string {
+    switch (status) {
+        case 400: return '입력 정보를 확인해주세요.';
+        case 401: return '로그인이 필요합니다.';
+        case 403: return '권한이 없습니다.';
+        case 404: return '요청한 정보를 찾을 수 없습니다.';
+        case 409: return '이미 존재하는 데이터입니다.';
+        case 413: return '파일 크기가 너무 큽니다.';
+        case 500: return '서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+        default: return '요청 처리 중 오류가 발생했습니다.';
+    }
+}
+
