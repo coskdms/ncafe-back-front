@@ -65,6 +65,8 @@ export default function MyPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'orders' | 'favorites' | 'settings'>('orders');
     const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
+    const [orderPage, setOrderPage] = useState(1);
+    const ORDERS_PER_PAGE = 5;
     const [favoriteMenus, setFavoriteMenus] = useState<any[]>([]);
     const [isFavLoading, setIsFavLoading] = useState(false);
     const [selectedFavorites, setSelectedFavorites] = useState<Set<number>>(new Set());
@@ -600,106 +602,143 @@ export default function MyPage() {
                                 아직 주문한 내역이 없어요. <br/>
                                 맛있는 메뉴를 구경해볼까요? 🐤
                             </div>
-                        ) : (
-                            <div className={styles.orderList}>
-                                {orders.map((order) => (
-                                    <div key={order.id} className={styles.orderCard}>
-                                        <div 
-                                            className={styles.expandableHeader}
-                                            onClick={() => toggleOrderExpansion(order.id)}
-                                        >
-                                            <div className={styles.orderHeader}>
-                                                <div className={styles.orderDate}>
-                                                    {new Date(order.createdAt).toLocaleDateString()}
-                                                    <span style={{ marginLeft: '10px', fontSize: '12px', color: '#94a3b8' }}>
-                                                        {order.paymentId}
-                                                    </span>
-                                                </div>
-                                                <span className={`${styles.statusBadge} ${getStatusStyle(order.status)}`}>
-                                                    {getStatusLabel(order.status)}
-                                                </span>
-                                            </div>
-
-                                            <div className={styles.itemSummary}>
-                                                <div className={styles.itemNameMain}>
-                                                    {order.items[0]?.korName}
-                                                    {order.items.length > 1 && ` 외 ${order.items.length - 1}건`}
-                                                    <span style={{ fontSize: '14px', marginLeft: '8px', color: '#f59e0b' }}>
-                                                        {expandedOrders.has(order.id) ? '▲ 닫기' : '▼ 상세보기'}
-                                                    </span>
-                                                </div>
-                                                {!expandedOrders.has(order.id) && (
-                                                    <span className={styles.itemCountText}>
-                                                        총 {order.items.reduce((acc, item) => acc + item.quantity, 0)}개 상품
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            {expandedOrders.has(order.id) && (
-                                                <div className={styles.orderItemsList}>
-                                                    {order.items.map((item) => (
-                                                        <div key={item.id} className={styles.orderItemRow}>
-                                                            <div className={styles.itemInfo}>
-                                                                <div>{item.korName}</div>
-                                                                {item.options && (
-                                                                    <div className={styles.itemOptions}>
-                                                                        {Object.entries(JSON.parse(item.options)).map(([key, val]: [string, any]) => (
-                                                                            <span key={key}>{key}: {val} </span>
-                                                                        ))}
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                            <div className={styles.itemPriceQty}>
-                                                                {item.price.toLocaleString()}원 / {item.quantity}개
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className={styles.orderFooter}>
-                                            <div className={styles.totalPrice}>{order.totalPrice.toLocaleString()}원</div>
-                                            <div className={styles.actionBtns}>
-                                                {order.status === 'PENDING' && (
-                                                    <button 
-                                                        className={styles.reorderBtn}
-                                                        style={{ background: '#f59e0b', color: 'white', borderColor: '#f59e0b' }}
-                                                        onClick={() => handlePayNow(order)}
-                                                    >
-                                                        바로 결제
-                                                    </button>
-                                                )}
-                                                <button 
-                                                    className={styles.reorderBtn}
-                                                    onClick={() => handleReorder(order)}
+                        ) : (() => {
+                            const totalPages = Math.ceil(orders.length / ORDERS_PER_PAGE);
+                            const startIdx = (orderPage - 1) * ORDERS_PER_PAGE;
+                            const paginatedOrders = orders.slice(startIdx, startIdx + ORDERS_PER_PAGE);
+                            
+                            return (
+                                <>
+                                    <div className={styles.orderList}>
+                                        {paginatedOrders.map((order) => (
+                                            <div key={order.id} className={styles.orderCard}>
+                                                <div 
+                                                    className={styles.expandableHeader}
+                                                    onClick={() => toggleOrderExpansion(order.id)}
                                                 >
-                                                    재주문
-                                                </button>
-                                                {(order.status === 'PAID' || order.status === 'PREPARING') && (
-                                                    <button 
-                                                        className={styles.reorderBtn}
-                                                        style={{ background: '#ca8a04', color: 'white', borderColor: '#ca8a04' }}
-                                                        onClick={() => router.push(`/orders/${order.paymentId}`)}
-                                                    >
-                                                        📱 현황 보기
-                                                    </button>
-                                                )}
-                                                {order.status === 'PAID' && 
-                                                 (new Date().getTime() - new Date(order.createdAt).getTime() < 24 * 60 * 60 * 1000) && (
-                                                    <button 
-                                                        className={styles.cancelBtn}
-                                                        onClick={() => handleCancelOrder(order.paymentId)}
-                                                    >
-                                                        취소하기
-                                                    </button>
-                                                )}
+                                                    <div className={styles.orderHeader}>
+                                                        <div className={styles.orderDate}>
+                                                            {new Date(order.createdAt).toLocaleDateString()}
+                                                            <span style={{ marginLeft: '10px', fontSize: '12px', color: '#94a3b8' }}>
+                                                                {order.paymentId}
+                                                            </span>
+                                                        </div>
+                                                        <span className={`${styles.statusBadge} ${getStatusStyle(order.status)}`}>
+                                                            {getStatusLabel(order.status)}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className={styles.itemSummary}>
+                                                        <div className={styles.itemNameMain}>
+                                                            {order.items[0]?.korName}
+                                                            {order.items.length > 1 && ` 외 ${order.items.length - 1}건`}
+                                                            <span style={{ fontSize: '14px', marginLeft: '8px', color: '#f59e0b' }}>
+                                                                {expandedOrders.has(order.id) ? '▲ 닫기' : '▼ 상세보기'}
+                                                            </span>
+                                                        </div>
+                                                        {!expandedOrders.has(order.id) && (
+                                                            <span className={styles.itemCountText}>
+                                                                총 {order.items.reduce((acc, item) => acc + item.quantity, 0)}개 상품
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    {expandedOrders.has(order.id) && (
+                                                        <div className={styles.orderItemsList}>
+                                                            {order.items.map((item) => (
+                                                                <div key={item.id} className={styles.orderItemRow}>
+                                                                    <div className={styles.itemInfo}>
+                                                                        <div>{item.korName}</div>
+                                                                        {item.options && (
+                                                                            <div className={styles.itemOptions}>
+                                                                                {Object.entries(JSON.parse(item.options)).map(([key, val]: [string, any]) => (
+                                                                                    <span key={key}>{key}: {val} </span>
+                                                                                ))}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className={styles.itemPriceQty}>
+                                                                        {item.price.toLocaleString()}원 / {item.quantity}개
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <div className={styles.orderFooter}>
+                                                    <div className={styles.totalPrice}>{order.totalPrice.toLocaleString()}원</div>
+                                                    <div className={styles.actionBtns}>
+                                                        {order.status === 'PENDING' && (
+                                                            <button 
+                                                                className={styles.reorderBtn}
+                                                                style={{ background: '#f59e0b', color: 'white', borderColor: '#f59e0b' }}
+                                                                onClick={() => handlePayNow(order)}
+                                                            >
+                                                                바로 결제
+                                                            </button>
+                                                        )}
+                                                        <button 
+                                                            className={styles.reorderBtn}
+                                                            onClick={() => handleReorder(order)}
+                                                        >
+                                                            재주문
+                                                        </button>
+                                                        {(order.status === 'PAID' || order.status === 'PREPARING') && (
+                                                            <button 
+                                                                className={styles.reorderBtn}
+                                                                style={{ background: '#ca8a04', color: 'white', borderColor: '#ca8a04' }}
+                                                                onClick={() => router.push(`/orders/${order.paymentId}`)}
+                                                            >
+                                                                📱 현황 보기
+                                                            </button>
+                                                        )}
+                                                        {order.status === 'PAID' && 
+                                                         (new Date().getTime() - new Date(order.createdAt).getTime() < 24 * 60 * 60 * 1000) && (
+                                                            <button 
+                                                                className={styles.cancelBtn}
+                                                                onClick={() => handleCancelOrder(order.paymentId)}
+                                                            >
+                                                                취소하기
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        )}
+
+                                    {/* 페이지네이션 */}
+                                    {totalPages > 1 && (
+                                        <div className={styles.pagination}>
+                                            <button
+                                                className={styles.pageBtn}
+                                                disabled={orderPage === 1}
+                                                onClick={() => setOrderPage(p => p - 1)}
+                                            >
+                                                ‹
+                                            </button>
+                                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                                <button
+                                                    key={page}
+                                                    className={`${styles.pageBtn} ${orderPage === page ? styles.pageBtnActive : ''}`}
+                                                    onClick={() => setOrderPage(page)}
+                                                >
+                                                    {page}
+                                                </button>
+                                            ))}
+                                            <button
+                                                className={styles.pageBtn}
+                                                disabled={orderPage === totalPages}
+                                                onClick={() => setOrderPage(p => p + 1)}
+                                            >
+                                                ›
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            );
+                        })()}
                     </section>
                 ) : (
                     <section className={styles.settingsSection}>
