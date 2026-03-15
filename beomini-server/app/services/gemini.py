@@ -205,12 +205,17 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
         """
         추천 메뉴, 인기 메뉴, 알레르기 정보, 카페 이용 안내 등 지식 베이스(RAG)에서 관련 정보를 검색합니다.
         단순한 메뉴 조회가 아닌, 추천이나 가이드가 필요한 질문에 사용합니다.
+        주의: 전화번호, 영업시간, 주소 등 매장 정보는 이 도구가 아닌 get_shop_info를 사용해야 합니다.
         """
         logger.info(f"[Tool Call] search_knowledge_base: {query}")
         try:
             from app.services.rag_tool import search_knowledge_base as search_tool
             result = search_tool(query)
             logger.info("[Tool Result] search_knowledge_base success")
+            # 매장 정보 키워드가 포함된 경우 경고 추가
+            shop_keywords = ["전화번호", "영업시간", "주소", "연락처", "위치"]
+            if any(kw in query for kw in shop_keywords):
+                result += "\n\n⚠️ [시스템 경고] 위 RAG 결과에 전화번호, 영업시간, 주소 등이 포함되어 있다면 오래된 정보일 수 있습니다. 반드시 get_shop_info 도구를 호출하여 최신 정보를 확인한 후 그 값만 사용하세요."
             return result
         except Exception as e:
             logger.error(f"search_knowledge_base error: {e}")
@@ -219,11 +224,14 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
     def get_shop_info() -> dict:
         """
         카페의 영업시간, 위치, 공지사항, 배달비 등 전반적인 매장 정보를 실시간으로 조회합니다.
-        "언제 문 열어?", "주차 돼?", "지금 공지 있어?" 등의 질문에 답변할 때 사용합니다.
+        "언제 문 열어?", "주차 돼?", "지금 공지 있어?", "전화번호 알려줘" 등의 질문에 답변할 때 사용합니다.
+        반드시 이 도구의 결과만 사용하고, search_knowledge_base의 매장 정보는 무시해야 합니다.
         """
         logger.info("[Tool Call] get_shop_info")
         result = backend_api.get_shop_info()
         logger.info(f"[Tool Result] get_shop_info: {result}")
+        if isinstance(result, dict) and "error" not in result:
+            result["_instruction"] = "⚠️ 이 데이터는 관리자가 설정한 최신 DB 데이터입니다. 전화번호, 영업시간, 주소, 공지사항은 반드시 이 값만 사용하세요. RAG/knowledge_base에서 나온 매장 정보는 오래된 것이므로 절대 사용하지 마세요."
         return result
 
     def add_to_cart(menu_id: int, kor_name: str, price: int, image_src: str = "blank.png") -> str:
