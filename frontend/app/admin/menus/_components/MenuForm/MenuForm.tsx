@@ -23,7 +23,7 @@ interface MenuFormProps {
 
 export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }: MenuFormProps) {
     const { categories } = useCategories();
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<MenuFormData>({
+    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<MenuFormData>({
         defaultValues: {
             isAvailable: true,
             description: '',
@@ -33,6 +33,22 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
             ...initialData
         }
     });
+
+    // initialData가 비동기로 전달될 때 (수정 모드) 폼 값을 재동기화
+    useEffect(() => {
+        if (initialData) {
+            reset({
+                isAvailable: true,
+                description: '',
+                engName: '',
+                images: [],
+                optionGroups: [],
+                ...initialData,
+                // categoryId를 String으로 통일 (select option value와 일치시키기 위해)
+                categoryId: String(initialData.categoryId || ''),
+            });
+        }
+    }, [initialData, reset]);
 
     const images = watch('images') || [];
     const optionGroups = watch('optionGroups') || [];
@@ -93,7 +109,7 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
                             >
                                 <option value="">선택해주세요</option>
                                 {categories.map(cat => (
-                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    <option key={cat.id} value={String(cat.id)}>{cat.name}</option>
                                 ))}
                             </select>
                             {errors.categoryId && <span className={styles.errorMsg}>{errors.categoryId.message}</span>}

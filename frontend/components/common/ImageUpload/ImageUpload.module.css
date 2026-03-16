@@ -50,10 +50,53 @@
     color: var(--color-primary-600);
 }
 
+.uploadHint {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+}
+
 .fileInput {
     display: none;
 }
 
+/* ── 상태 메시지 ── */
+.statusMessage {
+    font-size: var(--text-sm);
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    line-height: 1.5;
+}
+
+.statusMessage.error {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.statusMessage.success {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.statusMessage.info {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+/* ── 스피너 애니메이션 ── */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+/* ── 프리뷰 그리드 ── */
 .previewGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -114,6 +157,21 @@
     border-radius: var(--radius-sm);
     z-index: 5;
     font-weight: 600;
+}
+
+/* ── 파일 크기 배지 ── */
+.fileSizeBadge {
+    position: absolute;
+    bottom: var(--space-1);
+    right: var(--space-1);
+    background-color: rgba(0, 0, 0, 0.55);
+    color: white;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: var(--radius-sm);
+    z-index: 5;
+    font-weight: 500;
+    letter-spacing: 0.02em;
 }
 
 .setPrimaryOverlay {

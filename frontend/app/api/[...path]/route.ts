@@ -57,13 +57,15 @@ async function proxyRequest(req: NextRequest) {
     // 4. 요청 본문 전달 (Body Proxy)
     let body: BodyInit | null = null;
     const contentType = req.headers.get('content-type');
+    let useStreaming = false;
 
     if (req.method !== 'GET' && req.method !== 'HEAD') {
         if (contentType?.includes('multipart/form-data')) {
-            // 파일 업로드의 경우, 원본 바디를 그대로(ArrayBuffer) 전달해야 
-            // 브라우저가 생성한 boundary 정보가 훼손되지 않습니다.
-            // 이때 'Content-Type' 헤더도 삭제하지 않고 원본 그대로 유지합니다.
-            body = await req.arrayBuffer();
+            // 파일 업로드의 경우, ReadableStream을 직접 전달하여
+            // 메모리에 전체 파일을 버퍼링하지 않고 효율적으로 처리합니다.
+            // Content-Type 헤더(boundary 포함)는 원본 그대로 유지됩니다.
+            body = req.body;
+            useStreaming = true;
         } else {
             body = await req.text();
         }
@@ -73,6 +75,8 @@ async function proxyRequest(req: NextRequest) {
         method: req.method,
         headers,
         body,
+        // 스트리밍 body 전송 시 duplex: 'half' 필요 (Node.js 18+)
+        ...(useStreaming ? { duplex: 'half' } : {}),
     });
 
     // 401 응답 시 세션 삭제 (JWT 만료)
