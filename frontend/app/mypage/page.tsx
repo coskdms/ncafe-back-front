@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, Suspense } from 'react';
 import styles from './MyPage.module.css';
 import { useAuthStore } from '@/stores/authStore';
 import { Bell, ChevronDown, Sparkles, Heart, Trash2, ShoppingCart } from 'lucide-react';
@@ -55,7 +55,7 @@ interface Order {
     items: OrderItem[];
 }
 
-export default function MyPage() {
+function MyPageContent() {
     const { user, isAuthenticated, isLoading: isAuthLoading } = useAuthStore();
     const { addItem } = useCartStore();
     const router = useRouter();
@@ -904,3 +904,10 @@ export default function MyPage() {
     );
 }
 
+export default function MyPage() {
+    return (
+        <Suspense>
+            <MyPageContent />
+        </Suspense>
+    );
+}
