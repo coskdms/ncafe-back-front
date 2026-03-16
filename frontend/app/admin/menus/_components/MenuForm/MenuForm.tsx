@@ -35,8 +35,9 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
     });
 
     // initialData가 비동기로 전달될 때 (수정 모드) 폼 값을 재동기화
+    // categories가 로드된 후에 reset해야 <option>이 존재하여 categoryId 매칭이 됨
     useEffect(() => {
-        if (initialData) {
+        if (initialData && categories.length > 0) {
             reset({
                 isAvailable: true,
                 description: '',
@@ -48,7 +49,7 @@ export default function MenuForm({ initialData, onSubmit, onCancel, isLoading }:
                 categoryId: String(initialData.categoryId || ''),
             });
         }
-    }, [initialData, reset]);
+    }, [initialData, categories.length, reset]);
 
     const images = watch('images') || [];
     const optionGroups = watch('optionGroups') || [];
