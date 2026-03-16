@@ -75,7 +75,7 @@ export default function ProfileDropdown({ isOpen, onClose }: ProfileDropdownProp
                     <Store size={16} />
                     <span>매장 정보</span>
                 </button>
-                <button className={styles.menuItem} onClick={() => handleNavigate('/mypage')}>
+                <button className={styles.menuItem} onClick={() => handleNavigate('/mypage?tab=settings&section=password')}>
                     <KeyRound size={16} />
                     <span>비밀번호 변경</span>
                 </button>

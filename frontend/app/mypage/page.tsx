@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './MyPage.module.css';
 import { useAuthStore } from '@/stores/authStore';
 import { Bell, ChevronDown, Sparkles, Heart, Trash2, ShoppingCart } from 'lucide-react';
@@ -14,7 +14,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { getDefaultOptions } from '@/app/lib/menuOptions';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Script from 'next/script';
 
@@ -59,12 +59,16 @@ export default function MyPage() {
     const { user, isAuthenticated, isLoading: isAuthLoading } = useAuthStore();
     const { addItem } = useCartStore();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const passwordSectionRef = useRef<HTMLFormElement>(null);
     
     const [growthInfo, setGrowthInfo] = useState<GrowthInfo | null>(null);
     const { settings: shopSettings, fetchSettings: fetchShopSettings } = useSettingsStore();
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'orders' | 'favorites' | 'settings'>('orders');
+    const [activeTab, setActiveTab] = useState<'orders' | 'favorites' | 'settings'>(
+        (searchParams.get('tab') as 'orders' | 'favorites' | 'settings') || 'orders'
+    );
     const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
     const [orderPage, setOrderPage] = useState(1);
     const ORDERS_PER_PAGE = 5;
@@ -96,6 +100,24 @@ export default function MyPage() {
             fetchMyData();
         }
     }, [isAuthenticated, isAuthLoading]);
+
+    // URL 쿼리 파라미터로 탭 전환 + 섹션 스크롤 (관리자 헤더 → 비밀번호 변경)
+    useEffect(() => {
+        const tab = searchParams.get('tab');
+        const section = searchParams.get('section');
+
+        if (tab === 'settings' || tab === 'favorites' || tab === 'orders') {
+            setActiveTab(tab);
+        }
+
+        if (tab === 'settings' && section === 'password') {
+            // 짧은 딜레이로 탭 전환 후 DOM이 렌더링되길 기다림
+            const timer = setTimeout(() => {
+                passwordSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+            return () => clearTimeout(timer);
+        }
+    }, [searchParams]);
 
     const fetchMyData = async () => {
         setIsLoading(true);
@@ -796,7 +818,7 @@ export default function MyPage() {
                             <button type="submit" className={styles.saveBtn}>정보 저장하기 🐤</button>
                         </form>
 
-                        <form onSubmit={handleUpdatePassword} className={styles.settingsGroup} style={{ marginTop: '40px' }}>
+                        <form ref={passwordSectionRef} onSubmit={handleUpdatePassword} className={styles.settingsGroup} style={{ marginTop: '40px' }}>
                             <h3>비밀번호 변경 🔐</h3>
                             <div className={styles.inputGroup}>
                                 <label>현재 비밀번호</label>
