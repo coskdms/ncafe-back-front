@@ -531,9 +531,11 @@ export default function AgentChat() {
             }
 
             // ═══ 텍스트 패턴 기반 네비게이션 fallback ═══
-            // ::action{...}:: 마커가 없어도, AI가 "~페이지로 이동" 텍스트를 생성했으면 직접 이동
+            // ::action{...}:: 마커가 없어도, AI가 이동 텍스트를 생성했으면 직접 이동
+            // 한국어 + 영어 + 일본어 + 중국어 패턴 지원
             if (!navigationHandled) {
                 const NAV_PATTERNS: { pattern: RegExp; url: string }[] = [
+                    // 한국어
                     { pattern: /메뉴.{0,10}(페이지|목록|리스트).{0,10}이동/, url: '/menus' },
                     { pattern: /메뉴.{0,5}(보여|보러|구경)/, url: '/menus' },
                     { pattern: /홈.{0,10}(페이지)?.{0,10}이동/, url: '/' },
@@ -544,8 +546,26 @@ export default function AgentChat() {
                     { pattern: /관리자.{0,10}(대시보드|페이지).{0,10}이동/, url: '/admin' },
                     { pattern: /메뉴\s*관리.{0,10}이동/, url: '/admin/menus' },
                     { pattern: /주문\s*관리.{0,10}이동/, url: '/admin/orders' },
+                    // 영어
+                    { pattern: /menu\s*(page|list).{0,15}(go|navigate|move|take)/i, url: '/menus' },
+                    { pattern: /(go|navigate|move|take).{0,15}menu\s*(page|list)/i, url: '/menus' },
+                    { pattern: /(show|see).{0,10}menu/i, url: '/menus' },
+                    { pattern: /(go|navigate|move|take).{0,15}(home|main)/i, url: '/' },
+                    { pattern: /(go|navigate|move|take).{0,15}cart/i, url: '/cart' },
+                    { pattern: /(go|navigate|move|take).{0,15}(my\s*page|profile)/i, url: '/mypage' },
+                    { pattern: /(go|navigate|move|take).{0,15}(login|sign\s*in)/i, url: '/login' },
+                    { pattern: /(go|navigate|move|take).{0,15}(checkout|payment)/i, url: '/checkout' },
+                    // 일본어
+                    { pattern: /メニュー.{0,10}(ページ|一覧).{0,10}(移動|行く|見せ)/, url: '/menus' },
+                    { pattern: /ホーム.{0,10}(移動|行く)/, url: '/' },
+                    { pattern: /カート.{0,10}(移動|行く)/, url: '/cart' },
+                    // 중국어
+                    { pattern: /菜单.{0,10}(页面|列表).{0,10}(移动|去|带)/, url: '/menus' },
+                    { pattern: /(去|到|带).{0,10}(首页|主页)/, url: '/' },
+                    { pattern: /(去|到|带).{0,10}购物车/, url: '/cart' },
                 ];
 
+                let patternMatched = false;
                 for (const nav of NAV_PATTERNS) {
                     if (nav.pattern.test(fullText)) {
                         console.log('[AgentChat] 🚀 Pattern-based navigation to:', nav.url);
@@ -556,7 +576,21 @@ export default function AgentChat() {
                             }
                         }
                         setTimeout(() => router.push(nav.url), 1500);
+                        patternMatched = true;
                         break;
+                    }
+                }
+
+                // 메뉴 상세 페이지 이동 패턴 (한국어 + 영어)
+                if (!patternMatched) {
+                    const detailPattern = /상세\s*(페이지)?.{0,10}이동|detail\s*page.{0,10}(go|navigate|move|take)/i;
+                    if (detailPattern.test(fullText)) {
+                        // fullText에서 /menus/숫자 URL 추출 시도
+                        const menuUrlMatch = fullText.match(/\/menus\/(\d+)/);
+                        if (menuUrlMatch) {
+                            console.log('[AgentChat] 🚀 Pattern-based menu detail navigation to:', menuUrlMatch[0]);
+                            setTimeout(() => router.push(menuUrlMatch[0]), 1500);
+                        }
                     }
                 }
             }
