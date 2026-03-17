@@ -86,6 +86,13 @@ BASE_PERSONA = """
 3. **성장 정보 조회 시:**
    `::growth{"level": "현재등급", "points": 현재포인트, "nextLevel": "다음등급", "remaining": 남은포인트}::`
 
+═══ ⚠️ "메뉴 보여줘" 대응 규칙 (필수!) ═══
+- "메뉴 보여줘", "메뉴판 보여줘", "전체 메뉴" 같은 **전체 메뉴 리스트 요청** → **반드시 `navigate_to_page("menu_list")`** 호출! 메뉴 페이지로 이동시켜줘!
+  - 예: "메뉴 보여줘" → `navigate_to_page("menu_list")` + "메뉴 페이지로 이동하겠다덕! 🐤"
+  - ❌ 절대 전체 메뉴를 ::menu{...}:: 카드로 나열하지 마! 데이터가 너무 커서 응답이 안 될 수 있어!
+- "커피 뭐 있어?", "디저트 종류 알려줘" 같은 **카테고리별 질문** → `get_menus` 사용하되, 해당 카테고리의 메뉴만 **최대 5개** ::menu{...}:: 카드로 보여줘.
+- "아메리카노 얼마야?" 같은 **특정 메뉴 질문** → `get_menus`로 조회하여 해당 메뉴 1~2개만 카드로 보여줘.
+
 ═══ 추가 규칙 ═══
 - 모든 도구를 사용해도 답을 찾을 수 없으면 정중하게 모른다고 대답해줘.
 - 도구가 `::action{...}::` 마커를 반환하면, 답변 텍스트 끝에 **해당 마커를 토씨 하나 틀리지 않게 그대로** 포함해야 해. 이 마커가 없으면 실제로 동작 안 함!
@@ -576,20 +583,8 @@ async def chat(messages: list[dict], auth_token: Optional[str] = None, user_role
                 contents=messages,
                 config=get_config(auth_token, captured_actions=actions, user_role=user_role)
             )
-            # AFC 대응: response.text가 없을 경우 candidates에서 추출
-            result_text = ""
-            try:
-                if response.text:
-                    result_text = response.text
-            except Exception:
-                pass
-            
-            if not result_text and response.candidates:
-                for candidate in response.candidates:
-                    if candidate.content and candidate.content.parts:
-                        for part in candidate.content.parts:
-                            if part.text and not getattr(part, 'thought', False):
-                                result_text += part.text
+            # 텍스트 추출 (thinking/function_call/function_response 파트 제외)
+            result_text = _extract_text_from_response(response)
             
             if result_text:
                 if attempt > 0:
@@ -609,18 +604,49 @@ async def chat(messages: list[dict], auth_token: Optional[str] = None, user_role
             logger.error(traceback.format_exc())
             raise e
 
+def _extract_text_from_response(response) -> str:
+    """Gemini response에서 텍스트를 추출합니다. thinking 파트는 제외합니다."""
+    full_text = ""
+    
+    # 1차: response.text 시도
+    try:
+        if response.text:
+            return response.text
+    except Exception:
+        pass
+    
+    # 2차: candidates에서 직접 추출
+    if response.candidates:
+        for candidate in response.candidates:
+            if candidate.content and candidate.content.parts:
+                for part in candidate.content.parts:
+                    # thought 파트 건너뛰기
+                    if getattr(part, 'thought', False):
+                        continue
+                    # function_call 파트 건너뛰기
+                    if getattr(part, 'function_call', None):
+                        continue
+                    # function_response 파트 건너뛰기
+                    if getattr(part, 'function_response', None):
+                        continue
+                    if part.text:
+                        full_text += part.text
+    
+    return full_text
+
+
 async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, user_role: str = "GUEST") -> AsyncGenerator[str, None]:
     """
     gemini-2.5-flash + AFC 환경에서 안정적으로 응답하는 함수.
     non-stream으로 AFC를 완료한 뒤, 텍스트를 pseudo-streaming으로 전달합니다.
-    빈 응답이 올 경우 최대 2번 자동 재시도합니다.
+    빈 응답이 올 경우 최대 3번 자동 재시도하고, 그래도 실패하면 non-stream fallback을 시도합니다.
     """
     import traceback
     import asyncio
     import re
     logger.info(f"Generating content using model: {model_name}. Auth provided: {bool(auth_token)}, Role: {user_role}")
     
-    max_retries = 2
+    max_retries = 3
     full_text = ""
     actions = []
     
@@ -636,19 +662,23 @@ async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, us
                 config=get_config(auth_token, captured_actions=actions, user_role=user_role)
             )
             
-            # gemini-2.5-flash (thinking 모델)은 response.text가 빈 경우가 있어, candidates에서 직접 추출
-            try:
-                if response.text:
-                    full_text = response.text
-            except Exception:
-                pass
+            # 텍스트 추출
+            full_text = _extract_text_from_response(response)
             
-            if not full_text and response.candidates:
-                for candidate in response.candidates:
-                    if candidate.content and candidate.content.parts:
-                        for part in candidate.content.parts:
-                            if part.text and not getattr(part, 'thought', False):
-                                full_text += part.text
+            # 디버깅: 빈 응답인 경우 상세 로그
+            if not full_text and not actions:
+                candidate_info = "no candidates"
+                if response.candidates:
+                    parts_info = []
+                    for c in response.candidates:
+                        if c.content and c.content.parts:
+                            for p in c.content.parts:
+                                part_type = "text" if p.text else "function_call" if getattr(p, 'function_call', None) else "function_response" if getattr(p, 'function_response', None) else "thought" if getattr(p, 'thought', False) else "unknown"
+                                parts_info.append(f"{part_type}({len(p.text) if p.text else 0})")
+                    candidate_info = f"parts: {', '.join(parts_info)}"
+                    finish_reason = getattr(response.candidates[0], 'finish_reason', 'unknown')
+                    candidate_info += f", finish_reason: {finish_reason}"
+                logger.warning(f"[chat_stream] Empty response detail (attempt {attempt + 1}): {candidate_info}")
             
             # 텍스트나 액션 중 하나라도 있으면 성공 → 루프 탈출
             if full_text or actions:
@@ -659,9 +689,17 @@ async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, us
             # 둘 다 비어있으면 재시도
             if attempt < max_retries:
                 logger.warning(f"[chat_stream] Empty response (attempt {attempt + 1}/{max_retries + 1}). Retrying...")
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.5 * (attempt + 1))  # 점진적 백오프
             else:
-                logger.warning(f"[chat_stream] All {max_retries + 1} attempts returned empty response.")
+                logger.warning(f"[chat_stream] All {max_retries + 1} attempts returned empty response. Trying non-stream fallback...")
+                # 최후 수단: non-stream chat() 호출
+                try:
+                    fallback_text = await chat(messages, auth_token=auth_token, user_role=user_role)
+                    if fallback_text:
+                        full_text = fallback_text
+                        logger.info(f"[chat_stream] Non-stream fallback succeeded! Text length: {len(full_text)}")
+                except Exception as fallback_err:
+                    logger.error(f"[chat_stream] Non-stream fallback also failed: {fallback_err}")
         
         logger.info(f"[chat_stream] Response received. Text length: {len(full_text)}, Actions: {len(actions)}")
         
@@ -681,8 +719,8 @@ async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, us
                         yield segment[i:i + chunk_size]
                         await asyncio.sleep(0.02)
         elif not actions:
-            # 재시도 후에도 텍스트도 액션도 없으면 기본 메시지 전송
-            yield "앗... 갑자기 머리가 멍해졌다덕! 💦 다시 한번 말해줄 수 있냐덕?"
+            # 모든 시도 실패 시 기본 메시지 전송
+            yield "앗... 잠시 머리가 멍해졌다덕! 💦 다시 한번 말해줄 수 있냐덕?"
         
         for action in actions:
             yield action
