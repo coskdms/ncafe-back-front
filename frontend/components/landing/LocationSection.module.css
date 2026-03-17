@@ -84,6 +84,10 @@
 }
 
 @media (max-width: 900px) {
+    .location {
+        padding: 60px 16px;
+    }
+
     .container {
         flex-direction: column;
         gap: 40px;
@@ -91,6 +95,16 @@
 
     .heading {
         font-size: 2rem;
+        text-align: center;
+    }
+
+    .desc {
+        text-align: center;
+    }
+
+    .label {
+        display: block;
+        text-align: center;
     }
 
     .imageArea {

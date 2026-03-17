@@ -392,6 +392,10 @@
 
 /* ── Mobile & Tablet ── */
 @media (max-width: 860px) {
+    .contentWrapper {
+        padding: 100px 20px 60px;
+    }
+
     .grid {
         grid-template-columns: 1fr;
         gap: 32px;
@@ -408,6 +412,37 @@
 
     .actionGroup {
         flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .contentWrapper {
+        padding: 80px 16px 40px;
+    }
+
+    .grid {
+        padding: 24px 16px;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .price {
+        font-size: 1.5rem;
+    }
+
+    .totalPriceSection {
+        padding: 14px;
+        border-radius: 12px;
+    }
+
+    .totalPriceValue {
+        font-size: 1.4rem;
+    }
+
+    .totalPriceLabel {
+        font-size: 0.95rem;
     }
 }
 

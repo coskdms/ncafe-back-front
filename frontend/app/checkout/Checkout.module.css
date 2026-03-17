@@ -672,6 +672,22 @@
     }
 }
 
+@media (max-width: 480px) {
+    .typeSelector {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+    .methodSelector {
+        grid-template-columns: 1fr;
+    }
+    .pointsInputRow {
+        flex-direction: column;
+    }
+    .useAllBtn {
+        padding: var(--space-2) var(--space-4);
+    }
+}
+
 /* ===== 옵션 변경 버튼 ===== */
 .itemOptionsRow {
     display: flex;

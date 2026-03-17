@@ -446,6 +446,11 @@
 
     .stepLabel {
         font-size: 0.75rem;
+        word-break: keep-all;
+    }
+
+    .detailCard {
+        padding: 20px 16px;
     }
 
     .actions {
