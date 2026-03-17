@@ -703,18 +703,39 @@ async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, us
         
         logger.info(f"[chat_stream] Response received. Text length: {len(full_text)}, Actions: {len(actions)}")
         
-        # ═══ 핵심 보강: captured_actions의 마커가 텍스트에 없으면 강제 추가 ═══
-        # Gemini가 ::action{...}:: 마커를 응답에 포함하지 않는 경우가 빈번하므로,
-        # captured_actions에서 수집된 액션을 텍스트 끝에 강제 삽입합니다.
-        if actions and full_text:
+        # ═══ 핵심 보강: 도구 실행됐으나 텍스트가 없는 경우 처리 ═══
+        # gemini-2.5-flash thinking 모델은 AFC 후 빈 텍스트를 자주 반환합니다.
+        # captured_actions에 기록된 액션으로 응답을 재구성합니다.
+        
+        PAGE_DESCRIPTIONS = {
+            "/": "홈페이지", "/menus": "메뉴 페이지", "/login": "로그인 페이지",
+            "/cart": "장바구니", "/mypage": "마이페이지", "/checkout": "결제 페이지",
+            "/admin": "관리자 대시보드", "/admin/menus": "메뉴 관리 페이지",
+            "/admin/orders": "주문 관리 페이지", "/admin/settings": "매장 설정 페이지",
+            "/admin/categories": "카테고리 관리 페이지", "/admin/rag": "RAG 지식 관리 페이지",
+        }
+        
+        if actions:
             for action in actions:
-                if isinstance(action, dict):
-                    action_url = action.get("url", "")
-                    if action.get("action") == "navigate" and action_url:
-                        marker = f'::action{json.dumps({"type": "navigate", "url": action_url}, ensure_ascii=False)}::'
-                        if marker not in full_text and '::action' not in full_text:
-                            full_text += f" {marker}"
-                            logger.info(f"[chat_stream] Injected missing action marker: {marker}")
+                if not isinstance(action, dict):
+                    continue
+                action_url = action.get("url", "")
+                
+                if action.get("action") == "navigate" and action_url:
+                    marker = f'::action{json.dumps({"type": "navigate", "url": action_url}, ensure_ascii=False)}::'
+                    
+                    if not full_text:
+                        # Case 1: 도구는 실행됐지만 텍스트가 비어있음 → 하드코딩 응답
+                        if action_url.startswith("/menus/"):
+                            desc = "해당 메뉴 상세 페이지"
+                        else:
+                            desc = PAGE_DESCRIPTIONS.get(action_url, action_url)
+                        full_text = f"{desc}로 이동하겠다덕! 🐤 {marker}"
+                        logger.info(f"[chat_stream] Generated fallback text for navigate action: {action_url}")
+                    elif '::action' not in full_text:
+                        # Case 2: 텍스트는 있지만 마커가 빠짐 → 마커만 추가
+                        full_text += f" {marker}"
+                        logger.info(f"[chat_stream] Injected missing action marker: {marker}")
         
         if full_text:
             # 텍스트와 마커를 분리: 마커는 통째로, 텍스트는 작게 스트리밍
