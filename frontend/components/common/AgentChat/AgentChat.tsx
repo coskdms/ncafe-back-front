@@ -419,6 +419,8 @@ export default function AgentChat() {
             };
 
             const actionMatches = [...fullText.matchAll(/::action(\{.*?\})::/g)];
+            let navigationHandled = false;
+            
             for (const actionMatch of actionMatches) {
                 try {
                     const action = JSON.parse(actionMatch[1]);
@@ -488,6 +490,7 @@ export default function AgentChat() {
                         }
                         useCartStore.getState().setCheckoutItems(checkoutItems);
                         setTimeout(() => router.push('/checkout'), 1500);
+                        navigationHandled = true;
                     } else if (action.type === 'navigate' && action.url) {
                         // 정상 형식: {"type":"navigate","url":"/login"}
                         console.log('[AgentChat] 🚀 Navigating to:', action.url);
@@ -499,6 +502,7 @@ export default function AgentChat() {
                             }
                         }
                         setTimeout(() => router.push(action.url), 1500);
+                        navigationHandled = true;
                     } else if (action.type === 'navigate_to_page' || action.type === 'navigate' || action.page) {
                         // AI 자체 생성 형식: {"type":"navigate_to_page","page":"login"} 등
                         const pageKey = action.page || action.target || '';
@@ -513,14 +517,47 @@ export default function AgentChat() {
                                 }
                             }
                             setTimeout(() => router.push(url), 1500);
+                            navigationHandled = true;
                         }
                     } else if (action.type === 'view_menu_detail' && action.menu_id) {
                         // AI 자체 생성: {"type":"view_menu_detail","menu_id":19}
                         console.log('[AgentChat] 🚀 Navigating to menu:', action.menu_id);
                         setTimeout(() => router.push(`/menus/${action.menu_id}`), 1500);
+                        navigationHandled = true;
                     }
                 } catch (e) {
                     console.error('[AgentChat] Action parse error:', e);
+                }
+            }
+
+            // ═══ 텍스트 패턴 기반 네비게이션 fallback ═══
+            // ::action{...}:: 마커가 없어도, AI가 "~페이지로 이동" 텍스트를 생성했으면 직접 이동
+            if (!navigationHandled) {
+                const NAV_PATTERNS: { pattern: RegExp; url: string }[] = [
+                    { pattern: /메뉴.{0,10}(페이지|목록|리스트).{0,10}이동/, url: '/menus' },
+                    { pattern: /메뉴.{0,5}(보여|보러|구경)/, url: '/menus' },
+                    { pattern: /홈.{0,10}(페이지)?.{0,10}이동/, url: '/' },
+                    { pattern: /장바구니.{0,10}이동/, url: '/cart' },
+                    { pattern: /마이페이지.{0,10}이동/, url: '/mypage' },
+                    { pattern: /로그인.{0,10}(페이지)?.{0,10}이동/, url: '/login' },
+                    { pattern: /결제.{0,10}(페이지)?.{0,10}이동/, url: '/checkout' },
+                    { pattern: /관리자.{0,10}(대시보드|페이지).{0,10}이동/, url: '/admin' },
+                    { pattern: /메뉴\s*관리.{0,10}이동/, url: '/admin/menus' },
+                    { pattern: /주문\s*관리.{0,10}이동/, url: '/admin/orders' },
+                ];
+
+                for (const nav of NAV_PATTERNS) {
+                    if (nav.pattern.test(fullText)) {
+                        console.log('[AgentChat] 🚀 Pattern-based navigation to:', nav.url);
+                        if (nav.url === '/checkout') {
+                            const cartItems = useCartStore.getState().items;
+                            if (cartItems.length > 0) {
+                                useCartStore.getState().setCheckoutItems(cartItems);
+                            }
+                        }
+                        setTimeout(() => router.push(nav.url), 1500);
+                        break;
+                    }
                 }
             }
 
