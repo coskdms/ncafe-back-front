@@ -197,7 +197,21 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
         """
         logger.info("[Tool Call] get_menus")
         result = backend_api.get_menus()
-        logger.info(f"[Tool Result] get_menus count: {len(result) if isinstance(result, list) else 'error'}")
+        if isinstance(result, list):
+            # 필수 필드만 추출 → 응답 크기 축소 (thinking 모델 안정성 향상)
+            trimmed = []
+            for m in result:
+                trimmed.append({
+                    "id": m.get("id"),
+                    "korName": m.get("korName", ""),
+                    "price": m.get("price", 0),
+                    "categoryName": m.get("categoryName", ""),
+                    "imagesSrc": m.get("imagesSrc", ""),
+                    "soldOut": m.get("soldOut", False),
+                })
+            logger.info(f"[Tool Result] get_menus count: {len(trimmed)}")
+            return trimmed
+        logger.info(f"[Tool Result] get_menus error: {result}")
         return result
 
     def get_categories() -> list:
@@ -371,8 +385,13 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
         # 2. 찜 목록 조회
         fav_ids = backend_api.get_my_favorites(auth_token)
         
-        # 3. 전체 메뉴 조회
-        menus = backend_api.get_menus()
+        # 3. 전체 메뉴 조회 (필수 필드만)
+        raw_menus = backend_api.get_menus()
+        menus = []
+        if isinstance(raw_menus, list):
+            menus = [{"id": m.get("id"), "korName": m.get("korName", ""), "price": m.get("price", 0),
+                       "categoryName": m.get("categoryName", ""), "imagesSrc": m.get("imagesSrc", "")}
+                      for m in raw_menus]
         
         # 4. 찜 메뉴 상세 정보
         fav_menus = []
@@ -382,7 +401,7 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
         analysis = {
             "orders": orders if isinstance(orders, list) else [],
             "favoriteMenus": fav_menus,
-            "allMenus": menus if isinstance(menus, list) else [],
+            "allMenus": menus,
             "instruction": """
 위 데이터를 분석해서 맞춤 추천을 제공해줘:
 1. 찜한 메뉴 중 아직 안 시켜본 것 우선 추천
