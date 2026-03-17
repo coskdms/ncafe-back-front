@@ -220,6 +220,53 @@ CSS Modules:
 
 ---
 
+### Q. "관리자 매출 분석 차트를 왜 외부 라이브러리 없이 순수 SVG로 구현했나요?"
+
+**A.** 차트 3개 정도의 규모에서는 **Recharts(~400KB)나 Chart.js(~200KB) 같은 무거운 라이브러리 없이도 SVG만으로 충분**하고, 번들 크기를 줄일 수 있기 때문입니다.
+
+| 비교 | 순수 SVG (선택) | Recharts | Chart.js |
+|:---|:---|:---|:---|
+| **번들 크기** | 0KB (추가 의존성 없음) | ~400KB | ~200KB |
+| **커스터마이징** | 완전 자유 | React 래퍼 제약 | Canvas 기반 제약 |
+| **학습 가치** | SVG 좌표계 직접 이해 | 라이브러리 API 학습 | 라이브러리 API 학습 |
+| **적합 규모** | 차트 3~5개 | 대규모 대시보드 | 대규모 대시보드 |
+
+**구현된 차트 3종:**
+1. **📈 일별 매출 추이** — `<path>`로 라인 + 에어리어 차트, `linearGradient`로 그라데이션
+2. **🏆 인기 메뉴 TOP 5** — CSS `width` 비율로 수평 바 차트
+3. **📊 일별 주문 건수** — `<rect>`로 바 차트
+
+**실제 주문 데이터 기반 동적 렌더링:**
+```typescript
+// 1. API에서 실제 주문 데이터 조회
+const data = await fetchAPI('/admin/orders');
+
+// 2. 기간별 필터링 (7일/30일/전체/커스텀 날짜)
+const filteredOrders = validOrders.filter(o => {
+    const d = new Date(o.createdAt);
+    return d >= cutoff;
+});
+
+// 3. 일별 매출 집계 → SVG 좌표로 변환
+const points = dailySales.map((d, i) => ({
+    x: padding.left + (i / (데이터수 - 1)) * plotWidth,
+    y: padding.top + plotHeight - (d.sales / maxSales) * plotHeight,
+}));
+
+// 4. SVG path 문자열 생성
+const linePath = points.map((p, i) => 
+    `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`
+).join(' ');
+```
+
+**면접 포인트:**
+- "하드코딩된 더미 데이터가 아닌, **실제 주문 DB 데이터를 기반으로 동적 렌더링**"
+- "SVG의 좌표계를 직접 계산하여 데이터 시각화의 원리를 이해"
+- "차트 라이브러리 없이도 그라데이션, 그리드라인, 반응형 등 구현 가능"
+- "viewBox + preserveAspectRatio로 **반응형 차트** 구현"
+
+---
+
 ## 🗄️ 백엔드
 
 ### Q. "Spring Data JPA를 왜 사용하나요?"
@@ -258,6 +305,41 @@ return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
 ## 🤖 AI 에이전트
 
+### Q. "왜 Gemini 2.5 Flash 모델을 선택했나요?"
+
+**A.** **Thinking(사고형) 모델**이면서도 빠르고 비용 효율적이기 때문입니다.
+
+| 비교 | GPT-4o | Gemini 2.5 Flash |
+|:---|:---|:---|
+| **사고 과정** | 내부 추론만 | Thinking 과정 투명하게 제공 |
+| **Function Calling** | 지원 | AFC(자동 도구 호출) 지원 |
+| **비용** | 높음 | 상대적으로 저렴 |
+| **속도** | 보통 | 빠름 (Flash 계열) |
+
+**실제 코드 (gemini.py):**
+```python
+# Thinking 모델 전용 API 버전 사용
+async_client = genai.Client(
+    api_key=GEMINI_API_KEY,
+    http_options={'api_version': 'v1alpha'}
+)
+model_name = "gemini-2.5-flash"
+
+# AFC로 도구 호출을 자동 처리
+config = types.GenerateContentConfig(
+    tools=config["tools"],  # Python 함수를 직접 도구로 등록
+    automatic_function_calling=types.AutomaticFunctionCallingConfig(),
+    system_instruction=system_instruction,
+)
+```
+
+**면접 포인트:**
+- "AFC(Automatic Function Calling)로 SDK가 도구 호출~결과 반환~최종 응답 생성을 자동 처리"
+- "Thinking 모델 특성상 빈 응답이 발생할 수 있어, 재시도 + 텍스트 패턴 fallback 등 안정성 보강 구현"
+- "역할별(GUEST/USER/ADMIN) 도구 세트와 시스템 프롬프트를 동적으로 구성"
+
+---
+
 ### Q. "RAG(Retrieval Augmented Generation)를 왜 사용하나요?"
 
 **A.** LLM이 **학습하지 않은 우리 카페만의 정보**를 정확히 답변하게 하기 위해서입니다.
@@ -268,15 +350,85 @@ LLM만 사용할 때의 문제:
 LLM: "일반적으로 카페에서는..." ← 우리 카페의 정보가 아님!
 
 RAG 적용 후:
-1. 사용자 질문 → 텍스트 임베딩 (Sentence Transformers)
+1. 사용자 질문 → 텍스트 임베딩 (multilingual-e5-small)
 2. 벡터 DB에서 유사한 문서 검색 (pgvector, 코사인 유사도)
 3. 검색된 문서 + 사용자 질문 → LLM에 전달
 4. LLM이 "우리 카페" 기준으로 정확한 답변 생성
 ```
 
+**면접 포인트:**
+- "RAG로 LLM의 할루시네이션(없는 정보 지어내기) 방지"
+- "관리자가 RAG 문서를 직접 CRUD할 수 있어 AI 지식을 실시간 업데이트 가능"
+
+---
+
+### Q. "임베딩 모델로 왜 multilingual-e5-small을 선택했나요?"
+
+**A.** **한국어를 포함한 다국어 지원**이 되면서도 **경량(384차원)** 이라 서버 부담이 적기 때문입니다.
+
+| 비교 | multilingual-e5-small | OpenAI text-embedding-3 | Gemini text-embedding-004 |
+|:---|:---|:---|:---|
+| **출처** | Microsoft (오픈소스) | OpenAI (유료 API) | Google (유료 API) |
+| **벡터 차원** | 384 | 1536 | 768 |
+| **실행 방식** | 로컬 (sentence-transformers) | API 호출 | API 호출 |
+| **비용** | 무료 (로컬 실행) | API 과금 | API 과금 |
+| **한국어 성능** | 우수 | 우수 | 우수 |
+| **의존성** | PyTorch + transformers 필요 | 없음 (API) | 없음 (API) |
+
+**실제 코드 (embedding.py):**
+```python
+from sentence_transformers import SentenceTransformer
+
+# 로컬에서 직접 실행 → API 비용 없음
+model = SentenceTransformer("intfloat/multilingual-e5-small")
+
+# e5 모델의 접두사 규칙 (성능 최적화)
+def get_embedding(text: str) -> list[float]:
+    processed_text = f"passage: {text}"      # 저장 시: "passage: 문서내용"
+    return model.encode(processed_text).tolist()
+
+# 검색 시에는 다른 접두사 사용
+processed_query = f"query: {query}"          # 검색 시: "query: 사용자질문"
+embedding = model.encode(processed_query).tolist()
+```
+
+**면접 포인트:**
+- "API 비용 없이 오프라인으로 임베딩 생성 가능 → 운영 비용 절감"
+- "e5 모델은 `passage:`/`query:` 접두사로 저장/검색 임베딩을 구분하여 검색 정확도 향상"
+- "384차원으로 경량이라 Docker 컨테이너에서도 빠르게 실행"
+- "sentence-transformers 라이브러리가 Hugging Face 모델 로딩을 추상화하여 코드가 단순"
+
+---
+
+### Q. "벡터 저장소로 왜 pgvector를 선택했나요?"
+
+**A.** 이미 사용 중인 **PostgreSQL에 확장만 추가**하면 되어 별도 인프라 없이 벡터 검색이 가능합니다.
+
+| 비교 | pgvector (선택) | Pinecone | Weaviate | ChromaDB |
+|:---|:---|:---|:---|:---|
+| **형태** | PostgreSQL 확장 | 관리형 SaaS | 자체 서버 필요 | 인메모리/로컬 |
+| **추가 인프라** | 없음 (기존 DB 활용) | 외부 서비스 | Docker 컨테이너 추가 | 별도 프로세스 |
+| **비용** | 무료 | 유료 | 무료 (셀프호스팅) | 무료 |
+| **SQL과 통합** | 네이티브 (JOIN 가능) | 불가 | 불가 | 불가 |
+| **적합 규모** | 수천~수만 건 | 수백만 건 | 수백만 건 | 프로토타입 |
+
 **실제 코드 (vector_db.py):**
 ```python
-# 코사인 거리 기반 검색 (가까울수록 유사)
+# pgvector 확장 활성화 (한 줄이면 끝!)
+cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+
+# 벡터 컬럼이 있는 테이블 생성
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS rag_documents (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        embedding VECTOR(384),    -- pgvector 타입 (384차원)
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+""")
+
+# 코사인 거리 기반 유사도 검색 (<=> 연산자)
 cur.execute(
     "SELECT id, title, content FROM rag_documents "
     "ORDER BY embedding <=> %s::vector LIMIT %s;",
@@ -285,9 +437,10 @@ cur.execute(
 ```
 
 **면접 포인트:**
-- "pgvector로 PostgreSQL에 벡터 검색 기능 추가 → 별도 벡터 DB(Pinecone 등) 불필요"
-- "Sentence Transformers(e5 모델)로 384차원 임베딩 → 가볍고 빠름"
-- "관리자가 RAG 문서를 직접 CRUD할 수 있어 AI 지식을 실시간 업데이트 가능"
+- "별도의 벡터 DB 서비스를 추가하지 않아 **Docker Compose 구성이 단순**하게 유지"
+- "RAG 문서와 다른 비즈니스 데이터가 같은 DB에 있어 **JOIN으로 복합 쿼리 가능**"
+- "카페 RAG 문서 수백 건 규모에서는 pgvector의 성능이 충분"
+- "`<=>` 연산자 = 코사인 거리, `<->` = L2 거리, `<#>` = 내적 (용도별 선택 가능)"
 
 ---
 
