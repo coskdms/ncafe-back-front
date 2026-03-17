@@ -703,6 +703,19 @@ async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, us
         
         logger.info(f"[chat_stream] Response received. Text length: {len(full_text)}, Actions: {len(actions)}")
         
+        # ═══ 핵심 보강: captured_actions의 마커가 텍스트에 없으면 강제 추가 ═══
+        # Gemini가 ::action{...}:: 마커를 응답에 포함하지 않는 경우가 빈번하므로,
+        # captured_actions에서 수집된 액션을 텍스트 끝에 강제 삽입합니다.
+        if actions and full_text:
+            for action in actions:
+                if isinstance(action, dict):
+                    action_url = action.get("url", "")
+                    if action.get("action") == "navigate" and action_url:
+                        marker = f'::action{json.dumps({"type": "navigate", "url": action_url}, ensure_ascii=False)}::'
+                        if marker not in full_text and '::action' not in full_text:
+                            full_text += f" {marker}"
+                            logger.info(f"[chat_stream] Injected missing action marker: {marker}")
+        
         if full_text:
             # 텍스트와 마커를 분리: 마커는 통째로, 텍스트는 작게 스트리밍
             # re.DOTALL로 줄바꿈 포함 매칭
