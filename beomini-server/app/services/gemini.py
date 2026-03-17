@@ -312,11 +312,12 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
             kor_name: 메뉴 이름 (한글)
         """
         logger.info(f"[Tool Call] view_menu_detail: {kor_name} (ID: {menu_id})")
+        url = f"/menus/{menu_id}"
         if captured_actions is not None:
-            captured_actions.append({"action": "navigate", "url": f"/menus/{menu_id}"})
-        logger.info(f"[Tool Result] view_menu_detail: /menus/{menu_id}")
-        # ::action 마커도 반환하여 프론트엔드에서 이중으로 처리 가능
-        marker = f'::action{{"type": "view_menu_detail", "menu_id": {menu_id}}}::'
+            captured_actions.append({"action": "navigate", "url": url})
+        logger.info(f"[Tool Result] view_menu_detail: {url}")
+        # navigate 타입으로 통일하여 프론트엔드에서 확실하게 처리
+        marker = f'::action{json.dumps({"type": "navigate", "url": url}, ensure_ascii=False)}::'
         return f"{kor_name} 상세 페이지를 보여주겠다덕! 🐤 {marker}"
 
     # ═══════════════════════════════════════
@@ -515,9 +516,7 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
             captured_actions.append({"action": "navigate", "url": page_info["url"]})
         
         logger.info(f"[Tool Result] navigate_to_page: {page_info['url']}")
-        # ::action 마커도 반환하여 프론트엔드에서 이중으로 처리 가능
-        marker = f'::action{{"type": "navigate", "url": "{page_info["url"]}"}}'
-        marker += '::'
+        marker = f'::action{json.dumps({"type": "navigate", "url": page_info["url"]}, ensure_ascii=False)}::'
         return f"{page_info['description']}로 이동하겠다덕! {marker}"
 
     # navigate 함수의 docstring을 역할에 맞게 동적 설정
