@@ -192,8 +192,11 @@ def get_config(auth_token: Optional[str] = None, captured_actions: Optional[list
 
     def get_menus() -> list:
         """
-        카페에서 판매 중인 모든 메뉴 목록을 조회합니다.
-        "뭐 팔아?", "메뉴판 보여줘", "어떤 메뉴 있어?" 등의 질문에 답변할 때 사용합니다.
+        카페 메뉴의 가격, 카테고리, 품절 여부 등을 조회합니다.
+        "아메리카노 얼마야?", "커피 뭐 있어?", "디저트 종류 알려줘" 같은 특정 메뉴/카테고리 질문에 사용합니다.
+        
+        ⚠️ 주의: "메뉴 보여줘", "메뉴판 보여줘", "전체 메뉴" 같은 요청에는 이 도구를 호출하지 마세요!
+        그런 요청에는 navigate_to_page("menu_list")를 사용하세요.
         """
         logger.info("[Tool Call] get_menus")
         result = backend_api.get_menus()
