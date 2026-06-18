@@ -1,6 +1,12 @@
 package com.newlecture.backend.admin.menu.adapter.out.persistence.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +17,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "menu_option_groups")
+@Table(name = "menu_option_groups", indexes = {
+    @Index(name = "idx_menu_option_groups_menu_id", columnList = "menu_id")
+})
 @Data
 @Builder
 @NoArgsConstructor

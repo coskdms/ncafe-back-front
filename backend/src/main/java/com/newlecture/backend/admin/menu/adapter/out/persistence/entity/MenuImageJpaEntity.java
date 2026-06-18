@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,9 @@ import com.newlecture.backend.admin.menu.domain.MenuImage;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "AdminMenuImage")
-@Table(name = "menu_images")
+@Table(name = "menu_images", indexes = {
+    @Index(name = "idx_menu_images_menu_id", columnList = "menu_id")
+})
 public class MenuImageJpaEntity {
 
     @Id

@@ -290,8 +290,8 @@ public class DataInitializer implements ApplicationRunner {
                 try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS security_question VARCHAR(200)"); } catch (Exception e) {}
                 try { jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS security_answer VARCHAR(200)"); } catch (Exception e) {}
 
-                // 소셜 로그인 검색용 인덱스
-                try { jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS idx_users_social ON users (social_provider, social_id)"); } catch (Exception e) {}
+                // 인덱스
+                jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS idx_users_social ON users (social_provider, social_id)");
 
                 // 3. 관리자 계정 초기화
                 insertUserIfMissing("coskdms", "thgud6173!", "ADMIN");
@@ -322,19 +322,9 @@ public class DataInitializer implements ApplicationRunner {
                                 ")";
                 jdbcTemplate.execute(createTableSql);
 
-                // 장바구니에 옵션이 추가되면서 member_id, menu_id 만으로는 유니크하지 않아지므로 제약조건 삭제 시도
-                try {
-                        jdbcTemplate.execute("ALTER TABLE cart_items DROP CONSTRAINT IF EXISTS unique_member_menu");
-                } catch (Exception e) {
-                        System.out.println("No unique constraint to drop or error occurred.");
-                }
-                
-                // 기존 테이블에 options 컬럼이 없다면 추가
-                try {
-                        jdbcTemplate.execute("ALTER TABLE cart_items ADD COLUMN IF NOT EXISTS options VARCHAR(1000) DEFAULT '{}'");
-                } catch (Exception e) {
-                        System.out.println("Failed to add options column, might already exist.");
-                }
+                jdbcTemplate.execute("ALTER TABLE cart_items DROP CONSTRAINT IF EXISTS unique_member_menu");
+                jdbcTemplate.execute("ALTER TABLE cart_items ADD COLUMN IF NOT EXISTS options VARCHAR(1000) DEFAULT '{}'");
+                jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS idx_cart_items_member_id ON cart_items (member_id)");
 
                 System.out.println("✅ DataInitializer: cart_items 테이블 확인 및 생성 완료 (옵션 지원)");
         }
@@ -380,6 +370,11 @@ public class DataInitializer implements ApplicationRunner {
                                 "quantity INTEGER NOT NULL" +
                                 ")";
                 jdbcTemplate.execute(createOrderItemsTableSql);
+
+                // 인덱스
+                jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS idx_orders_member_id ON orders (member_id)");
+                jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders (created_at)");
+                jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS idx_orders_status ON orders (status)");
 
                 System.out.println("✅ DataInitializer: orders 및 order_items 테이블 확인 및 생성 완료 (자동 마이그레이션 포함)");
         }
