@@ -6,6 +6,14 @@ import com.newlecture.backend.auth.domain.Member;
 import com.newlecture.backend.auth.application.service.MemberService;
 import com.newlecture.backend.admin.notification.application.service.NotificationService;
 import com.newlecture.backend.admin.notification.application.service.SseNotificationService;
+import com.newlecture.backend.admin.menu.adapter.out.persistence.entity.MenuJpaEntity;
+import com.newlecture.backend.admin.menu.adapter.out.persistence.entity.MenuOptionGroupJpaEntity;
+import com.newlecture.backend.admin.menu.adapter.out.persistence.entity.MenuOptionDetailJpaEntity;
+import com.newlecture.backend.admin.menu.adapter.out.persistence.repository.AdminMenuJpaRepository;
+import com.newlecture.backend.admin.menu.adapter.out.persistence.repository.AdminMenuOptionGroupJpaRepository;
+import com.newlecture.backend.admin.menu.adapter.out.persistence.repository.AdminMenuOptionDetailJpaRepository;
+import com.newlecture.backend.admin.setting.adapter.out.persistence.entity.ShopSettingJpaEntity;
+import com.newlecture.backend.admin.setting.adapter.out.persistence.repository.ShopSettingJpaRepository;
 
 import com.newlecture.backend.order.adapter.in.web.dto.OrderCreateRequest;
 import com.newlecture.backend.order.adapter.out.persistence.entity.OrderJpaEntity;
@@ -14,6 +22,7 @@ import com.newlecture.backend.order.adapter.out.persistence.repository.OrderJpaR
 import com.newlecture.backend.order.domain.OrderStatus;
 import com.newlecture.backend.order.domain.OrderType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,10 +31,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -38,7 +51,20 @@ public class OrderService {
     private final SseNotificationService sseNotificationService;
     private final PortOneService portOneService;
 
+    // 서버 측 가격 재계산에 필요한 저장소 (클라이언트가 보낸 가격을 신뢰하지 않기 위함)
+    private final AdminMenuJpaRepository menuRepository;
+    private final AdminMenuOptionGroupJpaRepository optionGroupRepository;
+    private final AdminMenuOptionDetailJpaRepository optionDetailRepository;
+    private final ShopSettingJpaRepository shopSettingRepository;
+
     private final ObjectMapper objectMapper;
+
+    // 비회원 기본 배달비 (매장 설정이 없을 때의 폴백)
+    private static final int DEFAULT_DELIVERY_FEE = 3000;
+
+    // 방어적 입력 한도
+    private static final int MAX_QUANTITY_PER_ITEM = 999;
+    private static final long MAX_ORDER_AMOUNT = 100_000_000L; // 1억원
 
 
     public OrderJpaEntity getOrderByPaymentId(String paymentId) {
@@ -55,6 +81,10 @@ public class OrderService {
 
     /**
      * 결제 완료 처리
+     *
+     * ★ 보안: 무조건 PAID로 바꾸지 않고, PortOne에 실제 결제 내역을 조회하여
+     *   결제 상태(PAID)와 실결제 금액이 서버가 계산한 주문 금액과 일치할 때만 확정한다.
+     *   (0원 주문 = 포인트 전액 결제 등은 PortOne 결제가 없으므로 검증을 생략한다.)
      */
     public void completeOrder(String paymentId) {
         OrderJpaEntity order = orderRepository.findByPaymentId(paymentId)
@@ -62,6 +92,28 @@ public class OrderService {
 
         // PENDING → PAID 전환만 허용. 이미 PAID/PREPARING/COMPLETED/CANCELLED라면 아무것도 하지 않음.
         if (order.getStatus() != OrderStatus.PENDING) return;
+
+        int expectedAmount = order.getTotalPrice() != null ? order.getTotalPrice() : 0;
+
+        // 실결제가 있는 주문만 PortOne 검증 (0원 주문은 결제 자체가 없음)
+        if (expectedAmount > 0) {
+            PortOneService.PaymentInfo payment = portOneService.getPayment(paymentId);
+
+            boolean paid = payment != null && "PAID".equalsIgnoreCase(payment.status());
+            boolean amountMatches = payment != null && payment.totalAmount() == expectedAmount;
+
+            if (!paid || !amountMatches) {
+                log.warn("[결제검증 실패] paymentId={}, expected={}, actualStatus={}, actualAmount={}",
+                        paymentId, expectedAmount,
+                        payment != null ? payment.status() : "null",
+                        payment != null ? payment.totalAmount() : "null");
+                // ★ 예외를 던지면 클래스 레벨 @Transactional에 의해 이 FAILED 저장까지 롤백된다.
+                //   따라서 throw 대신 FAILED로 확정하고 정상 반환하여 상태가 커밋되도록 한다.
+                order.setStatus(OrderStatus.FAILED);
+                orderRepository.save(order);
+                return;
+            }
+        }
 
         order.setStatus(OrderStatus.PAID);
         orderRepository.save(order);
@@ -158,6 +210,11 @@ public class OrderService {
 
 
     public OrderJpaEntity createOrder(OrderCreateRequest request) {
+        // ★ 입력 검증: 빈/누락 항목은 이후 completeOrder의 items.get(0) 등에서 크래시를 유발하므로 선제 차단
+        if (request.getItems() == null || request.getItems().isEmpty()) {
+            throw new IllegalArgumentException("주문 항목이 비어 있습니다.");
+        }
+
         String nickname = SecurityContextHolder.getContext().getAuthentication().getName();
         UUID memberId = null;
 
@@ -169,15 +226,41 @@ public class OrderService {
         }
 
         // 포트원 V2 paymentId 생성
-        String paymentId = "order-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) 
+        String paymentId = "order-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
                 + "-" + ThreadLocalRandom.current().nextInt(100000, 999999);
 
-        int totalPrice = request.getItems().stream()
-                .mapToInt(item -> item.getPrice() * item.getQuantity())
-                .sum();
-        
+        // ★ 보안: 클라이언트가 보낸 item.price를 신뢰하지 않고,
+        //   DB의 메뉴 기본가 + 옵션 추가금으로 서버가 직접 단가를 계산한다.
+        //   금액은 int 곱셈 오버플로우를 막기 위해 long으로 누적하고 상한을 검증한다.
+        List<Integer> unitPrices = new ArrayList<>();
+        long subtotal = 0L;
+        for (var itemReq : request.getItems()) {
+            if (itemReq.getMenuId() == null) {
+                throw new IllegalArgumentException("메뉴 ID가 누락되었습니다.");
+            }
+            Integer qty = itemReq.getQuantity();
+            if (qty == null || qty < 1 || qty > MAX_QUANTITY_PER_ITEM) {
+                throw new IllegalArgumentException("수량은 1~" + MAX_QUANTITY_PER_ITEM + " 사이여야 합니다: " + qty);
+            }
+            MenuJpaEntity menu = menuRepository.findById(itemReq.getMenuId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다: " + itemReq.getMenuId()));
+            if (Boolean.FALSE.equals(menu.getIsAvailable())) {
+                throw new IllegalStateException("품절된 메뉴는 주문할 수 없습니다: " + menu.getKorName());
+            }
+            int base = menu.getPrice() != null ? menu.getPrice() : 0;
+            int unitPrice = base + calcOptionsPrice(itemReq.getMenuId(), itemReq.getOptions());
+            unitPrices.add(unitPrice);
+            subtotal += (long) unitPrice * qty; // long 누적 → 오버플로우 방지
+        }
+        if (subtotal > MAX_ORDER_AMOUNT) {
+            throw new IllegalStateException("주문 금액이 허용 한도를 초과했습니다.");
+        }
+
+        int totalPrice = (int) subtotal;
+
+        // 배달비: 비회원 배달 주문만 부과 (회원은 무료)
         if (memberId == null && request.getType() == OrderType.DELIVERY) {
-            totalPrice += 3000;
+            totalPrice += resolveDeliveryFee();
         }
 
         // 멤버십 등급별 즉시 할인 적용 🎁
@@ -189,7 +272,7 @@ public class OrderService {
                 membershipDiscount = member.getImmediateDiscount();
                 if (membershipDiscount > 0) {
                     totalPrice = Math.max(0, totalPrice - membershipDiscount);
-                    System.out.println("[OrderService] Membership discount applied: " + membershipDiscount + "원 for " + nickname);
+                    log.info("[OrderService] 멤버십 할인 적용: {}원 ({})", membershipDiscount, nickname);
                 }
             }
         }
@@ -218,6 +301,7 @@ public class OrderService {
                 .memo(request.getMemo())
                 .build();
 
+        int idx = 0;
         for (var itemReq : request.getItems()) {
             String optionsJson = "{}";
             try {
@@ -229,7 +313,7 @@ public class OrderService {
             OrderItemJpaEntity item = OrderItemJpaEntity.builder()
                     .menuId(itemReq.getMenuId())
                     .korName(itemReq.getKorName())
-                    .price(itemReq.getPrice())
+                    .price(unitPrices.get(idx++)) // ★ 서버가 계산한 단가 저장 (클라이언트 값 무시)
                     .quantity(itemReq.getQuantity())
                     .options(optionsJson)
                     .build();
@@ -371,5 +455,50 @@ public class OrderService {
             order.setStatus(OrderStatus.CANCELLED);
             orderRepository.save(order);
         }
+    }
+
+    /**
+     * 메뉴의 옵션 선택값에 해당하는 추가 금액 합계를 DB에서 조회해 계산한다.
+     * options = { 그룹명 → 선택한 옵션명 } (다중 선택은 콤마로 구분될 수 있음)
+     */
+    private int calcOptionsPrice(Long menuId, Map<String, String> options) {
+        if (options == null || options.isEmpty()) return 0;
+
+        List<MenuOptionGroupJpaEntity> groups = optionGroupRepository.findAllByMenuIdOrderBySortOrderAsc(menuId);
+        if (groups.isEmpty()) return 0;
+
+        List<Long> groupIds = groups.stream().map(MenuOptionGroupJpaEntity::getId).toList();
+        List<MenuOptionDetailJpaEntity> details = optionDetailRepository.findAllByOptionGroupIdInOrderBySortOrderAsc(groupIds);
+
+        // 옵션 상세명 → 추가금액 매핑
+        Map<String, Integer> priceByName = new HashMap<>();
+        for (MenuOptionDetailJpaEntity d : details) {
+            priceByName.put(d.getName(), d.getAdditionalPrice() != null ? d.getAdditionalPrice() : 0);
+        }
+
+        int sum = 0;
+        for (String value : options.values()) {
+            if (value == null || value.isBlank()) continue;
+            for (String part : value.split(",")) {
+                Integer p = priceByName.get(part.trim());
+                if (p != null) {
+                    sum += p;
+                } else {
+                    log.warn("[OrderService] 알 수 없는 옵션값(추가금 0 처리): menuId={}, option='{}'", menuId, part.trim());
+                }
+            }
+        }
+        return sum;
+    }
+
+    /**
+     * 매장 설정의 배달비를 반환한다. 설정이 없으면 기본값(3000)을 사용한다.
+     */
+    private int resolveDeliveryFee() {
+        ShopSettingJpaEntity setting = shopSettingRepository.findById(1L).orElse(null);
+        if (setting != null && setting.getDeliveryFee() != null) {
+            return setting.getDeliveryFee();
+        }
+        return DEFAULT_DELIVERY_FEE;
     }
 }

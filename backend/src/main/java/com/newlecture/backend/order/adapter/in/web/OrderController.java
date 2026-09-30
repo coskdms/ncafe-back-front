@@ -1,20 +1,27 @@
 package com.newlecture.backend.order.adapter.in.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.newlecture.backend.order.adapter.in.web.dto.OrderCreateRequest;
 import com.newlecture.backend.order.adapter.out.persistence.entity.OrderJpaEntity;
 import com.newlecture.backend.order.application.service.OrderService;
+import com.newlecture.backend.order.application.service.PortOneService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
+    private final PortOneService portOneService;
+    private final ObjectMapper objectMapper;
 
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderCreateRequest request) {
@@ -48,38 +55,55 @@ public class OrderController {
         }
     }
 
+    /**
+     * 주문 조회 (순수 조회 - 상태 변경 부작용 없음)
+     */
     @GetMapping("/{paymentId}")
     public ResponseEntity<?> getOrder(@PathVariable String paymentId) {
         try {
-            // PENDING 상태인 경우에만 completeOrder를 시도합니다.
-            // (이미 PAID/PREPARING/COMPLETED인 주문을 다시 PAID로 되돌리지 않도록)
-            var order = orderService.getOrderByPaymentId(paymentId);
-            if (order.getStatus() == com.newlecture.backend.order.domain.OrderStatus.PENDING) {
-                orderService.completeOrder(paymentId);
-                // completeOrder 후 갱신된 데이터를 다시 조회
-                order = orderService.getOrderByPaymentId(paymentId);
-            }
-            return ResponseEntity.ok(order);
+            return ResponseEntity.ok(orderService.getOrderByPaymentId(paymentId));
         } catch (Exception e) {
             return ResponseEntity.status(404).body(Map.of("message", e.getMessage()));
         }
     }
 
+    /**
+     * 결제 완료 확정 (PortOne 실결제 검증 후에만 PAID 처리)
+     * 결제 성공 리다이렉트 페이지에서 호출한다.
+     */
+    @PostMapping("/{paymentId}/complete")
+    public ResponseEntity<?> completeOrder(@PathVariable String paymentId) {
+        try {
+            orderService.completeOrder(paymentId);
+            return ResponseEntity.ok(orderService.getOrderByPaymentId(paymentId));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    /**
+     * PortOne V2 웹훅 수신 (★ 서명 검증 후에만 처리)
+     * 원본 바디로 서명을 검증해야 하므로 String으로 수신한다.
+     */
     @PostMapping("/webhook")
     @SuppressWarnings("unchecked")
-    public ResponseEntity<?> handleWebhook(@RequestBody Map<String, Object> payload) {
-        System.out.println("Received V2 Webhook: " + payload);
-        
+    public ResponseEntity<?> handleWebhook(@RequestBody(required = false) String rawBody,
+                                           @RequestHeader HttpHeaders headers) {
+        if (!portOneService.verifyWebhook(rawBody, headers)) {
+            log.warn("❌ 웹훅 서명 검증 실패 - 요청 거부");
+            return ResponseEntity.status(401).body(Map.of("message", "invalid signature"));
+        }
+
         try {
-            // PortOne V2 웹훅 페이로드에서 payment_id 추출
+            Map<String, Object> payload = objectMapper.readValue(rawBody, Map.class);
             Map<String, Object> data = (Map<String, Object>) payload.get("data");
             if (data != null && data.containsKey("payment_id")) {
                 String paymentId = (String) data.get("payment_id");
                 orderService.completeOrder(paymentId);
-                System.out.println("✅ 주문 완료 처리 성공: " + paymentId);
+                log.info("✅ 웹훅 주문 완료 처리 성공: {}", paymentId);
             }
         } catch (Exception e) {
-            System.err.println("❌ 웹훅 처리 중 오류 발생: " + e.getMessage());
+            log.error("❌ 웹훅 처리 중 오류 발생: {}", e.getMessage());
         }
 
         return ResponseEntity.ok().build();

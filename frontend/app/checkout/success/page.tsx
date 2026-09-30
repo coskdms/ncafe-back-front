@@ -27,16 +27,25 @@ function SuccessContent() {
         };
         cleanUp();
 
-        // 2. 주문 데이터 상세 조회
+        // 2. 결제 완료 확정(PortOne 실결제 검증) 후 주문 데이터 상세 조회
+        //    - 확정은 서버가 PortOne 결제 내역을 검증한 뒤에만 이루어진다.
+        //    - 웹훅이 먼저 처리했다면 이미 PAID 상태이므로 이 호출은 무시된다.
         if (paymentId) {
-            fetchAPI(`/orders/${paymentId}`)
-                .then(data => {
-                    setOrderData(data);
-                    setIsLoading(false);
-                })
+            fetchAPI(`/orders/${paymentId}/complete`, { method: 'POST' })
                 .catch(err => {
-                    console.error('주문 정보 조회 실패:', err);
-                    setIsLoading(false);
+                    // 검증 실패/이미 확정 등은 이후 조회 결과로 사용자에게 상태를 보여준다.
+                    console.warn('주문 확정 처리 응답:', err);
+                })
+                .finally(() => {
+                    fetchAPI(`/orders/${paymentId}`)
+                        .then(data => {
+                            setOrderData(data);
+                            setIsLoading(false);
+                        })
+                        .catch(err => {
+                            console.error('주문 정보 조회 실패:', err);
+                            setIsLoading(false);
+                        });
                 });
         }
     }, [paymentId, clearCart, setCheckoutItems, syncWithServer]);
