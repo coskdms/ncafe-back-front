@@ -17,4 +17,6 @@ public interface AdminMenuJpaRepository extends JpaRepository<MenuJpaEntity, Lon
     List<MenuJpaEntity> findByKorNameContaining(String korName);
 
     List<MenuJpaEntity> findByCategoryIdAndKorNameContaining(String categoryId, String korName);
+
+    long countByIsAvailableFalse();
 }

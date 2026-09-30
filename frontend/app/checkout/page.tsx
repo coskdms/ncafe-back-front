@@ -114,7 +114,8 @@ export default function CheckoutPage() {
 
 
     const totalPrice = getCheckoutTotalPrice();
-    const deliveryFee = (orderType === 'DELIVERY') ? (shopSettings?.deliveryFee ?? 3000) : 0;
+    // 배달비: 회원은 무료 (백엔드 정책과 일치). 실제 결제는 서버가 반환한 금액으로 진행된다.
+    const deliveryFee = (orderType === 'DELIVERY' && !isAuthenticated) ? (shopSettings?.deliveryFee ?? 3000) : 0;
     const finalPrice = Math.max(0, totalPrice + deliveryFee - pointsToUse - membershipDiscount);
 
 
@@ -201,7 +202,8 @@ export default function CheckoutPage() {
 
             // 💰 2-1. 0원 결제 처리 (포인트 전액 결제 등)
             // 포트원 V2는 0원 결제를 지원하지 않으므로, 백엔드에서 이미 처리했을 거라 믿고 즉시 이동합니다.
-            if (finalPrice === 0) {
+            // 금액은 서버가 계산한 값(orderRes.totalPrice)을 기준으로 판단한다.
+            if (orderRes.totalPrice === 0) {
                 router.push(`/checkout/success?paymentId=${orderRes.paymentId}`);
                 return;
             }
@@ -229,7 +231,7 @@ export default function CheckoutPage() {
                 orderName: checkoutItems.length > 1
                     ? `${checkoutItems[0].korName} 외 ${checkoutItems.length - 1}건`
                     : checkoutItems[0].korName,
-                totalAmount: finalPrice,
+                totalAmount: orderRes.totalPrice, // ★ 서버가 계산한 금액으로 결제 (클라이언트 계산값 미사용)
                 currency: "CURRENCY_KRW",
                 customer: {
                     fullName: formData.receiver || '구매자',

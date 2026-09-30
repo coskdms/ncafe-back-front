@@ -35,8 +35,13 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	
+	// p6spy: SQL 실행 시간 측정 (starter 없이 core만 사용 - Spring Boot 4.x 호환)
+	implementation 'p6spy:p6spy:3.9.1'
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	// 단위 테스트용: JUnit5 + Mockito + AssertJ
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

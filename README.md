@@ -92,26 +92,27 @@ AI 챗봇 에이전트(버미나이덕 🐤)가 고객 응대, 메뉴 추천, �
 | **Zustand** | 5.0.11 | 전역 상태 관리 (auth, cart, favorites 등) |
 | **CSS Modules** | - | 컴포넌트 스코프 스타일링 |
 | **iron-session** | 8.0.4 | 서버 측 세션 관리 (BFF 인증) |
-| **Lucide React** | 0.563 | 아이콘 라이브러리 |
+| **Lucide React** | 0.563.0 | 아이콘 라이브러리 |
+| **react-hot-toast** | 2.6.0 | 토스트 알림 |
 | **dnd-kit** | 6.x | 드래그 앤 드롭 (메뉴 이미지 정렬) |
-| **date-fns** | 4.1 | 날짜 포맷팅 |
-| **react-hook-form** | 7.71 | 폼 상태 관리 |
+| **date-fns** | 4.1.0 | 날짜 포맷팅 |
+| **react-hook-form** | 7.71.1 | 폼 상태 관리 |
 
 ### AI Agent Server (Beomini)
 | 기술 | 용도 |
 |:---|:---|
 | **FastAPI** | Python 웹 프레임워크 (비동기 지원) |
-| **Google Gemini API** | LLM 기반 AI 대화 (Function Calling) |
-| **Sentence Transformers** | 텍스트 임베딩 (e5 모델) |
-| **PostgreSQL + pgvector** | 벡터 DB (RAG 지식 검색) |
-| **SSE (Server-Sent Events)** | 실시간 스트리밍 응답 |
+| **Google Gemini 2.5 Flash** | LLM 기반 AI 대화 (Function Calling, AFC) |
+| **Sentence Transformers (multilingual-e5-small)** | 다국어 텍스트 임베딩 (384차원) |
+| **PostgreSQL + pgvector** | 벡터 DB (RAG 지식 코사인 유사도 검색) |
+| **SSE (Server-Sent Events)** | 실시간 스트리밍 응답 (sse-starlette) |
 
 ### 인프라
 | 기술 | 용도 |
 |:---|:---|
-| **Docker Compose** | 멀티 컨테이너 오케스트레이션 |
-| **GitHub Actions** | CI/CD 자동 배포 |
-| **Nginx** | 리버스 프록시 (프론트엔드 앞단) |
+| **Docker Compose** | 멀티 컨테이너 오케스트레이션 (4개 서비스) |
+| **GitHub Actions** | CI/CD 자동 배포 (Self-Hosted Runner) |
+| **pgvector/pgvector:pg17** | PostgreSQL 17 + pgvector 확장 이미지 |
 
 ---
 
@@ -263,8 +264,36 @@ docker compose --profile with-db up -d --build
 cd frontend && npm install && npm run dev
 
 # AI 에이전트
-cd beomini-server && pip install -r requirements.txt && uvicorn app.main:app --reload
+cd beomini-server && pip install -r requirements.txt && python3 -m uvicorn app.main:app --reload
 ```
+
+로컬(`dev` 프로필)로 백엔드를 실행하면 `application-dev.properties`의 기본값에 따라
+`localhost:5332`의 PostgreSQL에 접속을 시도합니다. `db` 서비스는 기본적으로 컨테이너
+외부(호스트)로 포트를 노출하지 않으므로(`docker-compose.yml` 참고), 로컬 실행 시에는
+포트를 노출해주는 override 파일이 별도로 필요합니다.
+
+**로컬 DB 접속 설정 (최초 1회)**
+
+프로젝트 루트에 `docker-compose.override.yml`을 생성합니다 (git에 커밋되지 않는
+개발자별 로컬 설정 파일입니다):
+
+```yaml
+# docker-compose.override.yml
+services:
+  db:
+    ports:
+      - "5332:5432"
+```
+
+DB 컨테이너를 (재)기동합니다:
+```bash
+docker compose --profile with-db up -d db
+```
+
+이후 `./gradlew :backend:bootRun`으로 로컬 백엔드를 실행하면 `localhost:5332`로
+정상 접속됩니다. `Connection to localhost:5332 refused` 에러가 발생한다면 위 override
+파일이 없거나 `db` 컨테이너가 내려가 있는 경우이니, `docker compose ps`로 `db`
+컨테이너 상태와 포트 매핑(`0.0.0.0:5332->5432/tcp`)을 먼저 확인하세요.
 
 ---
 

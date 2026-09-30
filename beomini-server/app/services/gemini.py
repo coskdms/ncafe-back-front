@@ -3,11 +3,25 @@ import json
 from typing import Generator, AsyncGenerator, Optional, Union
 from google import genai
 from google.genai import types
+from google.genai import errors as genai_errors
 from app.config import GEMINI_API_KEY
 import app.services.backend_api as backend_api
 
 # 로거 설정
 logger = logging.getLogger(__name__)
+
+# 사용자에게 노출할 에러 메시지 (내부 원인은 서버 로그에만 남기고, 응답에는 노출하지 않음)
+RATE_LIMIT_MESSAGE = "지금 손님이 너무 많아서 숨 고르는 중이다덕! 🐤 1분만 있다가 다시 말해달라덕 💦"
+GENERIC_ERROR_MESSAGE = "앗... 문제가 생겼다덕! 다시 시도해달라덕! 💦"
+
+
+def is_rate_limited(e: Exception) -> bool:
+    """Gemini API 할당량/속도 제한(429) 에러인지 판별합니다."""
+    return isinstance(e, genai_errors.APIError) and e.code == 429
+
+
+def friendly_error_message(e: Exception) -> str:
+    return RATE_LIMIT_MESSAGE if is_rate_limited(e) else GENERIC_ERROR_MESSAGE
 
 # 비동기 클라이언트 사용
 async_client = genai.Client(
@@ -808,5 +822,5 @@ async def chat_stream(messages: list[dict], auth_token: Optional[str] = None, us
     except Exception as e:
         logger.error(f"Gemini API (chat_stream) error: {e}")
         logger.error(traceback.format_exc())
-        yield f"앗... 문제가 생겼다덕! 다시 시도해달라덕! 💦"
+        yield friendly_error_message(e)
 
