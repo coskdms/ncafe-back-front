@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from sse_starlette.sse import EventSourceResponse
 
 from app.models.schemas import ChatRequest, Message
-from app.services.gemini import chat, chat_stream
+from app.services.gemini import chat, chat_stream, is_rate_limited, friendly_error_message
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ async def chat_endpoint(
         logger.error(f"Endpoint error: {e}")
         logger.error(traceback.format_exc())
         return JSONResponse(
-            status_code=500,
-            content={"error": str(e)}
+            status_code=429 if is_rate_limited(e) else 500,
+            content={"error": friendly_error_message(e)}
         )
 
