@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/app/lib/session';
 
 const AGENT_BASE = process.env.AGENT_API_URL || 'http://localhost:8000';
 
@@ -6,6 +7,10 @@ export async function PUT(
     req: NextRequest,
     props: { params: Promise<{ id: string }> }
 ) {
+    // ★ 문서 수정은 관리자만 (AI 서버의 /rag/documents는 자체 인증이 없음)
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     try {
         const { id } = await props.params;
         const body = await req.json();
@@ -37,6 +42,10 @@ export async function DELETE(
     req: NextRequest,
     props: { params: Promise<{ id: string }> }
 ) {
+    // ★ 문서 삭제는 관리자만
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     try {
         const { id } = await props.params;
 

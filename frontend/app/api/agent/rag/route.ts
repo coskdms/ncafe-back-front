@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/app/lib/session';
 
 const AGENT_BASE = process.env.AGENT_API_URL || 'http://localhost:8000';
 
 export async function POST(req: NextRequest) {
+    // ★ 문서 추가는 관리자만 (AI 서버의 /rag/documents는 자체 인증이 없음)
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     try {
         const body = await req.json();
 
