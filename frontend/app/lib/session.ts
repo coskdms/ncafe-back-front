@@ -1,5 +1,6 @@
 import { getIronSession, SessionOptions } from 'iron-session';
 import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 // ──────────────────────────────────────
 // 세션에 저장할 사용자 정보 타입
@@ -30,4 +31,20 @@ export const sessionOptions: SessionOptions = {
 export async function getSession() {
     const cookieStore = await cookies();
     return getIronSession<SessionData>(cookieStore, sessionOptions);
+}
+
+// ──────────────────────────────────────
+// 관리자 전용 API Route 가드
+// 미들웨어는 /api 경로를 검사하지 않으므로, 관리자 전용 API는 여기서 직접 막는다.
+// ADMIN이면 null, 아니면 바로 반환할 401/403 응답을 돌려준다.
+// ──────────────────────────────────────
+export async function requireAdmin(): Promise<NextResponse | null> {
+    const session = await getSession();
+    if (!session.user) {
+        return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
+    }
+    if (session.user.role !== 'ADMIN') {
+        return NextResponse.json({ error: '관리자만 사용할 수 있는 기능입니다.' }, { status: 403 });
+    }
+    return null;
 }
